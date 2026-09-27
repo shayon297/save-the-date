@@ -11,6 +11,7 @@
   --ink-soft:   #66703f;
   --olive:      #7f8a4e;
   --olive-pale: #d9dcc2;
+  --gold:       #b0975a;   /* metal accent only, per the floral brief */
   --line:       rgba(63,74,37,0.45);
 
   --serif:  "Cormorant Garamond", "Times New Roman", serif;
@@ -115,15 +116,8 @@ body{
   justify-content: center;
   gap: 18px;
 }
-.caps-title::before, .caps-title::after{
-  content: "";
-  flex: 0 0 auto;
-  width: clamp(14px, 4vw, 40px);
-  height: 1px;
-  background: var(--line);
-}
 @media (max-width: 559px){
-  .caps-title::before, .caps-title::after{ display: none; }
+  .caps-title .sprig{ display: none; }
 }
 
 .names{
@@ -154,27 +148,37 @@ body{
 .name-and{
   font-family: var(--script);
   font-size: 30px;
-  color: var(--olive);
+  color: var(--gold);
   line-height: 1;
   padding-top: 2px;
 }
 @media (min-width: 560px){ .name-and{ padding-top: 22px; } }
 
-/* ---------- portrait (ink sketch of the photo) ---------- */
-.portrait{
-  margin: 34px auto 0;
-  width: min(100%, 360px);
-  padding: 6px;
-  border: 1px solid var(--line);
+/* ---------- florals (line art, same ink as the type) ---------- */
+.ink-stroke{ fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.leaf-stroke{ fill: var(--ivory); stroke: var(--olive); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.leaf-stroke path:first-child{ fill: none; }
+.gold-dot{ fill: var(--gold); }
+
+.corner{
+  position: absolute;
+  width: 210px;
+  height: 210px;
+  pointer-events: none;
 }
-.portrait img{
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  border: 1px solid var(--line);
+.corner-tl{ top: -30px; left: -30px; }
+.corner-br{ bottom: -30px; right: -30px; transform: rotate(180deg); }
+@media (max-width: 699px){
+  .corner{ width: 120px; height: 120px; }
+  .corner-tl{ top: -16px; left: -16px; }
+  .corner-br{ bottom: -16px; right: -16px; }
+  .card-inner{ padding-top: 88px; padding-bottom: 56px; }
 }
+
+.sprig{ width: clamp(42px, 9vw, 84px); height: clamp(14px, 3vw, 28px); flex: 0 0 auto; }
+.sprig-l{ transform: scaleX(-1); }
+
+.rule-bud{ width: 24px; height: 40px; margin: 0 14px; flex: 0 0 auto; }
 
 /* ---------- when / where ---------- */
 .when-where{ margin-top: 36px; }
@@ -240,12 +244,6 @@ body{
 }
 .rule::before, .rule::after{
   content: ""; flex: 1; height: 1px; background: var(--line);
-}
-.rule span{
-  width: 8px; height: 8px; margin: 0 12px;
-  border: 1px solid var(--olive);
-  transform: rotate(45deg);
-  background: var(--olive-pale);
 }
 
 /* ---------- weekend ---------- */
