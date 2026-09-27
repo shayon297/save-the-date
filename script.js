@@ -37,7 +37,7 @@
       end: "20270516T010000Z",   // May 15, 9:00 PM EDT
     },
     wedding: {
-      title: "Shayon & Amanda — Wedding Ceremony",
+      title: "Shayon & Amanda — Wedding Ceremony & Reception",
       location: "Cincinnati Art Museum, 953 Eden Park Dr, Cincinnati, OH 45202",
       start: "20270516T213000Z", // May 16, 5:30 PM EDT
       end: "20270517T030000Z",   // May 16, 11:00 PM EDT
