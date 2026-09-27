@@ -57,18 +57,20 @@ body{
     0 6px 14px -8px rgba(0,0,0,0.35);
 }
 
-/* pinstripe edges, perpendicular to each side like the RSVP card */
-.stripe{ position: absolute; pointer-events: none; }
+/* Greek key (meander) frieze around the card, after the museum's facade */
+.stripe{ position: absolute; pointer-events: none; opacity: 0.85; }
 .stripe-top, .stripe-bottom{
-  left: 0; right: 0; height: var(--stripe);
-  background: repeating-linear-gradient(90deg, var(--olive) 0 1.5px, transparent 1.5px 5px);
+  left: 4px; right: 4px; height: 14px;
+  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2014%2014%22%3E%3Cpath%20d%3D%22M0%2012.5H14M2.5%2012.5V1.5H11.5V9.5H5.5V4.5H8.5V6.5%22%20fill%3D%22none%22%20stroke%3D%22%237f8a4e%22%20stroke-width%3D%221%22/%3E%3C/svg%3E") repeat-x left top;
 }
-.stripe-top{ top: 0; } .stripe-bottom{ bottom: 0; }
+.stripe-top{ top: 4px; }
+.stripe-bottom{ bottom: 4px; transform: rotate(180deg); }
 .stripe-left, .stripe-right{
-  top: 0; bottom: 0; width: var(--stripe);
-  background: repeating-linear-gradient(180deg, var(--olive) 0 1.5px, transparent 1.5px 5px);
+  top: 4px; bottom: 4px; width: 14px;
+  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2014%2014%22%3E%3Cpath%20d%3D%22M1.5%200V14M1.5%202.5H12.5V11.5H4.5V5.5H9.5V8.5H7.5%22%20fill%3D%22none%22%20stroke%3D%22%237f8a4e%22%20stroke-width%3D%221%22/%3E%3C/svg%3E") repeat-y left top;
 }
-.stripe-left{ left: 0; } .stripe-right{ right: 0; }
+.stripe-left{ left: 4px; transform: rotate(180deg); }
+.stripe-right{ right: 4px; }
 
 .card{ overflow: hidden; }
 .card-inner{
@@ -169,8 +171,12 @@ body{
 .flora-tr{ top: 0; right: 0; }
 .flora-br{ bottom: 0; right: 0; }
 .flora .p{ fill: var(--ivory); stroke: var(--olive); stroke-width: 1; stroke-linejoin: round; }
-.flora .l, .flora .s{ fill: none; stroke: var(--olive); stroke-width: 1; stroke-linecap: round; }
+.flora .l, .flora .s, .flora .s2{ fill: none; stroke: var(--olive); stroke-width: 1; stroke-linecap: round; }
 .flora .s{ stroke-width: 1.4; }
+.flora .g{ fill: none; stroke: var(--gold); stroke-width: 0.8; }
+.flora .gd{ fill: var(--gold); }
+.flora .k{ fill: var(--page); }
+.flora .kd{ fill: var(--olive); }
 .flora .v{ fill: none; stroke: var(--olive); stroke-width: 0.7; stroke-linecap: round; opacity: 0.7; }
 .flora .d{ fill: none; stroke: var(--olive); stroke-width: 0.9; stroke-linecap: round; opacity: 0.85; }
 @media (max-width: 699px){
@@ -314,6 +320,113 @@ body{
 .btn-solid:hover{ background: var(--page-deep); border-color: var(--page-deep); }
 .btn-ghost{ background: transparent; color: var(--ink); }
 .btn-ghost:hover{ background: var(--ink); color: var(--ivory); }
+
+/* ---------- mailing address form ---------- */
+.address{ text-align: center; }
+.address .section-title{ margin-bottom: 4px; }
+.address-sub{
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-soft);
+  margin: 0 0 26px;
+}
+.addr-form{
+  max-width: 440px;
+  margin: 0 auto;
+  text-align: left;
+}
+.field{ display: block; margin: 0 0 16px; position: relative; }
+.field-label{
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 6px;
+}
+.field input{
+  width: 100%;
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 6px 2px 8px;
+  outline: none;
+  border-radius: 0;
+  transition: border-color 0.2s ease;
+}
+.field input::placeholder{ color: rgba(63,74,37,0.38); font-style: italic; }
+.field input:focus{ border-bottom-color: var(--ink); }
+.field input[aria-invalid="true"]{ border-bottom-color: #9a5a3a; }
+
+.addr-fields{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 18px;
+}
+.addr-fields[hidden]{ display: none; }
+.addr-fields .field-wide{ grid-column: 1 / -1; }
+@media (max-width: 559px){
+  .addr-fields{ grid-template-columns: 1fr; gap: 0; }
+}
+
+.link-btn{
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  background: none;
+  border: 0;
+  padding: 6px 0 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--line);
+}
+.link-btn:hover{ color: var(--ink); }
+
+.suggest{
+  position: absolute;
+  left: 0; right: 0;
+  top: 100%;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 28px -12px rgba(0,0,0,0.35);
+  z-index: 5;
+  max-height: 260px;
+  overflow: auto;
+}
+.suggest li{
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.suggest li small{ display: block; font-size: 13px; color: var(--ink-soft); }
+.suggest li:hover, .suggest li[aria-selected="true"]{ background: rgba(127,138,78,0.12); }
+.suggest .suggest-note{ cursor: default; font-style: italic; color: var(--ink-soft); font-size: 14px; }
+
+.form-error{
+  font-size: 14px;
+  font-style: italic;
+  color: #9a5a3a;
+  margin: -4px 0 12px;
+}
+.btn-submit{
+  display: block;
+  width: 100%;
+  padding: 13px 14px;
+  font-size: 12.5px;
+  margin-top: 6px;
+}
+.btn-submit[disabled]{ opacity: 0.6; cursor: default; }
+.addr-thanks{ padding: 8px 0 2px; }
 
 /* ---------- closing ---------- */
 .closing-script{

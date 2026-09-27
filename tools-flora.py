@@ -1,4 +1,6 @@
-"""Procedural botanical line art: rose, peony, buds, leaves on a flowing stem."""
+"""Botanical line art for the save-the-date, restricted to the floral brief's
+florist's selection: cream garden roses and spray roses, peony, olive / bay laurel foliage.
+Draped fabric at the top corners echoes the chuppah."""
 import math, random, sys
 
 def f(v): return f"{v:.1f}".rstrip("0").rstrip(".")
@@ -7,109 +9,198 @@ def rot(x, y, a):
     c, s = math.cos(a), math.sin(a)
     return x * c - y * s, x * s + y * c
 
+
 class Flora:
     def __init__(self, seed):
         self.r = random.Random(seed)
         self.out = []
 
-    # ---------- primitives ----------
-    def petal(self, cx, cy, ang, r0, L, W, bumps=2, fill=True):
+    def path(self, d, cls): self.out.append(f'<path class="{cls}" d="{d}"/>')
+
+    # ---------- petals ----------
+    def petal(self, cx, cy, ang, r0, L, W, tip="rose"):
+        """Closed petal lobe from base radius r0 outward. tip: rose (soft point / notch),
+        peony (ruffled 3-bump), anemone (rounded)."""
         r = self.r
-        L *= r.uniform(0.92, 1.08); W *= r.uniform(0.9, 1.1)
-        pts = []
+        L *= r.uniform(0.94, 1.06); W *= r.uniform(0.92, 1.08)
         def P(x, y):
             X, Y = rot(x, y, ang); return (cx + X, cy + Y)
         b = P(r0, 0)
-        d = [f"M{f(b[0])} {f(b[1])}"]
-        c1 = P(r0 + 0.28 * L, -0.62 * W); c2 = P(r0 + 0.82 * L, -0.66 * W); tl = P(r0 + 0.96 * L, -0.28 * W)
-        d.append(f"C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(tl[0])} {f(tl[1])}")
-        # ruffled tip: n bumps from tl to tr
-        tr = P(r0 + 0.96 * L, 0.28 * W)
-        n = bumps
-        for i in range(n):
-            t0, t1 = i / n, (i + 1) / n
-            ya = -0.28 * W + 0.56 * W * t0; yb = -0.28 * W + 0.56 * W * t1
-            ym = (ya + yb) / 2
-            cp = P(r0 + L * (1.0 + 0.06 * r.uniform(0.6, 1.2)), ym)
-            e = P(r0 + 0.96 * L - (0.03 * L if i < n - 1 else 0), yb)
-            d.append(f"Q{f(cp[0])} {f(cp[1])} {f(e[0])} {f(e[1])}")
-        c3 = P(r0 + 0.82 * L, 0.66 * W); c4 = P(r0 + 0.28 * L, 0.62 * W)
-        d.append(f"C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(b[0])} {f(b[1])}Z")
-        cls = "p" if fill else "l"
-        self.out.append(f'<path class="{cls}" d="{"".join(d)}"/>')
-        # a soft crease line inside the petal
-        if L > 18 and r.random() < 0.7:
-            s0 = P(r0 + 0.15 * L, 0); s1 = P(r0 + 0.5 * L, r.uniform(-0.12, 0.12) * W); s2 = P(r0 + 0.8 * L, r.uniform(-0.1, 0.1) * W)
-            self.out.append(f'<path class="v" d="M{f(s0[0])} {f(s0[1])}Q{f(s1[0])} {f(s1[1])} {f(s2[0])} {f(s2[1])}"/>')
-
-    def spiral_centre(self, cx, cy, rmax, turns=2.2):
-        r = self.r
-        n = int(turns * 7)
-        a0 = r.uniform(0, math.tau)
-        for i in range(n):
-            t = i / n
-            rad = rmax * (0.18 + 0.82 * t)
-            a = a0 + t * turns * math.tau
-            span = 1.5 - 0.5 * t
-            p0 = (cx + rad * math.cos(a), cy + rad * math.sin(a))
-            p1 = (cx + rad * 1.18 * math.cos(a + span / 2), cy + rad * 1.18 * math.sin(a + span / 2))
-            p2 = (cx + rad * math.cos(a + span), cy + rad * math.sin(a + span))
-            self.out.append(f'<path class="l" d="M{f(p0[0])} {f(p0[1])}Q{f(p1[0])} {f(p1[1])} {f(p2[0])} {f(p2[1])}"/>')
-
-    def rose(self, cx, cy, R):
-        r = self.r
-        rings = [(9, 0.42 * R, 0.62 * R, 0.55 * R, 1), (7, 0.22 * R, 0.5 * R, 0.5 * R, 1), (5, 0.08 * R, 0.34 * R, 0.4 * R, 1)]
-        for n, r0, L, W, bumps in rings:
-            a0 = r.uniform(0, math.tau)
+        d = f"M{f(b[0])} {f(b[1])}"
+        c1 = P(r0 + 0.2 * L, -0.7 * W); c2 = P(r0 + 0.78 * L, -0.72 * W); tl = P(r0 + 0.94 * L, -0.34 * W)
+        d += f"C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(tl[0])} {f(tl[1])}"
+        tr = P(r0 + 0.94 * L, 0.34 * W)
+        if tip == "rose":      # two rolled corners with a shallow notch between
+            a1 = P(r0 + 1.04 * L, -0.2 * W); m = P(r0 + 0.97 * L, 0); a2 = P(r0 + 1.04 * L, 0.2 * W)
+            d += f"Q{f(a1[0])} {f(a1[1])} {f(m[0])} {f(m[1])}Q{f(a2[0])} {f(a2[1])} {f(tr[0])} {f(tr[1])}"
+        elif tip == "peony":   # frilled edge
+            n = 3
             for i in range(n):
-                a = a0 + i * math.tau / n + r.uniform(-0.12, 0.12)
-                self.petal(cx, cy, a, r0, L, W, bumps)
-        self.spiral_centre(cx, cy, 0.2 * R)
+                ya = -0.34 * W + 0.68 * W * i / n; yb = -0.34 * W + 0.68 * W * (i + 1) / n
+                cp = P(r0 + L * (1.02 + 0.07 * r.random()), (ya + yb) / 2)
+                e = P(r0 + (0.9 if i < n - 1 else 0.94) * L, yb)
+                d += f"Q{f(cp[0])} {f(cp[1])} {f(e[0])} {f(e[1])}"
+        else:                  # anemone: single rounded tip
+            cp = P(r0 + 1.12 * L, 0)
+            d += f"Q{f(cp[0])} {f(cp[1])} {f(tr[0])} {f(tr[1])}"
+        c3 = P(r0 + 0.78 * L, 0.72 * W); c4 = P(r0 + 0.2 * L, 0.7 * W)
+        d += f"C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(b[0])} {f(b[1])}Z"
+        self.path(d, "p")
+        if L > 16:
+            s0 = P(r0 + 0.1 * L, 0); s1 = P(r0 + 0.5 * L, r.uniform(-0.1, 0.1) * W); s2 = P(r0 + 0.82 * L, r.uniform(-0.08, 0.08) * W)
+            self.path(f"M{f(s0[0])} {f(s0[1])}Q{f(s1[0])} {f(s1[1])} {f(s2[0])} {f(s2[1])}", "v")
+
+    # ---------- blooms ----------
+    def rose(self, cx, cy, R):
+        """Garden rose seen from above: two rings of broad cupped petals around a furled spiral."""
+        r = self.r
+        a0 = r.uniform(0, math.tau)
+        for i in range(6):
+            self.petal(cx, cy, a0 + i * math.tau / 6 + r.uniform(-0.1, 0.1), 0.34 * R, 0.66 * R, 0.78 * R, "rose")
+        for i in range(5):
+            self.petal(cx, cy, a0 + math.pi / 5 + i * math.tau / 5 + r.uniform(-0.1, 0.1), 0.18 * R, 0.5 * R, 0.62 * R, "rose")
+        # furled centre: wrapped petals as overlapping cupped arcs, tightening inward
+        base = r.uniform(0, math.tau)
+        for k in range(5):
+            rad = 0.34 * R * (1 - k * 0.17)
+            a = base + k * 1.9
+            span = 3.3 - k * 0.25
+            p0 = (cx + rad * math.cos(a), cy + rad * math.sin(a))
+            m1 = (cx + rad * 1.25 * math.cos(a + span * 0.33), cy + rad * 1.25 * math.sin(a + span * 0.33))
+            m2 = (cx + rad * 1.25 * math.cos(a + span * 0.66), cy + rad * 1.25 * math.sin(a + span * 0.66))
+            p1 = (cx + rad * 0.85 * math.cos(a + span), cy + rad * 0.85 * math.sin(a + span))
+            self.path(f"M{f(p0[0])} {f(p0[1])}C{f(m1[0])} {f(m1[1])} {f(m2[0])} {f(m2[1])} {f(p1[0])} {f(p1[1])}", "l")
+        # tight spiral core
+        d = ""; n = 22
+        for i in range(n + 1):
+            t = i / n
+            rad = 0.02 * R + 0.1 * R * t
+            a = base + t * 2.2 * math.tau
+            x, y = cx + rad * math.cos(a), cy + rad * math.sin(a)
+            d += ("M" if i == 0 else "L") + f"{f(x)} {f(y)}"
+        self.path(d, "l")
 
     def peony(self, cx, cy, R):
+        """Loose, ruffled peony with a visible golden stamen centre."""
         r = self.r
-        rings = [(12, 0.5 * R, 0.55 * R, 0.5 * R, 3), (10, 0.3 * R, 0.5 * R, 0.46 * R, 3), (8, 0.14 * R, 0.4 * R, 0.4 * R, 2), (6, 0.04 * R, 0.26 * R, 0.3 * R, 2)]
-        for n, r0, L, W, bumps in rings:
-            a0 = r.uniform(0, math.tau)
-            for i in range(n):
-                a = a0 + i * math.tau / n + r.uniform(-0.15, 0.15)
-                self.petal(cx, cy, a, r0, L, W, bumps)
+        a0 = r.uniform(0, math.tau)
+        for i in range(8):
+            self.petal(cx, cy, a0 + i * math.tau / 8 + r.uniform(-0.12, 0.12), 0.3 * R, 0.68 * R, 0.8 * R, "peony")
+        for i in range(6):
+            self.petal(cx, cy, a0 + math.pi / 6 + i * math.tau / 6 + r.uniform(-0.12, 0.12), 0.14 * R, 0.48 * R, 0.62 * R, "peony")
+        for i in range(16):
+            a = r.uniform(0, math.tau); l = R * r.uniform(0.1, 0.22)
+            x1, y1 = cx + 0.03 * R * math.cos(a), cy + 0.03 * R * math.sin(a)
+            x2, y2 = cx + l * math.cos(a), cy + l * math.sin(a)
+            self.path(f"M{f(x1)} {f(y1)}L{f(x2)} {f(y2)}", "g")
+            self.out.append(f'<circle class="gd" cx="{f(x2)}" cy="{f(y2)}" r="1.1"/>')
 
-    def bud(self, cx, cy, ang, L):
+    def anemone(self, cx, cy, R):
+        """Anemone: rounded petals around a dark centre ringed with stamens."""
         r = self.r
-        W = 0.42 * L
+        a0 = r.uniform(0, math.tau)
+        for i in range(7):
+            self.petal(cx, cy, a0 + i * math.tau / 7 + r.uniform(-0.08, 0.08), 0.14 * R, 0.8 * R, 0.66 * R, "anemone")
+        self.out.append(f'<circle class="k" cx="{f(cx)}" cy="{f(cy)}" r="{f(0.15 * R)}"/>')
+        for i in range(12):
+            a = i * math.tau / 12 + r.uniform(-0.1, 0.1)
+            self.out.append(f'<circle class="kd" cx="{f(cx + 0.25 * R * math.cos(a))}" cy="{f(cy + 0.25 * R * math.sin(a))}" r="1.1"/>')
+
+    def spray_roses(self, cx, cy, ang, L):
+        """Spray rose: a short branched stem carrying three small open roses and a bud."""
+        def P(px, py):
+            X, Y = rot(px, py, ang); return (cx + X, cy + Y)
+        tips = [(0.9 * L, -0.42 * L), (1.0 * L, 0.08 * L), (0.62 * L, 0.5 * L), (0.36 * L, -0.3 * L)]
+        for i, (tx, ty) in enumerate(tips):
+            t = P(tx, ty); m = P(tx * 0.5, ty * 0.5 + (0.04 * L if i % 2 else -0.04 * L))
+            self.path(f"M{f(cx)} {f(cy)}Q{f(m[0])} {f(m[1])} {f(t[0])} {f(t[1])}", "s2")
+        for tx, ty, R in tips[0:3:1] and [(tips[0][0], tips[0][1], 0.3 * L), (tips[1][0], tips[1][1], 0.27 * L), (tips[2][0], tips[2][1], 0.24 * L)]:
+            t = P(tx, ty); self.rose(t[0], t[1], R)
+        t = P(*tips[3]); self.rosebud(t[0], t[1], ang - 1.1, 0.24 * L)
+        s = P(0.3 * L, 0.06 * L)
+        self.leaf_outline(s[0], s[1], ang + 1.3, 0.3 * L, 0.16 * L, serrate=True, veins=False)
+
+    def rosebud(self, cx, cy, ang, L):
+        """Rose bud: tight furled bud with five long sepals reaching past the tip."""
+        r = self.r
+        W = 0.4 * L
         def P(x, y):
             X, Y = rot(x, y, ang); return (cx + X, cy + Y)
         b = P(0, 0); t = P(L, 0)
-        c1 = P(0.3 * L, -0.9 * W); c2 = P(0.85 * L, -0.5 * W); c3 = P(0.85 * L, 0.5 * W); c4 = P(0.3 * L, 0.9 * W)
-        self.out.append(f'<path class="p" d="M{f(b[0])} {f(b[1])}C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(t[0])} {f(t[1])}C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(b[0])} {f(b[1])}Z"/>')
-        for k in (-0.35, 0.3):
-            s0 = P(0.1 * L, 0); s1 = P(0.55 * L, k * W); s2 = P(0.9 * L, k * 0.5 * W)
-            self.out.append(f'<path class="v" d="M{f(s0[0])} {f(s0[1])}Q{f(s1[0])} {f(s1[1])} {f(s2[0])} {f(s2[1])}"/>')
-        # sepals
-        for k in (-1, 0, 1):
-            s0 = P(0, 0); s1 = P(0.45 * L, k * 0.9 * W); s2 = P(0.7 * L, k * 1.15 * W)
-            self.out.append(f'<path class="l" d="M{f(s0[0])} {f(s0[1])}Q{f(s1[0])} {f(s1[1])} {f(s2[0])} {f(s2[1])}"/>')
+        c1 = P(0.25 * L, -0.85 * W); c2 = P(0.8 * L, -0.55 * W); c3 = P(0.8 * L, 0.55 * W); c4 = P(0.25 * L, 0.85 * W)
+        self.path(f"M{f(b[0])} {f(b[1])}C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(t[0])} {f(t[1])}C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(b[0])} {f(b[1])}Z", "p")
+        for k in (-0.3, 0.25):
+            s0 = P(0.05 * L, 0); s1 = P(0.5 * L, k * W); s2 = P(0.92 * L, k * 0.4 * W)
+            self.path(f"M{f(s0[0])} {f(s0[1])}Q{f(s1[0])} {f(s1[1])} {f(s2[0])} {f(s2[1])}", "v")
+        # calyx cup + sepals
+        for k in (-1.0, -0.4, 0.4, 1.0):
+            s0 = P(0.02 * L, k * 0.35 * W); s1 = P(0.6 * L, k * 1.0 * W); s2 = P(1.15 * L, k * 0.9 * W)
+            self.path(f"M{f(s0[0])} {f(s0[1])}Q{f(s1[0])} {f(s1[1])} {f(s2[0])} {f(s2[1])}", "l")
+        s0 = P(0.05 * L, 0); s1 = P(0.7 * L, r.uniform(-0.1, 0.1) * W); s2 = P(1.2 * L, r.uniform(-0.15, 0.15) * W)
+        self.path(f"M{f(s0[0])} {f(s0[1])}Q{f(s1[0])} {f(s1[1])} {f(s2[0])} {f(s2[1])}", "l")
 
-    def leaf(self, x, y, ang, L, W):
+    # ---------- foliage ----------
+    def leaf_outline(self, x, y, ang, L, W, serrate=False, veins=True):
         r = self.r
-        L *= r.uniform(0.9, 1.1); W *= r.uniform(0.9, 1.1)
         def P(px, py):
             X, Y = rot(px, py, ang); return (x + X, y + Y)
         b = P(0, 0); t = P(L, 0)
-        c1 = P(0.25 * L, -0.55 * W); c2 = P(0.72 * L, -0.5 * W); c3 = P(0.72 * L, 0.5 * W); c4 = P(0.25 * L, 0.55 * W)
-        self.out.append(f'<path class="p" d="M{f(b[0])} {f(b[1])}C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(t[0])} {f(t[1])}C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(b[0])} {f(b[1])}Z"/>')
-        m1 = P(0.5 * L, r.uniform(-0.06, 0.06) * W); m2 = P(0.9 * L, 0)
-        self.out.append(f'<path class="v" d="M{f(b[0])} {f(b[1])}Q{f(m1[0])} {f(m1[1])} {f(m2[0])} {f(m2[1])}"/>')
-        if L > 22:
-            for tt in (0.3, 0.55):
+        if not serrate:
+            c1 = P(0.22 * L, -0.55 * W); c2 = P(0.72 * L, -0.5 * W); c3 = P(0.72 * L, 0.5 * W); c4 = P(0.22 * L, 0.55 * W)
+            d = f"M{f(b[0])} {f(b[1])}C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(t[0])} {f(t[1])}C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(b[0])} {f(b[1])}Z"
+        else:
+            # ovate rose leaflet with a toothed margin: sample the smooth edge, add small teeth
+            n = 7
+            def edge(side):
+                pts = []
+                for i in range(1, n + 1):
+                    u = i / (n + 1)
+                    half = W * 0.55 * math.sin(math.pi * u ** 0.8) * (1.0 - 0.15 * u)
+                    pts.append((u * L, side * half))
+                return pts
+            d = f"M{f(b[0])} {f(b[1])}"
+            for (px, py) in edge(-1):
+                tooth = P(px - 0.035 * L, py - 0.09 * W); e = P(px, py)
+                d += f"Q{f(tooth[0])} {f(tooth[1])} {f(e[0])} {f(e[1])}"
+            d += f"L{f(t[0])} {f(t[1])}"
+            for (px, py) in reversed(edge(1)):
+                tooth = P(px + 0.035 * L, py + 0.09 * W); e = P(px, py)
+                d += f"Q{f(tooth[0])} {f(tooth[1])} {f(e[0])} {f(e[1])}"
+            d += f"L{f(b[0])} {f(b[1])}Z"
+        self.path(d, "p")
+        m1 = P(0.5 * L, r.uniform(-0.05, 0.05) * W); m2 = P(0.92 * L, 0)
+        self.path(f"M{f(b[0])} {f(b[1])}Q{f(m1[0])} {f(m1[1])} {f(m2[0])} {f(m2[1])}", "v")
+        if veins and L > 20:
+            for tt in (0.28, 0.5, 0.7):
                 for side in (-1, 1):
-                    v0 = P(tt * L, 0); v1 = P((tt + 0.2) * L, side * 0.32 * W)
-                    self.out.append(f'<path class="v" d="M{f(v0[0])} {f(v0[1])}Q{f((v0[0]+v1[0])/2)} {f((v0[1]+v1[1])/2 + side*1.5)} {f(v1[0])} {f(v1[1])}"/>')
+                    v0 = P(tt * L, 0); v1 = P((tt + 0.16) * L, side * 0.3 * W * (1 - tt * 0.6))
+                    self.path(f"M{f(v0[0])} {f(v0[1])}L{f(v1[0])} {f(v1[1])}", "v")
+
+    def rose_leaflets(self, x, y, ang, L):
+        """Compound rose leaf: short stalk, then a terminal leaflet with an opposite pair."""
+        def P(px, py):
+            X, Y = rot(px, py, ang); return (x + X, y + Y)
+        s = P(0.45 * L, 0)
+        self.path(f"M{f(x)} {f(y)}L{f(s[0])} {f(s[1])}", "s2")
+        self.leaf_outline(s[0], s[1], ang, 0.55 * L, 0.3 * L, serrate=True, veins=False)
+        pair = P(0.3 * L, 0)
+        self.leaf_outline(pair[0], pair[1], ang - 0.95, 0.42 * L, 0.24 * L, serrate=True, veins=False)
+        self.leaf_outline(pair[0], pair[1], ang + 0.95, 0.42 * L, 0.24 * L, serrate=True, veins=False)
+
+    def laurel_sprig(self, pts, L=24, pairs=5, taper=True):
+        """Bay laurel / olive: straight-ish stem with opposite pairs of smooth elliptic leaves."""
+        segs = self.stem(pts, cls="s2")
+        for k in range(pairs):
+            t = 0.12 + 0.8 * k / max(1, pairs - 1)
+            x, y, a = self.at(segs, t)
+            sz = L * (1 - 0.35 * t if taper else 1)
+            for side in (-1, 1):
+                self.leaf_outline(x, y, a + side * 0.75 + self.r.uniform(-0.1, 0.1), sz, sz * 0.36, serrate=False, veins=False)
+        x, y, a = self.at(segs, 0.995)
+        self.leaf_outline(x, y, a, L * 0.7, L * 0.25, serrate=False, veins=False)
 
     # ---------- stems ----------
     def catmull(self, pts):
-        """Catmull-Rom through pts -> list of cubic segments (p0, c1, c2, p1)."""
         segs = []
         P = [pts[0]] + pts + [pts[-1]]
         for i in range(1, len(P) - 2):
@@ -133,29 +224,26 @@ class Flora:
         segs = self.catmull(pts)
         d = f"M{f(pts[0][0])} {f(pts[0][1])}" + "".join(
             f"C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(p1[0])} {f(p1[1])}" for (_, c1, c2, p1) in segs)
-        self.out.append(f'<path class="{cls}" d="{d}"/>')
+        self.path(d, cls)
         return segs
 
     def at(self, segs, t):
         n = len(segs); i = min(int(t * n), n - 1)
         return self.bez(segs[i], t * n - i)
 
-    def leaves_along(self, segs, ts, size, side0=1, spread=0.95, taper=True):
+    def rose_stem_foliage(self, segs, ts, L, side0=1):
         side = side0
-        for k, t in enumerate(ts):
+        for t in ts:
             x, y, a = self.at(segs, t)
-            sz = size * ((1 - 0.45 * t) if taper else 1)
-            ang = a + side * spread + self.r.uniform(-0.15, 0.15)
-            self.leaf(x, y, ang, sz, sz * 0.42)
+            self.rose_leaflets(x, y, a + side * 1.05 + self.r.uniform(-0.12, 0.12), L)
             side = -side
 
     def svg(self, w, h):
-        return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">'
-                + "".join(self.out) + "</svg>")
+        return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">' + "".join(self.out) + "</svg>"
 
 
 def drape(F, x0, y0, w, tie_y, hem_y, side):
-    """Tied-back curtain hanging from the top edge. side=+1 hangs on the left edge (tie pulls right)."""
+    """Tied-back fabric hanging from the top edge (the draped chuppah)."""
     r = F.r
     k = 7
     tie_x = x0 + (w * 0.55 if side > 0 else w * 0.45)
@@ -163,118 +251,69 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
     for i in range(k):
         t = i / (k - 1)
         sx = x0 + t * w
-        # upper fall: sway outward then converge into the tie
         c1 = (sx + side * r.uniform(-4, 6), y0 + (tie_y - y0) * 0.35)
         c2 = (tie_x + (sx - tie_x) * 0.35 + side * r.uniform(-3, 3), y0 + (tie_y - y0) * 0.8)
         tx = tie_x + (sx - tie_x) * 0.12
         d = f"M{f(sx)} {f(y0)}C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(tx)} {f(tie_y)}"
-        # lower fall: flare out below the tie to a soft hem
         hx = tie_x + (t - 0.5) * w * 0.8 + side * 6 + r.uniform(-5, 5)
         hy = hem_y + r.uniform(-30, 12) - abs(t - 0.5) * 30
         c3 = (tx + (hx - tx) * 0.1 + r.uniform(-4, 4), tie_y + (hy - tie_y) * 0.4)
         c4 = (hx + r.uniform(-8, 8), tie_y + (hy - tie_y) * 0.82)
         d += f"C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(hx)} {f(hy)}"
-        F.out.append(f'<path class="d" d="{d}"/>')
+        F.path(d, "d")
         hem_pts.append((hx, hy))
-    # soft hem
     hp = hem_pts if side > 0 else hem_pts[::-1]
     d = f"M{f(hp[0][0])} {f(hp[0][1])}"
     for (ax, ay), (bx, by) in zip(hp, hp[1:]):
         d += f"Q{f((ax+bx)/2 + r.uniform(-3,3))} {f(max(ay,by)+4)} {f(bx)} {f(by)}"
-    F.out.append(f'<path class="d" d="{d}"/>')
-    # partial inner folds below the tie
+    F.path(d, "d")
     for i in range(3):
         px = tie_x + side * r.uniform(-12, 14)
         ln = (hem_y - tie_y) * r.uniform(0.35, 0.7)
-        F.out.append(f'<path class="d" d="M{f(px)} {f(tie_y+10)}q{f(r.uniform(-8,8))} {f(ln*0.5)} {f(r.uniform(-6,6))} {f(ln)}"/>')
-    # tie: a small gathered knot
-    F.out.append(f'<path class="d" d="M{f(tie_x-9)} {f(tie_y-4)}Q{f(tie_x)} {f(tie_y-10)} {f(tie_x+9)} {f(tie_y-4)}"/>')
-    F.out.append(f'<path class="d" d="M{f(tie_x-10)} {f(tie_y+3)}Q{f(tie_x)} {f(tie_y+9)} {f(tie_x+10)} {f(tie_y+3)}"/>')
-    # a few short gathers near the top
+        F.path(f"M{f(px)} {f(tie_y+10)}q{f(r.uniform(-8,8))} {f(ln*0.5)} {f(r.uniform(-6,6))} {f(ln)}", "d")
+    F.path(f"M{f(tie_x-9)} {f(tie_y-4)}Q{f(tie_x)} {f(tie_y-10)} {f(tie_x+9)} {f(tie_y-4)}", "d")
+    F.path(f"M{f(tie_x-10)} {f(tie_y+3)}Q{f(tie_x)} {f(tie_y+9)} {f(tie_x+10)} {f(tie_y+3)}", "d")
     for i in range(3):
         gx = x0 + w * r.uniform(0.15, 0.85)
-        F.out.append(f'<path class="d" d="M{f(gx)} {f(y0)}q{f(side*3)} 18 {f(side*1)} 40"/>')
+        F.path(f"M{f(gx)} {f(y0)}q{f(side*3)} 18 {f(side*1)} 40", "d")
     return (tie_x, tie_y)
 
 
 def top_left(seed):
     F = Flora(seed)
     tie = drape(F, 8, 0, 110, 210, 420, +1)
-    # cascade hanging from the tie, spilling down and inward
-    main = F.stem([(tie[0], tie[1] - 6), (80, 270), (104, 340), (112, 430), (94, 520), (66, 600)])
-    F.leaves_along(main, [0.1, 0.2, 0.32, 0.44, 0.56, 0.68, 0.8, 0.9], 42, side0=-1, taper=False)
-    br = F.stem([(104, 342), (140, 328), (172, 300)])
-    F.leaves_along(br, [0.4, 0.75], 30, side0=1)
-    F.bud(172, 300, math.radians(-40), 26)
-    F.rose(84, 266, 54)
-    br2 = F.stem([(110, 470), (140, 500), (150, 540)])
-    F.leaves_along(br2, [0.4], 28, side0=-1)
-    F.peony(150, 560, 40)
+    # rose stem trailing down from the tie, with serrated leaflets and a bud
+    main = F.stem([(tie[0], tie[1] - 6), (82, 272), (104, 344), (110, 432), (92, 520), (64, 600)])
+    F.rose_stem_foliage(main, [0.18, 0.34, 0.5, 0.66, 0.82], 44, side0=-1)
+    br = F.stem([(104, 346), (140, 330), (170, 302)])
+    F.rosebud(170, 302, math.radians(-42), 24)
+    F.rose(84, 264, 52)
+    # laurel sprig branching low, with a peony at its foot
+    F.laurel_sprig([(108, 470), (136, 502), (148, 544)], L=22, pairs=4)
+    F.peony(150, 566, 38)
     return F.svg(300, 720)
 
 
 def top_right(seed):
     F = Flora(seed)
     tie = drape(F, 182, 0, 110, 190, 380, -1)
-    main = F.stem([(tie[0], tie[1] - 6), (206, 240), (182, 300), (168, 360), (186, 420)])
-    F.leaves_along(main, [0.12, 0.28, 0.46, 0.64, 0.84], 40, side0=1, taper=False)
-    F.rose(208, 238, 50)
-    br = F.stem([(176, 330), (140, 350), (110, 380)])
-    F.leaves_along(br, [0.45], 30, side0=-1)
-    F.bud(110, 380, math.radians(215), 26)
+    main = F.stem([(tie[0], tie[1] - 6), (208, 240), (184, 300), (170, 360), (188, 420)])
+    F.rose_stem_foliage(main, [0.2, 0.42, 0.64, 0.86], 40, side0=1)
+    F.rose(210, 236, 48)
+    F.laurel_sprig([(178, 330), (142, 350), (112, 384)], L=20, pairs=3)
+    F.spray_roses(110, 392, math.radians(150), 34)
     return F.svg(300, 720)
 
 
 def bottom_right(seed):
     F = Flora(seed)
-    main = F.stem([(286, 720), (266, 640), (240, 590), (222, 540), (224, 480), (240, 430)])
-    F.leaves_along(main, [0.1, 0.22, 0.36, 0.5, 0.64, 0.78], 42, side0=1)
-    br = F.stem([(242, 592), (206, 600), (176, 626)])
-    F.leaves_along(br, [0.45], 30, side0=-1)
-    F.peony(164, 640, 44)
-    F.bud(240, 430, math.radians(-70), 30)
-    br2 = F.stem([(226, 520), (256, 508), (278, 486)])
-    F.leaves_along(br2, [0.5], 26, side0=1)
-    F.bud(278, 486, math.radians(-40), 22)
-    return F.svg(300, 720)
-
-
-def left_spray(seed):
-    F = Flora(seed)
-    # main stem rising from bottom-left, bending inward then back out
-    main = F.stem([(40, 700), (58, 600), (95, 500), (120, 400), (110, 300), (130, 210), (168, 140)])
-    F.leaves_along(main, [0.08, 0.16, 0.25, 0.34, 0.44, 0.53, 0.63, 0.72, 0.8], 58, side0=1)
-    # side branch with a peony
-    br = F.stem([(96, 498), (140, 470), (185, 455), (222, 430)])
-    F.leaves_along(br, [0.25, 0.5, 0.72], 40, side0=-1)
-    F.peony(240, 418, 58)
-    # second side branch: bud + small leaves
-    br2 = F.stem([(112, 372), (70, 340), (46, 300)])
-    F.leaves_along(br2, [0.35, 0.65], 34, side0=1)
-    F.bud(46, 300, math.radians(-115), 30)
-    # a bud near the top
-    br3 = F.stem([(128, 232), (170, 250), (205, 262)])
-    F.leaves_along(br3, [0.4], 30, side0=-1)
-    F.bud(205, 262, math.radians(15), 28)
-    # main bloom: rose at the tip
-    F.rose(176, 118, 64)
-    return F.svg(300, 720)
-
-
-def right_spray(seed):
-    F = Flora(seed)
-    main = F.stem([(262, 0), (245, 90), (208, 180), (180, 280), (196, 380), (176, 470), (140, 540)])
-    F.leaves_along(main, [0.08, 0.17, 0.26, 0.35, 0.45, 0.54, 0.64, 0.73, 0.81], 56, side0=-1)
-    br = F.stem([(206, 184), (160, 200), (118, 214), (82, 238)])
-    F.leaves_along(br, [0.28, 0.52, 0.74], 38, side0=1)
-    F.peony(64, 254, 54)
-    br2 = F.stem([(190, 300), (232, 322), (258, 360)])
-    F.leaves_along(br2, [0.35, 0.65], 32, side0=-1)
-    F.bud(258, 360, math.radians(58), 30)
-    br3 = F.stem([(188, 448), (150, 440), (120, 426)])
-    F.leaves_along(br3, [0.45], 28, side0=1)
-    F.bud(120, 426, math.radians(200), 26)
-    F.rose(132, 560, 60)
+    # olive / laurel spray rising from the corner
+    F.laurel_sprig([(286, 720), (268, 650), (246, 590), (228, 530), (236, 470), (252, 420)], L=26, pairs=8)
+    br = F.stem([(244, 592), (208, 602), (178, 628)], cls="s2")
+    F.rose_stem_foliage(br, [0.45], 34, side0=-1)
+    F.peony(166, 642, 42)
+    F.rosebud(252, 420, math.radians(-72), 26)
+    F.spray_roses(236, 512, math.radians(-30), 34)
     return F.svg(300, 720)
 
 
