@@ -1,0 +1,362 @@
+/* ---------------------------------------------------
+   Shayon & Amanda — Save the Date
+   A letterpress-style card on a deep olive page.
+--------------------------------------------------- */
+
+:root{
+  --page:       #5f6a3a;   /* deep olive backdrop */
+  --page-deep:  #4c5530;
+  --ivory:      #fbf8f0;
+  --ink:        #3f4a25;   /* card ink */
+  --ink-soft:   #66703f;
+  --olive:      #7f8a4e;
+  --olive-pale: #d9dcc2;
+  --line:       rgba(63,74,37,0.45);
+
+  --serif:  "Cormorant Garamond", "Times New Roman", serif;
+  --script: "Beau Rivage", "Brush Script MT", cursive;
+
+  --stripe: 12px;
+}
+
+*{ box-sizing: border-box; }
+html{ background: var(--page); }
+body{
+  margin: 0;
+  font-family: var(--serif);
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.10), transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.18), transparent 60%),
+    var(--page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.page{
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px 12px 32px;
+}
+@media (min-width: 700px){
+  .page{ padding: 56px 24px 72px; }
+}
+
+/* ---------- card ---------- */
+.card{
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  background: var(--ivory);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.35) inset,
+    0 20px 50px -20px rgba(0,0,0,0.55),
+    0 6px 14px -8px rgba(0,0,0,0.35);
+}
+
+/* pinstripe edges, perpendicular to each side like the RSVP card */
+.stripe{ position: absolute; pointer-events: none; }
+.stripe-top, .stripe-bottom{
+  left: 0; right: 0; height: var(--stripe);
+  background: repeating-linear-gradient(90deg, var(--olive) 0 1.5px, transparent 1.5px 5px);
+}
+.stripe-top{ top: 0; } .stripe-bottom{ bottom: 0; }
+.stripe-left, .stripe-right{
+  top: 0; bottom: 0; width: var(--stripe);
+  background: repeating-linear-gradient(180deg, var(--olive) 0 1.5px, transparent 1.5px 5px);
+}
+.stripe-left{ left: 0; } .stripe-right{ right: 0; }
+
+.card-inner{
+  position: relative;
+  margin: calc(var(--stripe) + 10px);
+  padding: 40px 22px 30px;
+  border: 1px solid var(--line);
+  outline: 1px solid var(--line);
+  outline-offset: 3px;
+  text-align: center;
+}
+@media (min-width: 700px){
+  .card-inner{
+    margin: calc(var(--stripe) + 16px);
+    padding: 60px 56px 40px;
+    outline-offset: 4px;
+  }
+  .eyebrow{ font-size: 12px; letter-spacing: 0.32em; }
+  .date-caps{ letter-spacing: 0.26em; }
+}
+
+/* ---------- type helpers ---------- */
+.eyebrow{
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.eyebrow-lower{ margin-top: 6px; }
+
+/* ---------- hero ---------- */
+.caps-title{
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(20px, 4.4vw, 34px);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.1;
+  margin: 14px 0 12px;
+  padding-left: 0.26em;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.caps-title::before, .caps-title::after{
+  content: "";
+  flex: 0 0 auto;
+  width: clamp(14px, 4vw, 40px);
+  height: 1px;
+  background: var(--line);
+}
+@media (max-width: 559px){
+  .caps-title::before, .caps-title::after{ display: none; }
+}
+
+.names{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 22px 0 0;
+}
+@media (min-width: 560px){
+  .names{ flex-direction: row; justify-content: center; gap: 26px; }
+}
+.name{ display: flex; flex-direction: column; align-items: center; }
+.name-script{
+  font-family: var(--script);
+  font-size: clamp(52px, 11vw, 72px);
+  line-height: 1;
+  color: var(--ink);
+}
+.name-caps{
+  font-size: 13px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-top: 4px;
+  padding-left: 0.34em; /* optically centre tracked caps */
+}
+.name-and{
+  font-family: var(--script);
+  font-size: 30px;
+  color: var(--olive);
+  line-height: 1;
+  padding-top: 2px;
+}
+@media (min-width: 560px){ .name-and{ padding-top: 22px; } }
+
+/* ---------- portrait (ink sketch of the photo) ---------- */
+.portrait{
+  margin: 34px auto 0;
+  width: min(100%, 360px);
+  padding: 6px;
+  border: 1px solid var(--line);
+}
+.portrait img{
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border: 1px solid var(--line);
+}
+
+/* ---------- when / where ---------- */
+.when-where{ margin-top: 36px; }
+.date-caps{
+  font-size: clamp(13px, 2.6vw, 17px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--ink);
+}
+.date-italic{
+  font-style: italic;
+  font-size: clamp(19px, 3.2vw, 23px);
+  margin: 4px 0 14px;
+  color: var(--ink-soft);
+}
+.venue-script{
+  font-family: var(--script);
+  font-size: clamp(30px, 9.4vw, 54px);
+  line-height: 1;
+  margin: 0;
+  color: var(--ink);
+}
+.place-caps{
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  margin: 8px 0 0;
+  color: var(--ink-soft);
+}
+
+/* ---------- countdown ---------- */
+.countdown{
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 18px;
+  margin: 30px auto 0;
+}
+.count{ display: flex; flex-direction: column; align-items: center; min-width: 64px; }
+.count-num{
+  font-size: clamp(30px, 6vw, 40px);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.count-label{
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 6px;
+  padding-left: 0.3em;
+}
+.count-sep{ width: 1px; background: var(--line); align-self: center; height: 34px; }
+
+/* ---------- rules ---------- */
+.rule{
+  display: flex; align-items: center; justify-content: center;
+  margin: 36px 0;
+  position: relative;
+}
+.rule::before, .rule::after{
+  content: ""; flex: 1; height: 1px; background: var(--line);
+}
+.rule span{
+  width: 8px; height: 8px; margin: 0 12px;
+  border: 1px solid var(--olive);
+  transform: rotate(45deg);
+  background: var(--olive-pale);
+}
+
+/* ---------- weekend ---------- */
+.section-title{
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: clamp(40px, 8vw, 50px);
+  line-height: 1;
+  margin: 0 0 26px;
+  color: var(--ink);
+}
+.events{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+@media (min-width: 560px){
+  .events{ grid-template-columns: 1fr 1fr; gap: 0; }
+  .event + .event{ border-left: 1px solid var(--line); }
+  .event{ padding: 0 22px; }
+}
+.event-day{
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--olive);
+  margin: 0 0 6px;
+}
+.event-name{
+  font-weight: 600;
+  font-size: clamp(22px, 4vw, 26px);
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+.event-venue{
+  font-style: italic;
+  font-size: 19px;
+  margin: 0;
+  color: var(--ink);
+}
+.event-address{
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 4px 0 14px;
+}
+.event-actions{
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+}
+
+.btn{
+  font-family: var(--serif);
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 9px 14px;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+  line-height: 1;
+}
+.btn-solid{ background: var(--ink); color: var(--ivory); }
+.btn-solid:hover{ background: var(--page-deep); border-color: var(--page-deep); }
+.btn-ghost{ background: transparent; color: var(--ink); }
+.btn-ghost:hover{ background: var(--ink); color: var(--ivory); }
+
+/* ---------- closing ---------- */
+.closing-script{
+  font-family: var(--script);
+  font-size: clamp(34px, 7vw, 44px);
+  line-height: 1.05;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+.closing-caps{
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+.closing-note{
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-soft);
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+/* ---------- footer ---------- */
+.card-footer{
+  margin-top: 36px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.footer-mark{
+  font-family: var(--script);
+  font-size: 30px;
+  line-height: 1;
+  color: var(--ink);
+}
+.footer-mark em{ font-style: normal; color: var(--olive); }
+.footer-caps{
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding-left: 0.3em;
+}
