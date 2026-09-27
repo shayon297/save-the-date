@@ -154,31 +154,22 @@ body{
 }
 @media (min-width: 560px){ .name-and{ padding-top: 22px; } }
 
-/* ---------- florals (line art, same ink as the type) ---------- */
-.ink-stroke{ fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.leaf-stroke{ fill: var(--ivory); stroke: var(--olive); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.leaf-stroke path:first-child{ fill: none; }
-.gold-dot{ fill: var(--gold); }
+/* ---------- florals (icons from the floral brief) ---------- */
+.sprig{ width: 62px; height: 26px; flex: 0 0 auto; }
 
-.corner{
-  position: absolute;
-  width: 210px;
-  height: 210px;
-  pointer-events: none;
+.botanical{
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(10px, 4vw, 30px);
+  margin: 30px auto 0;
 }
-.corner-tl{ top: -30px; left: -30px; }
-.corner-br{ bottom: -30px; right: -30px; transform: rotate(180deg); }
-@media (max-width: 699px){
-  .corner{ width: 120px; height: 120px; }
-  .corner-tl{ top: -16px; left: -16px; }
-  .corner-br{ bottom: -16px; right: -16px; }
-  .card-inner{ padding-top: 88px; padding-bottom: 56px; }
+.botanical svg{ width: 44px; height: 80px; }
+@media (max-width: 559px){
+  .botanical svg{ width: 36px; height: 66px; }
 }
 
-.sprig{ width: clamp(42px, 9vw, 84px); height: clamp(14px, 3vw, 28px); flex: 0 0 auto; }
-.sprig-l{ transform: scaleX(-1); }
-
-.rule-bud{ width: 24px; height: 40px; margin: 0 14px; flex: 0 0 auto; }
+.rule-flower{ width: 26px; height: 46px; margin: 0 14px; flex: 0 0 auto; }
 
 /* ---------- when / where ---------- */
 .when-where{ margin-top: 36px; }
