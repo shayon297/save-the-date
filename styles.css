@@ -57,20 +57,18 @@ body{
     0 6px 14px -8px rgba(0,0,0,0.35);
 }
 
-/* Greek key (meander) frieze around the card, after the museum's facade */
-.stripe{ position: absolute; pointer-events: none; opacity: 0.85; }
+/* pinstripe edges, perpendicular to each side like the RSVP card */
+.stripe{ position: absolute; pointer-events: none; }
 .stripe-top, .stripe-bottom{
-  left: 4px; right: 4px; height: 14px;
-  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2014%2014%22%3E%3Cpath%20d%3D%22M0%2012.5H14M2.5%2012.5V1.5H11.5V9.5H5.5V4.5H8.5V6.5%22%20fill%3D%22none%22%20stroke%3D%22%237f8a4e%22%20stroke-width%3D%221%22/%3E%3C/svg%3E") repeat-x left top;
+  left: 0; right: 0; height: var(--stripe);
+  background: repeating-linear-gradient(90deg, var(--olive) 0 1.5px, transparent 1.5px 5px);
 }
-.stripe-top{ top: 4px; }
-.stripe-bottom{ bottom: 4px; transform: rotate(180deg); }
+.stripe-top{ top: 0; } .stripe-bottom{ bottom: 0; }
 .stripe-left, .stripe-right{
-  top: 4px; bottom: 4px; width: 14px;
-  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2014%2014%22%3E%3Cpath%20d%3D%22M1.5%200V14M1.5%202.5H12.5V11.5H4.5V5.5H9.5V8.5H7.5%22%20fill%3D%22none%22%20stroke%3D%22%237f8a4e%22%20stroke-width%3D%221%22/%3E%3C/svg%3E") repeat-y left top;
+  top: 0; bottom: 0; width: var(--stripe);
+  background: repeating-linear-gradient(180deg, var(--olive) 0 1.5px, transparent 1.5px 5px);
 }
-.stripe-left{ left: 4px; transform: rotate(180deg); }
-.stripe-right{ right: 4px; }
+.stripe-left{ left: 0; } .stripe-right{ right: 0; }
 
 .card{ overflow: hidden; }
 .card-inner{
@@ -158,18 +156,19 @@ body{
 }
 @media (min-width: 560px){ .name-and{ padding-top: 22px; } }
 
-/* ---------- florals: draped fabric and blooms, line art behind the type ---------- */
+/* ---------- florals: small corner ornaments, line art behind the type ----------
+   One dominant corner (top-left), a quiet echo (top-right), a light
+   counter-accent (bottom-right) — each cropped tight to its own artwork so
+   nothing spreads under the text column. */
 .flora{
   position: absolute;
-  width: 255px;
-  height: 612px;
   pointer-events: none;
-  opacity: 0.45;
+  opacity: 0.5;
   z-index: 0;
 }
-.flora-tl{ top: 0; left: 0; }
-.flora-tr{ top: 0; right: 0; }
-.flora-br{ bottom: 0; right: 0; }
+.flora-tl{ top: 0; left: 0; width: 124px; height: 380px; }
+.flora-tr{ top: 0; right: 0; width: 124px; height: 300px; opacity: 0.34; }
+.flora-br{ bottom: 0; right: 0; width: 118px; height: 180px; opacity: 0.4; }
 .flora .p{ fill: var(--ivory); stroke: var(--olive); stroke-width: 1; stroke-linejoin: round; }
 .flora .l, .flora .s, .flora .s2{ fill: none; stroke: var(--olive); stroke-width: 1; stroke-linecap: round; }
 .flora .s{ stroke-width: 1.4; }
@@ -180,7 +179,9 @@ body{
 .flora .v{ fill: none; stroke: var(--olive); stroke-width: 0.7; stroke-linecap: round; opacity: 0.7; }
 .flora .d{ fill: none; stroke: var(--olive); stroke-width: 0.9; stroke-linecap: round; opacity: 0.85; }
 @media (max-width: 699px){
-  .flora{ width: 150px; height: 360px; opacity: 0.36; }
+  .flora-tl{ width: 82px; height: 250px; }
+  .flora-tr{ width: 82px; height: 198px; }
+  .flora-br{ width: 78px; height: 118px; }
 }
 
 .rule span{
@@ -285,8 +286,14 @@ body{
 .event-name{
   font-weight: 600;
   font-size: clamp(22px, 4vw, 26px);
-  margin: 0 0 8px;
+  margin: 0 0 4px;
   color: var(--ink);
+}
+.event-time{
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin: 0 0 12px;
 }
 .event-venue{
   font-style: italic;
@@ -428,10 +435,21 @@ body{
 .btn-submit[disabled]{ opacity: 0.6; cursor: default; }
 .addr-thanks{ padding: 8px 0 2px; }
 
+/* ---------- preview renders (share images for email / text) ---------- */
+.preview .countdown, .preview .address, .preview .address + .rule{ display: none; }
+.preview .closing{ margin-top: 0; }
+.preview-email body{ background: var(--page); }
+.preview-email .page{ min-height: 100vh; align-items: center; padding: 40px; }
+.preview-email .card{ box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6); }
+.preview-og body{ overflow: hidden; }
+.preview-og .page{ padding: 0; align-items: flex-start; justify-content: flex-start; }
+.preview-og .card{ width: 100%; max-width: none; box-shadow: none; }
+.preview-og .card-inner{ padding-top: 34px; }
+
 /* ---------- closing ---------- */
 .closing-script{
   font-family: var(--script);
-  font-size: clamp(34px, 7vw, 44px);
+  font-size: clamp(30px, 6vw, 40px);
   line-height: 1.05;
   margin: 0 0 10px;
   color: var(--ink);

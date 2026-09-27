@@ -238,8 +238,8 @@ class Flora:
             self.rose_leaflets(x, y, a + side * 1.05 + self.r.uniform(-0.12, 0.12), L)
             side = -side
 
-    def svg(self, w, h):
-        return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">' + "".join(self.out) + "</svg>"
+    def svg(self, w, h, x0=0, y0=0):
+        return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0} {y0} {w} {h}">' + "".join(self.out) + "</svg>"
 
 
 def drape(F, x0, y0, w, tie_y, hem_y, side):
@@ -280,41 +280,36 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
 
 
 def top_left(seed):
+    """The dominant corner: a tied drape, a rose at the tie, a short vine
+    hugging the left edge. Kept inside the outer ~35% of the card so it
+    never sits under the name/date text."""
     F = Flora(seed)
-    tie = drape(F, 8, 0, 110, 210, 420, +1)
-    # rose stem trailing down from the tie, with serrated leaflets and a bud
-    main = F.stem([(tie[0], tie[1] - 6), (82, 272), (104, 344), (110, 432), (92, 520), (64, 600)])
-    F.rose_stem_foliage(main, [0.18, 0.34, 0.5, 0.66, 0.82], 44, side0=-1)
-    br = F.stem([(104, 346), (140, 330), (170, 302)])
-    F.rosebud(170, 302, math.radians(-42), 24)
-    F.rose(84, 264, 52)
-    # laurel sprig branching low, with a peony at its foot
-    F.laurel_sprig([(108, 470), (136, 502), (148, 544)], L=22, pairs=4)
-    F.peony(150, 566, 38)
-    return F.svg(300, 720)
+    tie = drape(F, 6, 0, 78, 150, 300, +1)
+    main = F.stem([(tie[0], tie[1] - 4), (58, 190), (70, 240), (66, 300), (52, 350)])
+    F.rose_stem_foliage(main, [0.22, 0.44, 0.68, 0.9], 30, side0=-1)
+    F.rosebud(96, 214, math.radians(-42), 18)
+    F.rose(60, 148, 38)
+    F.laurel_sprig([(66, 322), (86, 344), (94, 368)], L=16, pairs=3)
+    return F.svg(130, 400)
 
 
 def top_right(seed):
+    """The echo corner: a smaller tied drape with one rose at the tie —
+    no cascading vine, so it reads as a quiet counterpoint, not a mirror."""
     F = Flora(seed)
-    tie = drape(F, 182, 0, 110, 190, 380, -1)
-    main = F.stem([(tie[0], tie[1] - 6), (208, 240), (184, 300), (170, 360), (188, 420)])
-    F.rose_stem_foliage(main, [0.2, 0.42, 0.64, 0.86], 40, side0=1)
-    F.rose(210, 236, 48)
-    F.laurel_sprig([(178, 330), (142, 350), (112, 384)], L=20, pairs=3)
-    F.spray_roses(110, 392, math.radians(150), 34)
-    return F.svg(300, 720)
+    tie = drape(F, 216, 0, 78, 130, 260, -1)
+    F.rose(238, 128, 34)
+    F.laurel_sprig([(224, 176), (206, 192), (196, 214)], L=14, pairs=2)
+    return F.svg(130, 320, x0=170)
 
 
 def bottom_right(seed):
+    """A small counter-accent, not a full spray: one bud and a few laurel
+    leaves rising from the corner, well clear of the closing text."""
     F = Flora(seed)
-    # olive / laurel spray rising from the corner
-    F.laurel_sprig([(286, 720), (268, 650), (246, 590), (228, 530), (236, 470), (252, 420)], L=26, pairs=8)
-    br = F.stem([(244, 592), (208, 602), (178, 628)], cls="s2")
-    F.rose_stem_foliage(br, [0.45], 34, side0=-1)
-    F.peony(166, 642, 42)
-    F.rosebud(252, 420, math.radians(-72), 26)
-    F.spray_roses(236, 512, math.radians(-30), 34)
-    return F.svg(300, 720)
+    F.laurel_sprig([(294, 720), (276, 672), (262, 622), (266, 574)], L=18, pairs=4)
+    F.rosebud(266, 574, math.radians(-75), 22)
+    return F.svg(130, 200, x0=170, y0=560)
 
 
 if __name__ == "__main__":

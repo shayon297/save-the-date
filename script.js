@@ -9,8 +9,8 @@
     coupleEmail: "shayon@multicoin.capital",
   };
 
-  // ---- countdown (midnight Eastern on the wedding day; exact time TBD) ----
-  var target = new Date("2027-05-16T00:00:00-04:00").getTime();
+  // ---- countdown (to the ceremony start, 5:30 PM Eastern) ----
+  var target = new Date("2027-05-16T17:30:00-04:00").getTime();
   var nums = {};
   document.querySelectorAll(".count-num").forEach(function (el) {
     nums[el.dataset.unit] = el;
@@ -28,19 +28,19 @@
   tick();
   setInterval(tick, 30000);
 
-  // ---- add-to-calendar (all-day .ics, no time assumed yet) ----
+  // ---- add-to-calendar (.ics, times given in UTC — Cincinnati is Eastern/EDT in May) ----
   var EVENTS = {
     reception: {
       title: "Shayon & Amanda — Welcome Dinner",
       location: "Via Vite, 520 Vine St, Cincinnati, OH 45202",
-      start: "20270515",
-      end: "20270516",
+      start: "20270515T220000Z", // May 15, 6:00 PM EDT
+      end: "20270516T010000Z",   // May 15, 9:00 PM EDT
     },
     wedding: {
       title: "Shayon & Amanda — Wedding Ceremony",
       location: "Cincinnati Art Museum, 953 Eden Park Dr, Cincinnati, OH 45202",
-      start: "20270516",
-      end: "20270517",
+      start: "20270516T213000Z", // May 16, 5:30 PM EDT
+      end: "20270517T030000Z",   // May 16, 11:00 PM EDT
     },
   };
 
@@ -62,8 +62,8 @@
       "BEGIN:VEVENT",
       "UID:" + ev.start + "-shayon-amanda@savethedate",
       "DTSTAMP:" + dtstamp(),
-      "DTSTART;VALUE=DATE:" + ev.start,
-      "DTEND;VALUE=DATE:" + ev.end,
+      "DTSTART:" + ev.start,
+      "DTEND:" + ev.end,
       "SUMMARY:" + ev.title,
       "LOCATION:" + ev.location,
       "DESCRIPTION:Formal invitation with full details to follow.",
