@@ -70,8 +70,10 @@ body{
 }
 .stripe-left{ left: 0; } .stripe-right{ right: 0; }
 
+.card{ overflow: hidden; }
 .card-inner{
   position: relative;
+  z-index: 1;
   margin: calc(var(--stripe) + 10px);
   padding: 40px 22px 30px;
   border: 1px solid var(--line);
@@ -154,22 +156,33 @@ body{
 }
 @media (min-width: 560px){ .name-and{ padding-top: 22px; } }
 
-/* ---------- florals (icons from the floral brief) ---------- */
-.sprig{ width: 62px; height: 26px; flex: 0 0 auto; }
-
-.botanical{
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: clamp(10px, 4vw, 30px);
-  margin: 30px auto 0;
+/* ---------- florals: draped fabric and blooms, line art behind the type ---------- */
+.flora{
+  position: absolute;
+  width: 255px;
+  height: 612px;
+  pointer-events: none;
+  opacity: 0.45;
+  z-index: 0;
 }
-.botanical svg{ width: 44px; height: 80px; }
-@media (max-width: 559px){
-  .botanical svg{ width: 36px; height: 66px; }
+.flora-tl{ top: 0; left: 0; }
+.flora-tr{ top: 0; right: 0; }
+.flora-br{ bottom: 0; right: 0; }
+.flora .p{ fill: var(--ivory); stroke: var(--olive); stroke-width: 1; stroke-linejoin: round; }
+.flora .l, .flora .s{ fill: none; stroke: var(--olive); stroke-width: 1; stroke-linecap: round; }
+.flora .s{ stroke-width: 1.4; }
+.flora .v{ fill: none; stroke: var(--olive); stroke-width: 0.7; stroke-linecap: round; opacity: 0.7; }
+.flora .d{ fill: none; stroke: var(--olive); stroke-width: 0.9; stroke-linecap: round; opacity: 0.85; }
+@media (max-width: 699px){
+  .flora{ width: 150px; height: 360px; opacity: 0.36; }
 }
 
-.rule-flower{ width: 26px; height: 46px; margin: 0 14px; flex: 0 0 auto; }
+.rule span{
+  width: 8px; height: 8px; margin: 0 12px;
+  border: 1px solid var(--olive);
+  transform: rotate(45deg);
+  background: var(--olive-pale);
+}
 
 /* ---------- when / where ---------- */
 .when-where{ margin-top: 36px; }
