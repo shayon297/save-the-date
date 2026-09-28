@@ -166,8 +166,8 @@ body{
   pointer-events: none;
   z-index: 0;
 }
-.flora-tl{ top: 0; left: 0; width: 152px; height: 620px; opacity: 0.58; }
-.flora-tr{ top: 0; right: 0; width: 152px; height: 620px; opacity: 0.58; }
+.flora-tl{ top: 0; left: 0; width: 150px; height: 620px; opacity: 0.58; }
+.flora-tr{ top: 0; right: 0; width: 150px; height: 620px; opacity: 0.58; }
 .flora-bl{ bottom: 0; left: 0; width: 132px; height: 280px; opacity: 0.5; }
 .flora-br{ bottom: 0; right: 0; width: 132px; height: 280px; opacity: 0.5; }
 .flora .p{ fill: var(--ivory); stroke: var(--olive); stroke-width: 1; stroke-linejoin: round; }
@@ -177,6 +177,7 @@ body{
 .flora .gd{ fill: var(--gold); }
 .flora .k{ fill: var(--page); }
 .flora .kd{ fill: var(--olive); }
+.flora .ol{ fill: var(--olive-pale); stroke: var(--olive); stroke-width: 0.8; }
 .flora .v{ fill: none; stroke: var(--olive); stroke-width: 0.7; stroke-linecap: round; opacity: 0.7; }
 .flora .d{ fill: none; stroke: var(--olive); stroke-width: 0.9; stroke-linecap: round; opacity: 0.85; }
 @media (max-width: 699px){

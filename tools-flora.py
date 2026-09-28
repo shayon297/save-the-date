@@ -55,13 +55,16 @@ class Flora:
         """Garden rose seen from above: two rings of broad cupped petals around a furled spiral."""
         r = self.r
         a0 = r.uniform(0, math.tau)
-        for i in range(6):
-            self.petal(cx, cy, a0 + i * math.tau / 6 + r.uniform(-0.1, 0.1), 0.34 * R, 0.66 * R, 0.78 * R, "rose")
-        for i in range(5):
-            self.petal(cx, cy, a0 + math.pi / 5 + i * math.tau / 5 + r.uniform(-0.1, 0.1), 0.18 * R, 0.5 * R, 0.62 * R, "rose")
+        # each rose varies: open (more, wider outer petals) through tight (fewer, cupped)
+        openness = r.uniform(0.85, 1.15)
+        n_out, n_in = r.choice([(5, 4), (6, 5), (7, 5), (6, 4), (7, 6)])
+        for i in range(n_out):
+            self.petal(cx, cy, a0 + i * math.tau / n_out + r.uniform(-0.14, 0.14), 0.34 * R, 0.66 * R * openness, 0.78 * R * (6 / n_out) ** 0.5, "rose")
+        for i in range(n_in):
+            self.petal(cx, cy, a0 + math.pi / n_in + i * math.tau / n_in + r.uniform(-0.12, 0.12), 0.18 * R, 0.5 * R, 0.62 * R * (5 / n_in) ** 0.5, "rose")
         # furled centre: wrapped petals as overlapping cupped arcs, tightening inward
         base = r.uniform(0, math.tau)
-        for k in range(5):
+        for k in range(r.choice([3, 4, 5])):
             rad = 0.34 * R * (1 - k * 0.17)
             a = base + k * 1.9
             span = 3.3 - k * 0.25
@@ -122,16 +125,126 @@ class Flora:
             self.path(f"M{f(cx)} {f(cy)}Q{f(c1[0])} {f(c1[1])} {f(tx)} {f(ty)}Q{f(c2[0])} {f(c2[1])} {f(cx)} {f(cy)}Z", "p")
         self.out.append(f'<circle class="gd" cx="{f(cx)}" cy="{f(cy)}" r="{f(R * 0.2)}"/>')
 
+    def narcissus(self, cx, cy, R):
+        """Narcissus: six pointed perianth petals around a ruffled trumpet cup."""
+        r = self.r
+        a0 = r.uniform(0, math.tau)
+        for i in range(6):
+            a = a0 + i * math.tau / 6 + r.uniform(-0.05, 0.05)
+            nx, ny = -math.sin(a), math.cos(a)
+            w = R * 0.34
+            tip = (cx + R * math.cos(a), cy + R * math.sin(a))
+            m = (cx + 0.5 * R * math.cos(a), cy + 0.5 * R * math.sin(a))
+            c1 = (m[0] + w * nx, m[1] + w * ny); c2 = (m[0] - w * nx, m[1] - w * ny)
+            self.path(f"M{f(cx)} {f(cy)}C{f(c1[0])} {f(c1[1])} {f(c1[0] + 0.3*(tip[0]-c1[0]))} {f(c1[1] + 0.3*(tip[1]-c1[1]))} {f(tip[0])} {f(tip[1])}"
+                      f"C{f(c2[0] + 0.3*(tip[0]-c2[0]))} {f(c2[1] + 0.3*(tip[1]-c2[1]))} {f(c2[0])} {f(c2[1])} {f(cx)} {f(cy)}Z", "p")
+            self.path(f"M{f(cx)} {f(cy)}L{f(m[0] + 0.5*(tip[0]-m[0]))} {f(m[1] + 0.5*(tip[1]-m[1]))}", "v")
+        # trumpet: a scalloped ring
+        cr = R * 0.3; n = 10; d = ""
+        for i in range(n + 1):
+            a = i * math.tau / n
+            rr = cr * (1.0 if i % 2 == 0 else 0.84)
+            d += ("M" if i == 0 else "L") + f"{f(cx + rr * math.cos(a))} {f(cy + rr * math.sin(a))}"
+        self.path(d + "Z", "p")
+        self.out.append(f'<circle class="gd" cx="{f(cx)}" cy="{f(cy)}" r="{f(cr * 0.35)}"/>')
+
+    def violet(self, cx, cy, R):
+        """Violet: five uneven petals — two upright, two side, one broad lower lip."""
+        r = self.r
+        rot0 = r.uniform(-0.5, 0.5)
+        spec = [(-1.95, 0.85, 0.5), (-1.2, 0.85, 0.5), (-0.1, 0.8, 0.52), (-3.05, 0.8, 0.52), (1.57, 1.05, 0.7)]
+        for a, L, W in spec:
+            a += rot0
+            nx, ny = -math.sin(a), math.cos(a)
+            tip = (cx + R * L * math.cos(a), cy + R * L * math.sin(a))
+            m = (cx + 0.55 * R * L * math.cos(a), cy + 0.55 * R * L * math.sin(a))
+            w = R * W * 0.6
+            self.path(f"M{f(cx)} {f(cy)}Q{f(m[0] + w*nx)} {f(m[1] + w*ny)} {f(tip[0])} {f(tip[1])}Q{f(m[0] - w*nx)} {f(m[1] - w*ny)} {f(cx)} {f(cy)}Z", "p")
+        lip = (cx + 0.5 * R * math.cos(1.57 + rot0), cy + 0.5 * R * math.sin(1.57 + rot0))
+        for k in (-0.25, 0, 0.25):
+            e = (cx + 0.75 * R * math.cos(1.57 + rot0 + k), cy + 0.75 * R * math.sin(1.57 + rot0 + k))
+            self.path(f"M{f(cx)} {f(cy)}L{f(e[0])} {f(e[1])}", "v")
+        self.out.append(f'<circle class="gd" cx="{f(cx)}" cy="{f(cy)}" r="{f(R * 0.12)}"/>')
+
+    def hyacinth(self, cx, cy, ang, L):
+        """Hyacinth: a short spike of small star florets, densest at the base."""
+        r = self.r
+        def P(px, py):
+            X, Y = rot(px, py, ang); return (cx + X, cy + Y)
+        e = P(L, 0)
+        self.path(f"M{f(cx)} {f(cy)}L{f(e[0])} {f(e[1])}", "s2")
+        n = r.randint(7, 11)
+        for i in range(n):
+            t = 0.2 + 0.8 * i / (n - 1)
+            spread = L * 0.26 * (1 - 0.6 * t)
+            side = 1 if i % 2 else -1
+            p = P(L * t, side * spread * r.uniform(0.5, 1.0))
+            fr = L * 0.11 * (1 - 0.45 * t)
+            a0 = r.uniform(0, math.tau)
+            d = ""
+            for k in range(13):
+                a = a0 + k * math.tau / 12
+                rr = fr if k % 2 == 0 else fr * 0.45
+                d += ("M" if k == 0 else "L") + f"{f(p[0] + rr * math.cos(a))} {f(p[1] + rr * math.sin(a))}"
+            self.path(d + "Z", "p")
+
+    def rose_side(self, cx, cy, ang, R):
+        """A rose seen in profile: calyx, a cupped bowl of overlapping front
+        petals, and rolled petal edges at the rim — a different silhouette
+        from the face-on roses."""
+        r = self.r
+        def P(px, py):
+            X, Y = rot(px, py, ang - math.pi / 2); return (cx + X, cy + Y)
+        # calyx
+        for k in (-1, 1):
+            a = P(0, 0); b = P(k * 0.55 * R, -0.05 * R); c = P(k * 0.9 * R, 0.35 * R)
+            self.path(f"M{f(a[0])} {f(a[1])}Q{f(b[0])} {f(b[1])} {f(c[0])} {f(c[1])}", "l")
+        # bowl outline
+        L0 = P(-0.75 * R, -0.35 * R); R0 = P(0.75 * R, -0.35 * R)
+        b1 = P(-0.9 * R, -0.95 * R); b2 = P(0.9 * R, -0.95 * R); base = P(0, -0.08 * R)
+        self.path(f"M{f(base[0])} {f(base[1])}Q{f(b1[0])} {f(b1[1])} {f(L0[0])} {f(L0[1] )}", "l")
+        # front petals: three overlapping cups
+        for k, (x0, w, h) in enumerate([(-0.42, 0.62, 1.05), (0.42, 0.62, 1.05), (0.0, 0.7, 0.9)]):
+            x0 *= R; w *= R; h *= R
+            s = P(x0 - w, -0.35 * R - 0.1 * h); e = P(x0 + w, -0.35 * R - 0.1 * h)
+            c1 = P(x0 - w * 1.05, -0.35 * R + 0.55 * h); c2 = P(x0 + w * 1.05, -0.35 * R + 0.55 * h)
+            topc = P(x0, -0.35 * R - 0.45 * h + r.uniform(-0.06, 0.06) * R)
+            self.path(f"M{f(s[0])} {f(s[1])}C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(e[0])} {f(e[1])}"
+                      f"Q{f(topc[0])} {f(topc[1])} {f(s[0])} {f(s[1])}Z", "p")
+        # rolled rim edges
+        for x0 in (-0.5, 0.05, 0.55):
+            a = P((x0 - 0.18) * R, -1.12 * R); b = P(x0 * R, -1.28 * R); c = P((x0 + 0.2) * R, -1.1 * R)
+            self.path(f"M{f(a[0])} {f(a[1])}Q{f(b[0])} {f(b[1])} {f(c[0])} {f(c[1])}", "l")
+
+    def olive_sprig(self, pts, L=20, pairs=4):
+        """Olive: slender pointed leaves (narrower than laurel) with a few olives."""
+        segs = self.stem(pts, cls="s2")
+        for k in range(pairs):
+            t = 0.1 + 0.85 * k / max(1, pairs - 1)
+            x, y, a = self.at(segs, t)
+            sz = L * (1 - 0.25 * t)
+            side = 1 if k % 2 else -1
+            self.leaf_outline(x, y, a + side * 0.55 + self.r.uniform(-0.12, 0.12), sz, sz * 0.2, serrate=False, veins=False)
+            if self.r.random() < 0.45:
+                ox, oy = x + 6 * math.cos(a - side * 1.2), y + 6 * math.sin(a - side * 1.2)
+                self.out.append(f'<ellipse class="ol" cx="{f(ox)}" cy="{f(oy)}" rx="3.2" ry="4.4" transform="rotate({f(math.degrees(a))} {f(ox)} {f(oy)})"/>')
+
     def bloom(self, kind, cx, cy, ang, R):
         """Dispatch to a bloom type by name, sized/oriented uniformly so callers can pick randomly."""
         if kind == "rose": self.rose(cx, cy, R)
+        elif kind == "rose_side": self.rose_side(cx, cy, ang, R * 0.62)
         elif kind == "peony": self.peony(cx, cy, R * 0.92)
         elif kind == "anemone": self.anemone(cx, cy, R * 0.85)
         elif kind == "blossom": self.blossom(cx, cy, R * 0.55)
         elif kind == "bud": self.rosebud(cx, cy, ang, R * 0.62)
+        elif kind == "narcissus": self.narcissus(cx, cy, R * 0.7)
+        elif kind == "violet": self.violet(cx, cy, R * 0.42)
+        elif kind == "hyacinth": self.hyacinth(cx, cy, ang, R * 1.1)
 
     def scatter_blooms(self, segs, n, side0, t_range=(0.05, 0.96), size_range=(22, 40),
-                        offset_range=(10, 22), types=("rose", "peony", "anemone", "blossom", "bud", "rose", "peony")):
+                        offset_range=(10, 22),
+                        types=("rose", "rose", "rose", "rose_side", "rose_side", "peony", "peony", "anemone",
+                               "narcissus", "hyacinth", "violet", "violet", "blossom", "bud", "bud")):
         """Place n blooms along a stem at jittered (non-periodic) intervals, each a
         randomly chosen type/size, offset slightly to the outer side of the stem so
         the sequence and silhouette read as varied rather than a repeating cycle."""
@@ -326,62 +439,77 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
 
 
 def top_left(seed):
-    """Full-height left-edge garland: a tied drape at the top, a long
-    serpentine vine, then a RANDOMIZED scatter of ~20 blooms (roses,
-    peonies, anemones, small blossoms, buds — five distinct silhouettes,
-    genuinely shuffled rather than an authored repeating cycle) plus two
-    hand-placed spray-rose branches and six laurel branches for fill."""
+    """Full-height left-edge garland in two layers: a main vine (from the
+    tied drape) carrying ~40 randomly chosen blooms across nine flower
+    types, plus a thinner outer tendril with ~16 small blooms for depth,
+    three spray-rose clusters, and laurel + olive sprigs as fill."""
     F = Flora(seed)
     tie = drape(F, 6, 0, 78, 150, 300, +1)
     main = F.stem([(tie[0], tie[1] - 4), (58, 175), (86, 215), (58, 255), (82, 295),
                    (54, 335), (80, 375), (52, 415), (78, 455), (50, 495), (76, 535),
                    (52, 575), (78, 615), (54, 655), (66, 685)])
-    ts = [0.04 + 0.06 * i for i in range(16)]
-    F.rose_stem_foliage(main, ts, 25, side0=-1)
-    F.scatter_blooms(main, 20, side0=-1, size_range=(18, 36), offset_range=(2, 9))
-    F.spray_roses(44, 373, math.radians(-150), 26)
-    F.spray_roses(48, 590, math.radians(-160), 26)
-    F.laurel_sprig([(70, 210), (96, 232), (108, 256)], L=16, pairs=3)
-    F.laurel_sprig([(64, 300), (92, 318), (104, 342)], L=16, pairs=3)
-    F.laurel_sprig([(58, 440), (86, 456), (100, 480)], L=16, pairs=3)
-    F.laurel_sprig([(60, 560), (88, 578), (102, 602)], L=16, pairs=3)
-    F.laurel_sprig([(66, 260), (44, 278), (32, 300)], L=14, pairs=3)
-    F.laurel_sprig([(70, 500), (46, 516), (34, 538)], L=14, pairs=3)
-    return F.svg(175, 715, x0=-18, y0=-10)
+    outer = F.stem([(20, 160), (34, 210), (16, 262), (32, 318), (14, 372), (30, 428),
+                    (12, 484), (28, 540), (14, 596), (30, 650), (20, 700)], cls="s2")
+    F.rose_stem_foliage(main, [0.03 + 0.045 * i for i in range(21)], 24, side0=-1)
+    F.rose_stem_foliage(outer, [0.05 + 0.09 * i for i in range(10)], 18, side0=1)
+    F.scatter_blooms(main, 40, side0=-1, size_range=(15, 34), offset_range=(2, 9))
+    F.scatter_blooms(outer, 16, side0=1, size_range=(11, 22), offset_range=(1, 5),
+                     types=("violet", "blossom", "bud", "rose", "hyacinth", "narcissus", "violet", "bud"))
+    F.spray_roses(44, 373, math.radians(-150), 24)
+    F.spray_roses(48, 590, math.radians(-160), 24)
+    F.spray_roses(70, 250, math.radians(-30), 20)
+    for pts in ([(70, 210), (96, 232), (108, 256)], [(64, 300), (92, 318), (104, 342)],
+                [(58, 440), (86, 456), (100, 480)], [(60, 560), (88, 578), (102, 602)]):
+        F.laurel_sprig(pts, L=15, pairs=3)
+    for pts in ([(66, 260), (44, 278), (32, 300)], [(70, 500), (46, 516), (34, 538)],
+                [(76, 400), (98, 414), (108, 434)], [(64, 640), (90, 654), (100, 676)]):
+        F.olive_sprig(pts, L=17, pairs=4)
+    return F.svg(175, 725, x0=-18, y0=-10)
 
 
 def top_right(seed):
-    """Mirror of top_left — a separately seeded scatter, so the two edges
-    are similarly dense but not identical bloom-for-bloom."""
+    """Mirror structure of top_left with its own seed, so the edges match in
+    density but not bloom-for-bloom."""
     F = Flora(seed)
     tie = drape(F, 216, 0, 78, 150, 300, -1)
     main = F.stem([(tie[0], tie[1] - 4), (242, 175), (214, 215), (242, 255), (218, 295),
                    (246, 335), (220, 375), (248, 415), (222, 455), (250, 495), (224, 535),
                    (248, 575), (222, 615), (246, 655), (234, 685)])
-    ts = [0.04 + 0.06 * i for i in range(16)]
-    F.rose_stem_foliage(main, ts, 25, side0=1)
-    F.scatter_blooms(main, 20, side0=1, size_range=(18, 36), offset_range=(2, 9))
-    F.spray_roses(256, 373, math.radians(330), 26)
-    F.spray_roses(252, 590, math.radians(340), 26)
-    F.laurel_sprig([(230, 210), (204, 232), (192, 256)], L=16, pairs=3)
-    F.laurel_sprig([(236, 300), (208, 318), (196, 342)], L=16, pairs=3)
-    F.laurel_sprig([(242, 440), (214, 456), (200, 480)], L=16, pairs=3)
-    F.laurel_sprig([(240, 560), (212, 578), (198, 602)], L=16, pairs=3)
-    F.laurel_sprig([(234, 260), (256, 278), (268, 300)], L=14, pairs=3)
-    F.laurel_sprig([(230, 500), (254, 516), (266, 538)], L=14, pairs=3)
-    return F.svg(175, 715, x0=143, y0=-10)
+    outer = F.stem([(280, 160), (266, 210), (284, 262), (268, 318), (286, 372), (270, 428),
+                    (288, 484), (272, 540), (286, 596), (270, 650), (280, 700)], cls="s2")
+    F.rose_stem_foliage(main, [0.03 + 0.045 * i for i in range(21)], 24, side0=1)
+    F.rose_stem_foliage(outer, [0.05 + 0.09 * i for i in range(10)], 18, side0=-1)
+    F.scatter_blooms(main, 40, side0=1, size_range=(15, 34), offset_range=(2, 9))
+    F.scatter_blooms(outer, 16, side0=-1, size_range=(11, 22), offset_range=(1, 5),
+                     types=("violet", "blossom", "bud", "rose", "hyacinth", "narcissus", "violet", "bud"))
+    F.spray_roses(256, 373, math.radians(330), 24)
+    F.spray_roses(252, 590, math.radians(340), 24)
+    F.spray_roses(230, 250, math.radians(210), 20)
+    for pts in ([(230, 210), (204, 232), (192, 256)], [(236, 300), (208, 318), (196, 342)],
+                [(242, 440), (214, 456), (200, 480)], [(240, 560), (212, 578), (198, 602)]):
+        F.laurel_sprig(pts, L=15, pairs=3)
+    for pts in ([(234, 260), (256, 278), (268, 300)], [(230, 500), (254, 516), (266, 538)],
+                [(224, 400), (202, 414), (192, 434)], [(236, 640), (210, 654), (200, 676)]):
+        F.olive_sprig(pts, L=17, pairs=4)
+    return F.svg(175, 725, x0=143, y0=-10)
 
 
 def bottom_left(seed):
-    """Bottom-left vine, densified and varied to match the top corners."""
+    """Bottom-left: a main rising vine plus an inner tendril, ~30 blooms."""
     F = Flora(seed)
     main = F.stem([(6, 720), (34, 670), (10, 620), (36, 570), (14, 520), (38, 470), (26, 430)])
-    F.rose_stem_foliage(main, [0.06, 0.18, 0.3, 0.42, 0.54, 0.66, 0.78, 0.9], 20, side0=1)
-    F.scatter_blooms(main, 11, side0=1, size_range=(16, 30), offset_range=(2, 8))
-    F.spray_roses(40, 460, math.radians(255), 22)
-    F.laurel_sprig([(20, 660), (46, 646), (60, 626)], L=16, pairs=3)
-    F.laurel_sprig([(16, 560), (44, 548), (58, 528)], L=16, pairs=3)
-    F.laurel_sprig([(28, 480), (52, 462), (64, 440)], L=14, pairs=3)
+    inner = F.stem([(40, 720), (62, 684), (48, 646), (70, 608), (56, 572)], cls="s2")
+    F.rose_stem_foliage(main, [0.04 + 0.075 * i for i in range(13)], 19, side0=1)
+    F.rose_stem_foliage(inner, [0.1, 0.3, 0.5, 0.7, 0.9], 15, side0=-1)
+    F.scatter_blooms(main, 22, side0=1, size_range=(13, 28), offset_range=(2, 8))
+    F.scatter_blooms(inner, 9, side0=-1, size_range=(10, 20), offset_range=(1, 5),
+                     types=("violet", "blossom", "bud", "hyacinth", "narcissus", "rose"))
+    F.spray_roses(40, 460, math.radians(255), 20)
+    F.spray_roses(24, 600, math.radians(290), 18)
+    F.laurel_sprig([(20, 660), (46, 646), (60, 626)], L=15, pairs=3)
+    F.laurel_sprig([(16, 560), (44, 548), (58, 528)], L=15, pairs=3)
+    F.olive_sprig([(28, 480), (52, 462), (64, 440)], L=15, pairs=4)
+    F.olive_sprig([(10, 700), (34, 704), (56, 696)], L=14, pairs=3)
     return F.svg(160, 340, x0=-20, y0=390)
 
 
@@ -389,12 +517,18 @@ def bottom_right(seed):
     """Mirror of bottom_left."""
     F = Flora(seed)
     main = F.stem([(294, 720), (266, 670), (290, 620), (264, 570), (286, 520), (262, 470), (274, 430)])
-    F.rose_stem_foliage(main, [0.06, 0.18, 0.3, 0.42, 0.54, 0.66, 0.78, 0.9], 20, side0=-1)
-    F.scatter_blooms(main, 11, side0=-1, size_range=(16, 30), offset_range=(2, 8))
-    F.spray_roses(260, 460, math.radians(285), 22)
-    F.laurel_sprig([(280, 660), (254, 646), (240, 626)], L=16, pairs=3)
-    F.laurel_sprig([(284, 560), (256, 548), (242, 528)], L=16, pairs=3)
-    F.laurel_sprig([(272, 480), (248, 462), (236, 440)], L=14, pairs=3)
+    inner = F.stem([(260, 720), (238, 684), (252, 646), (230, 608), (244, 572)], cls="s2")
+    F.rose_stem_foliage(main, [0.04 + 0.075 * i for i in range(13)], 19, side0=-1)
+    F.rose_stem_foliage(inner, [0.1, 0.3, 0.5, 0.7, 0.9], 15, side0=1)
+    F.scatter_blooms(main, 22, side0=-1, size_range=(13, 28), offset_range=(2, 8))
+    F.scatter_blooms(inner, 9, side0=1, size_range=(10, 20), offset_range=(1, 5),
+                     types=("violet", "blossom", "bud", "hyacinth", "narcissus", "rose"))
+    F.spray_roses(260, 460, math.radians(285), 20)
+    F.spray_roses(276, 600, math.radians(250), 18)
+    F.laurel_sprig([(280, 660), (254, 646), (240, 626)], L=15, pairs=3)
+    F.laurel_sprig([(284, 560), (256, 548), (242, 528)], L=15, pairs=3)
+    F.olive_sprig([(272, 480), (248, 462), (236, 440)], L=15, pairs=4)
+    F.olive_sprig([(290, 700), (266, 704), (244, 696)], L=14, pairs=3)
     return F.svg(160, 340, x0=160, y0=390)
 
 
