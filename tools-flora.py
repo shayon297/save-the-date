@@ -3,7 +3,10 @@ florist's selection: cream garden roses and spray roses, peony, olive / bay laur
 Draped fabric at the top corners echoes the chuppah."""
 import math, random, sys
 
-def f(v): return f"{v:.1f}".rstrip("0").rstrip(".")
+PREC = 0
+
+def f(v):
+    return f"{v:.{PREC}f}".rstrip("0").rstrip(".") if PREC else str(round(v))
 
 def rot(x, y, a):
     c, s = math.cos(a), math.sin(a)
@@ -438,104 +441,130 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
     return (tie_x, tie_y)
 
 
-def top_left(seed):
-    """Full-height left-edge garland in two layers: a main vine (from the
-    tied drape) carrying ~40 randomly chosen blooms across nine flower
-    types, plus a thinner outer tendril with ~16 small blooms for depth,
-    three spray-rose clusters, and laurel + olive sprigs as fill."""
-    F = Flora(seed)
-    tie = drape(F, 6, 0, 78, 150, 300, +1)
-    main = F.stem([(tie[0], tie[1] - 4), (58, 175), (86, 215), (58, 255), (82, 295),
-                   (54, 335), (80, 375), (52, 415), (78, 455), (50, 495), (76, 535),
-                   (52, 575), (78, 615), (54, 655), (66, 685)])
-    outer = F.stem([(20, 160), (34, 210), (16, 262), (32, 318), (14, 372), (30, 428),
-                    (12, 484), (28, 540), (14, 596), (30, 650), (20, 700)], cls="s2")
-    F.rose_stem_foliage(main, [0.03 + 0.045 * i for i in range(21)], 24, side0=-1)
-    F.rose_stem_foliage(outer, [0.05 + 0.09 * i for i in range(10)], 18, side0=1)
-    F.scatter_blooms(main, 40, side0=-1, size_range=(15, 34), offset_range=(2, 9))
-    F.scatter_blooms(outer, 16, side0=1, size_range=(11, 22), offset_range=(1, 5),
-                     types=("violet", "blossom", "bud", "rose", "hyacinth", "narcissus", "violet", "bud"))
-    F.spray_roses(44, 373, math.radians(-150), 24)
-    F.spray_roses(48, 590, math.radians(-160), 24)
-    F.spray_roses(70, 250, math.radians(-30), 20)
-    for pts in ([(70, 210), (96, 232), (108, 256)], [(64, 300), (92, 318), (104, 342)],
-                [(58, 440), (86, 456), (100, 480)], [(60, 560), (88, 578), (102, 602)]):
-        F.laurel_sprig(pts, L=15, pairs=3)
-    for pts in ([(66, 260), (44, 278), (32, 300)], [(70, 500), (46, 516), (34, 538)],
-                [(76, 400), (98, 414), (108, 434)], [(64, 640), (90, 654), (100, 676)]):
-        F.olive_sprig(pts, L=17, pairs=4)
-    return F.svg(175, 725, x0=-18, y0=-10)
+STYLE = ("<style>"
+         ".p{fill:#fbf8f0;stroke:#7f8a4e;stroke-width:1;stroke-linejoin:round}"
+         ".l,.s,.s2{fill:none;stroke:#7f8a4e;stroke-width:1;stroke-linecap:round}"
+         ".s{stroke-width:1.3}"
+         ".g{fill:none;stroke:#b0975a;stroke-width:.8}.gd{fill:#b0975a}"
+         ".k{fill:#5f6a3a}.kd{fill:#7f8a4e}"
+         ".v{fill:none;stroke:#7f8a4e;stroke-width:.7;stroke-linecap:round;opacity:.7}"
+         ".d{fill:none;stroke:#7f8a4e;stroke-width:.9;stroke-linecap:round;opacity:.85}"
+         ".ol{fill:#d9dcc2;stroke:#7f8a4e;stroke-width:.8}"
+         "</style>")
+
+KINDS = ("rose", "rose", "rose", "rose", "rose_side", "rose_side", "peony", "peony", "anemone",
+         "narcissus", "hyacinth", "violet", "violet", "blossom", "bud", "bud", "laurel", "olive")
 
 
-def top_right(seed):
-    """Mirror structure of top_left with its own seed, so the edges match in
-    density but not bloom-for-bloom."""
-    F = Flora(seed)
-    tie = drape(F, 216, 0, 78, 150, 300, -1)
-    main = F.stem([(tie[0], tie[1] - 4), (242, 175), (214, 215), (242, 255), (218, 295),
-                   (246, 335), (220, 375), (248, 415), (222, 455), (250, 495), (224, 535),
-                   (248, 575), (222, 615), (246, 655), (234, 685)])
-    outer = F.stem([(280, 160), (266, 210), (284, 262), (268, 318), (286, 372), (270, 428),
-                    (288, 484), (272, 540), (286, 596), (270, 650), (280, 700)], cls="s2")
-    F.rose_stem_foliage(main, [0.03 + 0.045 * i for i in range(21)], 24, side0=1)
-    F.rose_stem_foliage(outer, [0.05 + 0.09 * i for i in range(10)], 18, side0=-1)
-    F.scatter_blooms(main, 40, side0=1, size_range=(15, 34), offset_range=(2, 9))
-    F.scatter_blooms(outer, 16, side0=-1, size_range=(11, 22), offset_range=(1, 5),
-                     types=("violet", "blossom", "bud", "rose", "hyacinth", "narcissus", "violet", "bud"))
-    F.spray_roses(256, 373, math.radians(330), 24)
-    F.spray_roses(252, 590, math.radians(340), 24)
-    F.spray_roses(230, 250, math.radians(210), 20)
-    for pts in ([(230, 210), (204, 232), (192, 256)], [(236, 300), (208, 318), (196, 342)],
-                [(242, 440), (214, 456), (200, 480)], [(240, 560), (212, 578), (198, 602)]):
-        F.laurel_sprig(pts, L=15, pairs=3)
-    for pts in ([(234, 260), (256, 278), (268, 300)], [(230, 500), (254, 516), (266, 538)],
-                [(224, 400), (202, 414), (192, 434)], [(236, 640), (210, 654), (200, 676)]):
-        F.olive_sprig(pts, L=17, pairs=4)
-    return F.svg(175, 725, x0=143, y0=-10)
+def poisson(W, H, r, rng, reject, k=30):
+    """Bridson Poisson-disc sampling: points at least r apart, none in rejected zones."""
+    cell = r / math.sqrt(2)
+    gw, gh = int(W / cell) + 1, int(H / cell) + 1
+    grid = [[None] * gh for _ in range(gw)]
+    pts, active = [], []
+    def ok(x, y):
+        if not (0 <= x < W and 0 <= y < H) or reject(x, y):
+            return False
+        gx, gy = int(x / cell), int(y / cell)
+        for i in range(max(gx - 2, 0), min(gx + 3, gw)):
+            for j in range(max(gy - 2, 0), min(gy + 3, gh)):
+                q = grid[i][j]
+                if q and (q[0] - x) ** 2 + (q[1] - y) ** 2 < r * r:
+                    return False
+        return True
+    def add(x, y):
+        pts.append((x, y)); active.append((x, y)); grid[int(x / cell)][int(y / cell)] = (x, y)
+    while True:
+        x, y = rng.uniform(0, W), rng.uniform(0, H)
+        if ok(x, y):
+            add(x, y); break
+    while active:
+        i = rng.randrange(len(active)); px, py = active[i]
+        for _ in range(k):
+            a = rng.uniform(0, math.tau); d = rng.uniform(r, 2 * r)
+            x, y = px + d * math.cos(a), py + d * math.sin(a)
+            if ok(x, y):
+                add(x, y); break
+        else:
+            active.pop(i)
+    return pts
 
 
-def bottom_left(seed):
-    """Bottom-left: a main rising vine plus an inner tendril, ~30 blooms."""
-    F = Flora(seed)
-    main = F.stem([(6, 720), (34, 670), (10, 620), (36, 570), (14, 520), (38, 470), (26, 430)])
-    inner = F.stem([(40, 720), (62, 684), (48, 646), (70, 608), (56, 572)], cls="s2")
-    F.rose_stem_foliage(main, [0.04 + 0.075 * i for i in range(13)], 19, side0=1)
-    F.rose_stem_foliage(inner, [0.1, 0.3, 0.5, 0.7, 0.9], 15, side0=-1)
-    F.scatter_blooms(main, 22, side0=1, size_range=(13, 28), offset_range=(2, 8))
-    F.scatter_blooms(inner, 9, side0=-1, size_range=(10, 20), offset_range=(1, 5),
-                     types=("violet", "blossom", "bud", "hyacinth", "narcissus", "rose"))
-    F.spray_roses(40, 460, math.radians(255), 20)
-    F.spray_roses(24, 600, math.radians(290), 18)
-    F.laurel_sprig([(20, 660), (46, 646), (60, 626)], L=15, pairs=3)
-    F.laurel_sprig([(16, 560), (44, 548), (58, 528)], L=15, pairs=3)
-    F.olive_sprig([(28, 480), (52, 462), (64, 440)], L=15, pairs=4)
-    F.olive_sprig([(10, 700), (34, 704), (56, 696)], L=14, pairs=3)
-    return F.svg(160, 340, x0=-20, y0=390)
+def unit(F, x, y, R, kind):
+    """One flower on its own short stem with a leaf or two — or a small laurel /
+    olive sprig — so each placement reads as a whole stem, not a floating head."""
+    r = F.r
+    sa = math.pi / 2 + r.uniform(-1.0, 1.0)              # stem hangs roughly downward
+    if kind in ("laurel", "olive"):
+        a = r.uniform(0, math.tau); L = R * r.uniform(2.2, 2.9)
+        pts = [(x - 0.5 * L * math.cos(a), y - 0.5 * L * math.sin(a)),
+               (x + 0.05 * L * math.cos(a + 0.3), y + 0.05 * L * math.sin(a + 0.3)),
+               (x + 0.5 * L * math.cos(a), y + 0.5 * L * math.sin(a))]
+        if kind == "laurel": F.laurel_sprig(pts, L=R * 0.9, pairs=3)
+        else: F.olive_sprig(pts, L=R * 1.0, pairs=4)
+        return
+    L = R * r.uniform(1.1, 1.6)
+    ex, ey = x + L * math.cos(sa), y + L * math.sin(sa)
+    bend = r.uniform(-0.35, 0.35) * L
+    mx, my = (x + ex) / 2 - bend * math.sin(sa), (y + ey) / 2 + bend * math.cos(sa)
+    F.path(f"M{f(x)} {f(y)}Q{f(mx)} {f(my)} {f(ex)} {f(ey)}", "s2")
+    for k in range(r.choice([1, 1, 2])):
+        t = r.uniform(0.35, 0.8)
+        lx, ly = x + t * (ex - x), y + t * (ey - y)
+        side = 1 if (k + r.randrange(2)) % 2 else -1
+        F.leaf_outline(lx, ly, sa + side * r.uniform(0.7, 1.1), R * r.uniform(0.55, 0.8), R * 0.28,
+                       serrate=kind in ("rose", "rose_side", "bud"), veins=False)
+    up = sa + math.pi + r.uniform(-0.25, 0.25)           # buds and spikes point away from the stem
+    F.bloom(kind, x, y, up, R)
 
 
-def bottom_right(seed):
-    """Mirror of bottom_left."""
-    F = Flora(seed)
-    main = F.stem([(294, 720), (266, 670), (290, 620), (264, 570), (286, 520), (262, 470), (274, 430)])
-    inner = F.stem([(260, 720), (238, 684), (252, 646), (230, 608), (244, 572)], cls="s2")
-    F.rose_stem_foliage(main, [0.04 + 0.075 * i for i in range(13)], 19, side0=-1)
-    F.rose_stem_foliage(inner, [0.1, 0.3, 0.5, 0.7, 0.9], 15, side0=1)
-    F.scatter_blooms(main, 22, side0=-1, size_range=(13, 28), offset_range=(2, 8))
-    F.scatter_blooms(inner, 9, side0=1, size_range=(10, 20), offset_range=(1, 5),
-                     types=("violet", "blossom", "bud", "hyacinth", "narcissus", "rose"))
-    F.spray_roses(260, 460, math.radians(285), 20)
-    F.spray_roses(276, 600, math.radians(250), 18)
-    F.laurel_sprig([(280, 660), (254, 646), (240, 626)], L=15, pairs=3)
-    F.laurel_sprig([(284, 560), (256, 548), (242, 528)], L=15, pairs=3)
-    F.olive_sprig([(272, 480), (248, 462), (236, 440)], L=15, pairs=4)
-    F.olive_sprig([(290, 700), (266, 704), (244, 696)], L=14, pairs=3)
-    return F.svg(160, 340, x0=160, y0=390)
+def field(seed, W, H, card_h, target, size, drape_w):
+    """An all-over scatter of individual stems across the card, spaced by
+    Poisson-disc sampling. Opacity is strongest at the side edges and fades
+    to a faint wash across the text column."""
+    rng = random.Random(seed)
+    tie_y, hem_y = drape_w * 1.9, drape_w * 3.7
+    def in_drape(x, y):
+        return y < hem_y + 10 and (x < drape_w + 14 or x > W - drape_w - 14)
+    # tune spacing so about `target` stems fall within the visible card height
+    lo, hi = 8.0, 120.0
+    for _ in range(18):
+        r = (lo + hi) / 2
+        n = sum(1 for (_, y) in poisson(W, H, r, random.Random(seed), in_drape) if y < card_h)
+        if n > target: lo = r
+        else: hi = r
+    pts = poisson(W, H, (lo + hi) / 2, random.Random(seed), in_drape)
+
+    out = []
+    def alpha(x):
+        d = min(x, W - x) / W
+        t = min(max((d - 0.06) / 0.16, 0.0), 1.0)
+        return 0.14 + 0.44 * (1 - t) ** 1.5
+    for i, (x, y) in enumerate(pts):
+        F = Flora(seed * 7919 + i)
+        kind = F.r.choice(KINDS)
+        R = size * F.r.uniform(0.75, 1.3)
+        unit(F, x, y, R, kind)
+        out.append(f'<g opacity="{alpha(x):.2f}">' + "".join(F.out) + "</g>")
+    # tied drapes at the top corners, a rose at each tie
+    for side, x0 in ((+1, 6), (-1, W - 6 - drape_w)):
+        F = Flora(seed + side * 31)
+        tx, ty = drape(F, x0, 0, drape_w, tie_y, hem_y, side)
+        F.rose(tx, ty, drape_w * 0.36)
+        out.append('<g opacity="0.58">' + "".join(F.out) + "</g>")
+    visible = sum(1 for (_, y) in pts if y < card_h)
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">'
+           + STYLE + "".join(out) + "</svg>")
+    return svg, len(pts), visible
 
 
 if __name__ == "__main__":
     out = sys.argv[1]
-    open(out + "/flora-tl.svg", "w").write(top_left(3))
-    open(out + "/flora-tr.svg", "w").write(top_right(5))
-    open(out + "/flora-bl.svg", "w").write(bottom_left(7))
-    open(out + "/flora-br.svg", "w").write(bottom_right(9))
-    print("ok")
+    # (name, svg width, svg height, typical card height, stems visible on the card, bloom size, drape width)
+    variants = [("narrow", 351, 2260, 2019, 640, 11.5, 50),
+                ("medium", 576, 1860, 1638, 640, 13.5, 78),
+                ("wide",   680, 1940, 1718, 640, 14.5, 92)]
+    for name, W, H, ch, target, size, dw in variants:
+        svg, total, vis = field(11, W, H, ch, target, size, dw)
+        open(f"{out}/florals-{name}.svg", "w").write(svg)
+        print(f"{name}: {total} stems ({vis} on a typical card), {len(svg)//1024} KB")
