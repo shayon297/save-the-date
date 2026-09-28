@@ -280,41 +280,69 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
 
 
 def top_left(seed):
-    """The dominant corner: a tied drape, a rose at the tie, a short vine
-    hugging the left edge. Kept inside the outer ~35% of the card so it
-    never sits under the name/date text."""
+    """Full-height left-edge garland: a tied drape at the top, then a long
+    cascading vine studded with roses, a peony, buds and a spray, plus two
+    extra laurel branches for fill. Dense, but still hugging the edge."""
     F = Flora(seed)
     tie = drape(F, 6, 0, 78, 150, 300, +1)
-    main = F.stem([(tie[0], tie[1] - 4), (58, 190), (70, 240), (66, 300), (52, 350)])
-    F.rose_stem_foliage(main, [0.22, 0.44, 0.68, 0.9], 30, side0=-1)
-    F.rosebud(96, 214, math.radians(-42), 18)
+    main = F.stem([(tie[0], tie[1] - 4), (56, 190), (72, 250), (64, 320),
+                   (78, 390), (58, 460), (74, 530), (60, 600), (48, 660)])
+    F.rose_stem_foliage(main, [0.1, 0.22, 0.34, 0.46, 0.58, 0.7, 0.82, 0.94], 28, side0=-1)
     F.rose(60, 148, 38)
-    F.laurel_sprig([(66, 322), (86, 344), (94, 368)], L=16, pairs=3)
-    return F.svg(130, 400)
+    F.rosebud(96, 214, math.radians(-42), 18)
+    F.peony(80, 300, 34)
+    F.rosebud(40, 380, math.radians(150), 20)
+    F.rose(84, 460, 36)
+    F.spray_roses(50, 560, math.radians(-160), 30)
+    F.peony(70, 650, 32)
+    F.laurel_sprig([(70, 340), (96, 364), (106, 390)], L=18, pairs=4)
+    F.laurel_sprig([(62, 520), (84, 540), (96, 562)], L=16, pairs=3)
+    return F.svg(170, 710, x0=-15, y0=-10)
 
 
 def top_right(seed):
-    """The echo corner: a smaller tied drape with one rose at the tie —
-    no cascading vine, so it reads as a quiet counterpoint, not a mirror."""
+    """Mirror of top_left, so both edges carry equal weight down the card."""
     F = Flora(seed)
-    tie = drape(F, 216, 0, 78, 130, 260, -1)
-    F.rose(238, 128, 34)
-    F.laurel_sprig([(224, 176), (206, 192), (196, 214)], L=14, pairs=2)
-    return F.svg(130, 320, x0=170)
+    tie = drape(F, 216, 0, 78, 150, 300, -1)
+    main = F.stem([(tie[0], tie[1] - 4), (244, 190), (228, 250), (236, 320),
+                   (222, 390), (242, 460), (226, 530), (240, 600), (252, 660)])
+    F.rose_stem_foliage(main, [0.1, 0.22, 0.34, 0.46, 0.58, 0.7, 0.82, 0.94], 28, side0=1)
+    F.rose(240, 148, 38)
+    F.rosebud(204, 214, math.radians(222), 18)
+    F.peony(220, 300, 34)
+    F.rosebud(260, 380, math.radians(30), 20)
+    F.rose(216, 460, 36)
+    F.spray_roses(250, 560, math.radians(340), 30)
+    F.peony(230, 650, 32)
+    F.laurel_sprig([(230, 340), (204, 364), (194, 390)], L=18, pairs=4)
+    F.laurel_sprig([(238, 520), (216, 540), (204, 562)], L=16, pairs=3)
+    return F.svg(170, 710, x0=140, y0=-10)
+
+
+def bottom_left(seed):
+    """Rising counter-accent from the bottom-left, mirroring bottom_right."""
+    F = Flora(seed)
+    F.laurel_sprig([(6, 720), (20, 660), (32, 600), (28, 540), (42, 480)], L=22, pairs=7)
+    F.rosebud(28, 540, math.radians(255), 24)
+    F.rose(50, 470, 32)
+    F.laurel_sprig([(34, 574), (60, 590), (74, 610)], L=16, pairs=3)
+    return F.svg(150, 320, x0=-20, y0=400)
 
 
 def bottom_right(seed):
-    """A small counter-accent, not a full spray: one bud and a few laurel
-    leaves rising from the corner, well clear of the closing text."""
+    """Rising counter-accent from the bottom-right."""
     F = Flora(seed)
-    F.laurel_sprig([(294, 720), (276, 672), (262, 622), (266, 574)], L=18, pairs=4)
-    F.rosebud(266, 574, math.radians(-75), 22)
-    return F.svg(130, 200, x0=170, y0=560)
+    F.laurel_sprig([(294, 720), (280, 660), (268, 600), (272, 540), (258, 480)], L=22, pairs=7)
+    F.rosebud(272, 540, math.radians(-75), 24)
+    F.rose(250, 470, 32)
+    F.laurel_sprig([(266, 574), (240, 590), (226, 610)], L=16, pairs=3)
+    return F.svg(150, 320, x0=190, y0=400)
 
 
 if __name__ == "__main__":
     out = sys.argv[1]
     open(out + "/flora-tl.svg", "w").write(top_left(3))
     open(out + "/flora-tr.svg", "w").write(top_right(5))
+    open(out + "/flora-bl.svg", "w").write(bottom_left(7))
     open(out + "/flora-br.svg", "w").write(bottom_right(9))
     print("ok")
