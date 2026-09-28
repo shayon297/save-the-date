@@ -166,10 +166,10 @@ body{
   pointer-events: none;
   z-index: 0;
 }
-.flora-tl{ top: 0; left: 0; width: 148px; height: 620px; opacity: 0.55; }
-.flora-tr{ top: 0; right: 0; width: 148px; height: 620px; opacity: 0.55; }
-.flora-bl{ bottom: 0; left: 0; width: 122px; height: 260px; opacity: 0.48; }
-.flora-br{ bottom: 0; right: 0; width: 122px; height: 260px; opacity: 0.48; }
+.flora-tl{ top: 0; left: 0; width: 152px; height: 620px; opacity: 0.58; }
+.flora-tr{ top: 0; right: 0; width: 152px; height: 620px; opacity: 0.58; }
+.flora-bl{ bottom: 0; left: 0; width: 132px; height: 280px; opacity: 0.5; }
+.flora-br{ bottom: 0; right: 0; width: 132px; height: 280px; opacity: 0.5; }
 .flora .p{ fill: var(--ivory); stroke: var(--olive); stroke-width: 1; stroke-linejoin: round; }
 .flora .l, .flora .s, .flora .s2{ fill: none; stroke: var(--olive); stroke-width: 1; stroke-linecap: round; }
 .flora .s{ stroke-width: 1.4; }
@@ -180,10 +180,10 @@ body{
 .flora .v{ fill: none; stroke: var(--olive); stroke-width: 0.7; stroke-linecap: round; opacity: 0.7; }
 .flora .d{ fill: none; stroke: var(--olive); stroke-width: 0.9; stroke-linecap: round; opacity: 0.85; }
 @media (max-width: 699px){
-  .flora-tl{ width: 100px; height: 420px; }
-  .flora-tr{ width: 100px; height: 420px; }
-  .flora-bl{ width: 80px; height: 168px; }
-  .flora-br{ width: 80px; height: 168px; }
+  .flora-tl{ width: 103px; height: 420px; }
+  .flora-tr{ width: 103px; height: 420px; }
+  .flora-bl{ width: 90px; height: 190px; }
+  .flora-br{ width: 90px; height: 190px; }
 }
 
 .rule span{

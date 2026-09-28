@@ -280,63 +280,96 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
 
 
 def top_left(seed):
-    """Full-height left-edge garland: a tied drape at the top, then a long
-    cascading vine studded with roses, a peony, buds and a spray, plus two
-    extra laurel branches for fill. Dense, but still hugging the edge."""
+    """Full-height left-edge garland, packed dense: a tied drape at the
+    top, a long serpentine vine with leaflets every ~7% of its length, and
+    thirteen blooms (roses, peonies, buds, a spray) plus four extra laurel
+    branches filling the gaps between them. Still hugs the edge."""
     F = Flora(seed)
     tie = drape(F, 6, 0, 78, 150, 300, +1)
-    main = F.stem([(tie[0], tie[1] - 4), (56, 190), (72, 250), (64, 320),
-                   (78, 390), (58, 460), (74, 530), (60, 600), (48, 660)])
-    F.rose_stem_foliage(main, [0.1, 0.22, 0.34, 0.46, 0.58, 0.7, 0.82, 0.94], 28, side0=-1)
+    main = F.stem([(tie[0], tie[1] - 4), (58, 175), (86, 215), (58, 255), (82, 295),
+                   (54, 335), (80, 375), (52, 415), (78, 455), (50, 495), (76, 535),
+                   (52, 575), (78, 615), (54, 655), (66, 685)])
+    ts = [0.05 + 0.07 * i for i in range(14)]
+    F.rose_stem_foliage(main, ts, 26, side0=-1)
     F.rose(60, 148, 38)
-    F.rosebud(96, 214, math.radians(-42), 18)
-    F.peony(80, 300, 34)
-    F.rosebud(40, 380, math.radians(150), 20)
-    F.rose(84, 460, 36)
-    F.spray_roses(50, 560, math.radians(-160), 30)
-    F.peony(70, 650, 32)
-    F.laurel_sprig([(70, 340), (96, 364), (106, 390)], L=18, pairs=4)
-    F.laurel_sprig([(62, 520), (84, 540), (96, 562)], L=16, pairs=3)
-    return F.svg(170, 710, x0=-15, y0=-10)
+    F.rosebud(102, 190, math.radians(-50), 16)
+    F.peony(78, 238, 30)
+    F.rosebud(42, 283, math.radians(140), 18)
+    F.rose(88, 328, 32)
+    F.spray_roses(44, 373, math.radians(-150), 26)
+    F.peony(76, 418, 28)
+    F.rosebud(38, 460, math.radians(150), 16)
+    F.rose(84, 503, 32)
+    F.rosebud(102, 546, math.radians(-40), 16)
+    F.spray_roses(48, 590, math.radians(-160), 28)
+    F.peony(74, 633, 30)
+    F.rose(44, 670, 26)
+    F.laurel_sprig([(70, 210), (96, 232), (108, 256)], L=16, pairs=3)
+    F.laurel_sprig([(64, 300), (92, 318), (104, 342)], L=16, pairs=3)
+    F.laurel_sprig([(58, 440), (86, 456), (100, 480)], L=16, pairs=3)
+    F.laurel_sprig([(60, 560), (88, 578), (102, 602)], L=16, pairs=3)
+    return F.svg(175, 715, x0=-18, y0=-10)
 
 
 def top_right(seed):
     """Mirror of top_left, so both edges carry equal weight down the card."""
     F = Flora(seed)
     tie = drape(F, 216, 0, 78, 150, 300, -1)
-    main = F.stem([(tie[0], tie[1] - 4), (244, 190), (228, 250), (236, 320),
-                   (222, 390), (242, 460), (226, 530), (240, 600), (252, 660)])
-    F.rose_stem_foliage(main, [0.1, 0.22, 0.34, 0.46, 0.58, 0.7, 0.82, 0.94], 28, side0=1)
+    main = F.stem([(tie[0], tie[1] - 4), (242, 175), (214, 215), (242, 255), (218, 295),
+                   (246, 335), (220, 375), (248, 415), (222, 455), (250, 495), (224, 535),
+                   (248, 575), (222, 615), (246, 655), (234, 685)])
+    ts = [0.05 + 0.07 * i for i in range(14)]
+    F.rose_stem_foliage(main, ts, 26, side0=1)
     F.rose(240, 148, 38)
-    F.rosebud(204, 214, math.radians(222), 18)
-    F.peony(220, 300, 34)
-    F.rosebud(260, 380, math.radians(30), 20)
-    F.rose(216, 460, 36)
-    F.spray_roses(250, 560, math.radians(340), 30)
-    F.peony(230, 650, 32)
-    F.laurel_sprig([(230, 340), (204, 364), (194, 390)], L=18, pairs=4)
-    F.laurel_sprig([(238, 520), (216, 540), (204, 562)], L=16, pairs=3)
-    return F.svg(170, 710, x0=140, y0=-10)
+    F.rosebud(198, 190, math.radians(230), 16)
+    F.peony(222, 238, 30)
+    F.rosebud(258, 283, math.radians(40), 18)
+    F.rose(212, 328, 32)
+    F.spray_roses(256, 373, math.radians(330), 26)
+    F.peony(224, 418, 28)
+    F.rosebud(262, 460, math.radians(30), 16)
+    F.rose(216, 503, 32)
+    F.rosebud(198, 546, math.radians(220), 16)
+    F.spray_roses(252, 590, math.radians(340), 28)
+    F.peony(226, 633, 30)
+    F.rose(256, 670, 26)
+    F.laurel_sprig([(230, 210), (204, 232), (192, 256)], L=16, pairs=3)
+    F.laurel_sprig([(236, 300), (208, 318), (196, 342)], L=16, pairs=3)
+    F.laurel_sprig([(242, 440), (214, 456), (200, 480)], L=16, pairs=3)
+    F.laurel_sprig([(240, 560), (212, 578), (198, 602)], L=16, pairs=3)
+    return F.svg(175, 715, x0=143, y0=-10)
 
 
 def bottom_left(seed):
-    """Rising counter-accent from the bottom-left, mirroring bottom_right."""
+    """Rising counter-accent from the bottom-left, mirroring bottom_right —
+    now a full extra vine, not just a sprig, so it balances the density
+    of the top corners."""
     F = Flora(seed)
-    F.laurel_sprig([(6, 720), (20, 660), (32, 600), (28, 540), (42, 480)], L=22, pairs=7)
-    F.rosebud(28, 540, math.radians(255), 24)
-    F.rose(50, 470, 32)
-    F.laurel_sprig([(34, 574), (60, 590), (74, 610)], L=16, pairs=3)
-    return F.svg(150, 320, x0=-20, y0=400)
+    main = F.stem([(6, 720), (34, 670), (10, 620), (36, 570), (14, 520), (38, 470), (26, 430)])
+    F.rose_stem_foliage(main, [0.08, 0.24, 0.4, 0.56, 0.72, 0.88], 22, side0=1)
+    F.rosebud(50, 440, math.radians(255), 22)
+    F.rose(56, 490, 30)
+    F.peony(30, 545, 26)
+    F.rosebud(58, 600, math.radians(255), 20)
+    F.rose(28, 655, 28)
+    F.laurel_sprig([(20, 660), (46, 646), (60, 626)], L=16, pairs=3)
+    F.laurel_sprig([(16, 560), (44, 548), (58, 528)], L=16, pairs=3)
+    return F.svg(160, 340, x0=-20, y0=390)
 
 
 def bottom_right(seed):
-    """Rising counter-accent from the bottom-right."""
+    """Mirror of bottom_left."""
     F = Flora(seed)
-    F.laurel_sprig([(294, 720), (280, 660), (268, 600), (272, 540), (258, 480)], L=22, pairs=7)
-    F.rosebud(272, 540, math.radians(-75), 24)
-    F.rose(250, 470, 32)
-    F.laurel_sprig([(266, 574), (240, 590), (226, 610)], L=16, pairs=3)
-    return F.svg(150, 320, x0=190, y0=400)
+    main = F.stem([(294, 720), (266, 670), (290, 620), (264, 570), (286, 520), (262, 470), (274, 430)])
+    F.rose_stem_foliage(main, [0.08, 0.24, 0.4, 0.56, 0.72, 0.88], 22, side0=-1)
+    F.rosebud(250, 440, math.radians(285), 22)
+    F.rose(244, 490, 30)
+    F.peony(270, 545, 26)
+    F.rosebud(242, 600, math.radians(285), 20)
+    F.rose(272, 655, 28)
+    F.laurel_sprig([(280, 660), (254, 646), (240, 626)], L=16, pairs=3)
+    F.laurel_sprig([(284, 560), (256, 548), (242, 528)], L=16, pairs=3)
+    return F.svg(160, 340, x0=160, y0=390)
 
 
 if __name__ == "__main__":
