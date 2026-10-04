@@ -5,7 +5,7 @@
   var CONFIG = {
     // Web app URL (ends in /exec) of the Apps Script in google-apps-script.gs,
     // bound to the mailing-address spreadsheet. Each submission becomes a row.
-    sheetEndpoint: "",
+    sheetEndpoint: "https://script.google.com/macros/s/AKfycbwKuGk-bqwAh3CgE6SYsnP1Tm2svJZW3OSVLMNpKbDWnBUzvqkmQnJGoqZPgupdJGv_/exec",
   };
 
   // ---- countdown (to the ceremony start, 5:30 PM Eastern) ----
