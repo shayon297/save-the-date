@@ -3,8 +3,9 @@
   "use strict";
 
   var CONFIG = {
-    // Google Apps Script web app (see google-apps-script.gs). Addresses are appended to the sheet.
-    sheetEndpoint: "https://script.google.com/macros/s/AKfycbyYbDurhgmxX0IixhGSMYSQuqVLgtgFfohUF8q6cHM9bhAtRcQ9LC8ghOU7tWzb8UP9/exec",
+    // Web app URL of the script bound to the "Save the Date — Mailing Addresses" sheet
+    // (see google-apps-script.gs). Empty = guests are offered an email link instead.
+    sheetEndpoint: "",
     // Fallback if the endpoint is unreachable: open the guest's email app addressed here.
     coupleEmail: "shayon@multicoin.capital",
   };
@@ -256,12 +257,9 @@
     setError("");
 
     var payload = {
-      type: "address",
       name: d.name, email: d.email,
       street: d.street, unit: d.unit, city: d.city, state: d.state, zip: d.zip, country: d.country,
       address: fullAddress(d),
-      // read by the original RSVP script, so rows still land somewhere sensible before it is upgraded
-      attending: "Mailing address", note: fullAddress(d).replace(/\n/g, ", "),
     };
 
     submitBtn.disabled = true;
@@ -271,16 +269,16 @@
       form.hidden = true;
       thanks.hidden = false;
     };
-    var fail = function () {
+    var fail = function (msg) {
       submitBtn.disabled = false;
       submitBtn.textContent = "Send";
       var body = "Name: " + d.name + "\nEmail: " + d.email + "\n\n" + fullAddress(d);
-      setError("We couldn't send that just now — please try again, or email it to us instead.");
+      setError(msg || "We couldn't send that just now — please try again, or email it to us instead.");
       errorEl.innerHTML += ' <a href="mailto:' + CONFIG.coupleEmail + "?subject=" +
         encodeURIComponent("Mailing address — " + d.name) + "&body=" + encodeURIComponent(body) + '">Email us</a>';
     };
 
-    if (!CONFIG.sheetEndpoint) return fail();
+    if (!CONFIG.sheetEndpoint) return fail("Please send your address to us by email —");
     // text/plain avoids a CORS preflight, which Apps Script web apps do not answer.
     fetch(CONFIG.sheetEndpoint, {
       method: "POST",
@@ -288,6 +286,6 @@
       body: JSON.stringify(payload),
     }).then(function (r) { return r.json(); }).then(function (res) {
       if (res && res.ok) done(); else fail();
-    }).catch(fail);
+    }).catch(function () { fail(); });
   });
 })();
