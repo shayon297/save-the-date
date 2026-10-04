@@ -509,6 +509,6 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
 if __name__ == "__main__":
     out = sys.argv[1]
     for name, svg in (("drape-wide", tall_drape(150, 1720, 92, 0.37, 30, 1.0, 4)),
-                      ("drape-narrow", tall_drape(40, 2020, 28, 0.37, 30, 0.36, 4))):
+                      ("drape-narrow", tall_drape(78, 2020, 48, 0.37, 30, 0.55, 4))):
         open(f"{out}/{name}.svg", "w").write(svg)
         print(name, len(svg) // 1024, "KB")
