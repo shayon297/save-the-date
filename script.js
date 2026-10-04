@@ -3,10 +3,8 @@
   "use strict";
 
   var CONFIG = {
-    // Each submission is emailed to the couple via FormSubmit (formsubmit.co).
-    emailEndpoint: "https://formsubmit.co/ajax/shayon@multicoin.capital",
-    // Optional: web app URL of the script bound to the "Save the Date — Mailing Addresses"
-    // sheet (see google-apps-script.gs). When set, each submission is also added there.
+    // Web app URL (ends in /exec) of the Apps Script in google-apps-script.gs,
+    // bound to the mailing-address spreadsheet. Each submission becomes a row.
     sheetEndpoint: "",
   };
 
@@ -275,29 +273,14 @@
       setError("Something went wrong sending that — please try again in a moment.");
     };
 
-    if (CONFIG.sheetEndpoint) {
-      // text/plain avoids a CORS preflight, which Apps Script web apps do not answer.
-      fetch(CONFIG.sheetEndpoint, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload),
-        keepalive: true,
-      }).catch(function () {});
-    }
-
-    fetch(CONFIG.emailEndpoint, {
+    if (!CONFIG.sheetEndpoint) return fail();
+    // text/plain avoids a CORS preflight, which Apps Script web apps do not answer.
+    fetch(CONFIG.sheetEndpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        _subject: "Save the Date — mailing address from " + d.name,
-        _template: "table",
-        _captcha: "false",
-        Name: d.name,
-        Email: d.email || "(not given)",
-        "Mailing address": fullAddress(d),
-      }),
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
     }).then(function (r) { return r.json(); }).then(function (res) {
-      if (res && String(res.success) === "true") done(); else fail();
+      if (res && res.ok) done(); else fail();
     }).catch(fail);
   });
 })();
