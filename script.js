@@ -3,11 +3,11 @@
   "use strict";
 
   var CONFIG = {
-    // Web app URL of the script bound to the "Save the Date — Mailing Addresses" sheet
-    // (see google-apps-script.gs). Empty = guests are offered an email link instead.
+    // Each submission is emailed to the couple via FormSubmit (formsubmit.co).
+    emailEndpoint: "https://formsubmit.co/ajax/shayon@multicoin.capital",
+    // Optional: web app URL of the script bound to the "Save the Date — Mailing Addresses"
+    // sheet (see google-apps-script.gs). When set, each submission is also added there.
     sheetEndpoint: "",
-    // Fallback if the endpoint is unreachable: open the guest's email app addressed here.
-    coupleEmail: "shayon@multicoin.capital",
   };
 
   // ---- countdown (to the ceremony start, 5:30 PM Eastern) ----
@@ -269,23 +269,35 @@
       form.hidden = true;
       thanks.hidden = false;
     };
-    var fail = function (msg) {
+    var fail = function () {
       submitBtn.disabled = false;
       submitBtn.textContent = "Send";
-      var body = "Name: " + d.name + "\nEmail: " + d.email + "\n\n" + fullAddress(d);
-      setError(msg || "We couldn't send that just now — please try again, or email it to us instead.");
-      errorEl.innerHTML += ' <a href="mailto:' + CONFIG.coupleEmail + "?subject=" +
-        encodeURIComponent("Mailing address — " + d.name) + "&body=" + encodeURIComponent(body) + '">Email us</a>';
+      setError("Something went wrong sending that — please try again in a moment.");
     };
 
-    if (!CONFIG.sheetEndpoint) return fail("Please send your address to us by email —");
-    // text/plain avoids a CORS preflight, which Apps Script web apps do not answer.
-    fetch(CONFIG.sheetEndpoint, {
+    if (CONFIG.sheetEndpoint) {
+      // text/plain avoids a CORS preflight, which Apps Script web apps do not answer.
+      fetch(CONFIG.sheetEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+        keepalive: true,
+      }).catch(function () {});
+    }
+
+    fetch(CONFIG.emailEndpoint, {
       method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        _subject: "Save the Date — mailing address from " + d.name,
+        _template: "table",
+        _captcha: "false",
+        Name: d.name,
+        Email: d.email || "(not given)",
+        "Mailing address": fullAddress(d),
+      }),
     }).then(function (r) { return r.json(); }).then(function (res) {
-      if (res && res.ok) done(); else fail();
-    }).catch(function () { fail(); });
+      if (res && String(res.success) === "true") done(); else fail();
+    }).catch(fail);
   });
 })();
