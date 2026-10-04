@@ -32,8 +32,8 @@
     reception: {
       title: "Shayon & Amanda — Welcome Dinner",
       location: "Via Vite, 520 Vine St, Cincinnati, OH 45202",
-      start: "20270515T220000Z", // May 15, 6:00 PM EDT
-      end: "20270516T010000Z",   // May 15, 9:00 PM EDT
+      start: "20270515T223000Z", // May 15, 6:30 PM EDT
+      end: "20270516T013000Z",   // May 15, 9:30 PM EDT
     },
     wedding: {
       title: "Shayon & Amanda — Wedding Ceremony & Reception",

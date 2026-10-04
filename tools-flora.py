@@ -3,7 +3,7 @@ florist's selection: cream garden roses and spray roses, peony, olive / bay laur
 Draped fabric at the top corners echoes the chuppah."""
 import math, random, sys
 
-PREC = 0
+PREC = 1
 
 def f(v):
     return f"{v:.{PREC}f}".rstrip("0").rstrip(".") if PREC else str(round(v))
@@ -452,119 +452,51 @@ STYLE = ("<style>"
          ".ol{fill:#d9dcc2;stroke:#7f8a4e;stroke-width:.8}"
          "</style>")
 
-KINDS = ("rose", "rose", "rose", "rose", "rose_side", "rose_side", "peony", "peony", "anemone",
-         "narcissus", "hyacinth", "violet", "violet", "blossom", "bud", "bud", "laurel", "olive")
+def svg_doc(F, W, H):
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">'
+            + STYLE + "".join(F.out) + "</svg>")
 
 
-def poisson(W, H, r, rng, reject, k=30):
-    """Bridson Poisson-disc sampling: points at least r apart, none in rejected zones."""
-    cell = r / math.sqrt(2)
-    gw, gh = int(W / cell) + 1, int(H / cell) + 1
-    grid = [[None] * gh for _ in range(gw)]
-    pts, active = [], []
-    def ok(x, y):
-        if not (0 <= x < W and 0 <= y < H) or reject(x, y):
-            return False
-        gx, gy = int(x / cell), int(y / cell)
-        for i in range(max(gx - 2, 0), min(gx + 3, gw)):
-            for j in range(max(gy - 2, 0), min(gy + 3, gh)):
-                q = grid[i][j]
-                if q and (q[0] - x) ** 2 + (q[1] - y) ** 2 < r * r:
-                    return False
-        return True
-    def add(x, y):
-        pts.append((x, y)); active.append((x, y)); grid[int(x / cell)][int(y / cell)] = (x, y)
-    while True:
-        x, y = rng.uniform(0, W), rng.uniform(0, H)
-        if ok(x, y):
-            add(x, y); break
-    while active:
-        i = rng.randrange(len(active)); px, py = active[i]
-        for _ in range(k):
-            a = rng.uniform(0, math.tau); d = rng.uniform(r, 2 * r)
-            x, y = px + d * math.cos(a), py + d * math.sin(a)
-            if ok(x, y):
-                add(x, y); break
-        else:
-            active.pop(i)
-    return pts
+def corner_main(seed=4):
+    """The dominant piece, top-left: a crescent of foliage — laurel along the
+    top edge, olive trailing down the left edge — gathered at one focal point
+    where a large garden rose sits with a smaller rose, a profile rose, a
+    peony and buds. Drawn back to front so nearer blooms overlap farther ones."""
+    F = Flora(seed)
+    W, H = 340, 470
+    # foliage: the two arms of the crescent, then a short inward sprig
+    F.laurel_sprig([(76, 44), (146, 30), (214, 34), (282, 22)], L=20, pairs=6)
+    F.olive_sprig([(48, 100), (30, 180), (42, 262), (24, 344), (36, 440)], L=22, pairs=9)
+    F.olive_sprig([(70, 100), (100, 136), (112, 168)], L=16, pairs=3)
+    for a, L in ((math.radians(200), 30), (math.radians(110), 28), (math.radians(-40), 26)):
+        F.rose_leaflets(58, 74, a, L)
+    # blooms, farthest first
+    F.rosebud(34, 304, math.radians(115), 18)
+    F.rosebud(22, 404, math.radians(100), 15)
+    F.rose(182, 36, 13)
+    F.rosebud(286, 20, math.radians(-10), 14)
+    F.peony(100, 106, 26)
+    F.rose_side(30, 132, math.radians(120), 20)
+    F.rose(110, 50, 22)
+    F.rose(58, 72, 34)
+    return svg_doc(F, W, H)
 
 
-def unit(F, x, y, R, kind):
-    """One flower on its own short stem with a leaf or two — or a small laurel /
-    olive sprig — so each placement reads as a whole stem, not a floating head."""
-    r = F.r
-    sa = math.pi / 2 + r.uniform(-1.0, 1.0)              # stem hangs roughly downward
-    if kind in ("laurel", "olive"):
-        a = r.uniform(0, math.tau); L = R * r.uniform(2.2, 2.9)
-        pts = [(x - 0.5 * L * math.cos(a), y - 0.5 * L * math.sin(a)),
-               (x + 0.05 * L * math.cos(a + 0.3), y + 0.05 * L * math.sin(a + 0.3)),
-               (x + 0.5 * L * math.cos(a), y + 0.5 * L * math.sin(a))]
-        if kind == "laurel": F.laurel_sprig(pts, L=R * 0.9, pairs=3)
-        else: F.olive_sprig(pts, L=R * 1.0, pairs=4)
-        return
-    L = R * r.uniform(1.1, 1.6)
-    ex, ey = x + L * math.cos(sa), y + L * math.sin(sa)
-    bend = r.uniform(-0.35, 0.35) * L
-    mx, my = (x + ex) / 2 - bend * math.sin(sa), (y + ey) / 2 + bend * math.cos(sa)
-    F.path(f"M{f(x)} {f(y)}Q{f(mx)} {f(my)} {f(ex)} {f(ey)}", "s2")
-    for k in range(r.choice([1, 1, 2])):
-        t = r.uniform(0.35, 0.8)
-        lx, ly = x + t * (ex - x), y + t * (ey - y)
-        side = 1 if (k + r.randrange(2)) % 2 else -1
-        F.leaf_outline(lx, ly, sa + side * r.uniform(0.7, 1.1), R * r.uniform(0.55, 0.8), R * 0.28,
-                       serrate=kind in ("rose", "rose_side", "bud"), veins=False)
-    up = sa + math.pi + r.uniform(-0.25, 0.25)           # buds and spikes point away from the stem
-    F.bloom(kind, x, y, up, R)
-
-
-def field(seed, W, H, card_h, target, size, drape_w):
-    """An all-over scatter of individual stems across the card, spaced by
-    Poisson-disc sampling. Opacity is strongest at the side edges and fades
-    to a faint wash across the text column."""
-    rng = random.Random(seed)
-    tie_y, hem_y = drape_w * 1.9, drape_w * 3.7
-    def in_drape(x, y):
-        return y < hem_y + 10 and (x < drape_w + 14 or x > W - drape_w - 14)
-    # tune spacing so about `target` stems fall within the visible card height
-    lo, hi = 8.0, 120.0
-    for _ in range(18):
-        r = (lo + hi) / 2
-        n = sum(1 for (_, y) in poisson(W, H, r, random.Random(seed), in_drape) if y < card_h)
-        if n > target: lo = r
-        else: hi = r
-    pts = poisson(W, H, (lo + hi) / 2, random.Random(seed), in_drape)
-
-    out = []
-    def alpha(x):
-        d = min(x, W - x) / W
-        t = min(max((d - 0.06) / 0.16, 0.0), 1.0)
-        return 0.14 + 0.44 * (1 - t) ** 1.5
-    for i, (x, y) in enumerate(pts):
-        F = Flora(seed * 7919 + i)
-        kind = F.r.choice(KINDS)
-        R = size * F.r.uniform(0.75, 1.3)
-        unit(F, x, y, R, kind)
-        out.append(f'<g opacity="{alpha(x):.2f}">' + "".join(F.out) + "</g>")
-    # tied drapes at the top corners, a rose at each tie
-    for side, x0 in ((+1, 6), (-1, W - 6 - drape_w)):
-        F = Flora(seed + side * 31)
-        tx, ty = drape(F, x0, 0, drape_w, tie_y, hem_y, side)
-        F.rose(tx, ty, drape_w * 0.36)
-        out.append('<g opacity="0.58">' + "".join(F.out) + "</g>")
-    visible = sum(1 for (_, y) in pts if y < card_h)
-    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">'
-           + STYLE + "".join(out) + "</svg>")
-    return svg, len(pts), visible
+def corner_counter(seed=8):
+    """The small counter-touch, bottom-right: laurel rising from the corner,
+    olive along the bottom edge, one rose and a bud."""
+    F = Flora(seed)
+    W, H = 200, 220
+    F.olive_sprig([(196, 214), (150, 202), (102, 208)], L=16, pairs=4)
+    F.laurel_sprig([(196, 216), (172, 170), (162, 120), (168, 70)], L=18, pairs=5)
+    F.rose_leaflets(166, 168, math.radians(200), 22)
+    F.rosebud(166, 70, math.radians(-100), 16)
+    F.rose(166, 168, 20)
+    return svg_doc(F, W, H)
 
 
 if __name__ == "__main__":
     out = sys.argv[1]
-    # (name, svg width, svg height, typical card height, stems visible on the card, bloom size, drape width)
-    variants = [("narrow", 351, 2260, 2019, 640, 11.5, 50),
-                ("medium", 576, 1860, 1638, 640, 13.5, 78),
-                ("wide",   680, 1940, 1718, 640, 14.5, 92)]
-    for name, W, H, ch, target, size, dw in variants:
-        svg, total, vis = field(11, W, H, ch, target, size, dw)
-        open(f"{out}/florals-{name}.svg", "w").write(svg)
-        print(f"{name}: {total} stems ({vis} on a typical card), {len(svg)//1024} KB")
+    for name, svg in (("spray-main", corner_main()), ("spray-counter", corner_counter())):
+        open(f"{out}/{name}.svg", "w").write(svg)
+        print(name, len(svg) // 1024, "KB")

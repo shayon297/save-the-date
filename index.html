@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Beau+Rivage&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6" />
+<link rel="stylesheet" href="styles.css?v=7" />
 <script>
   // ?preview=email / ?preview=og switch the page into fixed layouts used to render the share images
   var pv = new URLSearchParams(location.search).get("preview");
@@ -39,11 +39,8 @@
     <span class="stripe stripe-bottom" aria-hidden="true"></span>
     <span class="stripe stripe-left" aria-hidden="true"></span>
     <span class="stripe stripe-right" aria-hidden="true"></span>
-    <picture class="flora-field" aria-hidden="true">
-      <source media="(max-width: 480px)" srcset="assets/florals-narrow.svg?v=1">
-      <source media="(max-width: 699px)" srcset="assets/florals-medium.svg?v=1">
-      <img src="assets/florals-wide.svg?v=1" alt="">
-    </picture>
+    <img class="spray spray-main" src="assets/spray-main.svg?v=1" alt="" aria-hidden="true">
+    <img class="spray spray-counter" src="assets/spray-counter.svg?v=1" alt="" aria-hidden="true">
 
     <div class="card-inner">
 
@@ -95,7 +92,7 @@
           <div class="event">
             <p class="event-day">Saturday, May 15</p>
             <h3 class="event-name">Welcome Dinner</h3>
-            <p class="event-time">6:00 – 9:00 PM</p>
+            <p class="event-time">6:30 – 9:30 PM</p>
             <p class="event-venue">Via Vite</p>
             <p class="event-address">520 Vine Street<br>Cincinnati, Ohio</p>
             <div class="event-actions">
@@ -195,6 +192,6 @@
   </article>
 </main>
 
-<script src="script.js?v=7"></script>
+<script src="script.js?v=8"></script>
 </body>
 </html>
