@@ -457,46 +457,58 @@ def svg_doc(F, W, H):
             + STYLE + "".join(F.out) + "</svg>")
 
 
-def corner_main(seed=4):
-    """The dominant piece, top-left: a crescent of foliage — laurel along the
-    top edge, olive trailing down the left edge — gathered at one focal point
-    where a large garden rose sits with a smaller rose, a profile rose, a
-    peony and buds. Drawn back to front so nearer blooms overlap farther ones."""
-    F = Flora(seed)
-    W, H = 340, 470
-    # foliage: the two arms of the crescent, then a short inward sprig
-    F.laurel_sprig([(76, 44), (146, 30), (214, 34), (282, 22)], L=20, pairs=6)
-    F.olive_sprig([(48, 100), (30, 180), (42, 262), (24, 344), (36, 440)], L=22, pairs=9)
-    F.olive_sprig([(70, 100), (100, 136), (112, 168)], L=16, pairs=3)
-    for a, L in ((math.radians(200), 30), (math.radians(110), 28), (math.radians(-40), 26)):
-        F.rose_leaflets(58, 74, a, L)
-    # blooms, farthest first
-    F.rosebud(34, 304, math.radians(115), 18)
-    F.rosebud(22, 404, math.radians(100), 15)
-    F.rose(182, 36, 13)
-    F.rosebud(286, 20, math.radians(-10), 14)
-    F.peony(100, 106, 26)
-    F.rose_side(30, 132, math.radians(120), 20)
-    F.rose(110, 50, 22)
-    F.rose(58, 72, 34)
-    return svg_doc(F, W, H)
+def drape_edge(x0, w, tie_y, hem_y, side):
+    """Points down the drape's inner (card-facing) edge: from the rod, in to the tie, out to the hem."""
+    tx = x0 + (w * 0.55 if side > 0 else w * 0.45)
+    if side > 0:
+        e = x0 + w
+        return [(e - 2, 4), (x0 + w * 0.92, tie_y * 0.45), (tx + (e - tx) * 0.12 + 3, tie_y),
+                (tx + 0.2 * w, tie_y + (hem_y - tie_y) * 0.5), (tx + 0.4 * w + 6, hem_y - 12)]
+    e = x0
+    return [(e + 2, 4), (x0 + w * 0.08, tie_y * 0.45), (tx - (tx - e) * 0.12 - 3, tie_y),
+            (tx - 0.2 * w, tie_y + (hem_y - tie_y) * 0.5), (tx - 0.4 * w - 6, hem_y - 12)]
 
 
-def corner_counter(seed=8):
-    """The small counter-touch, bottom-right: laurel rising from the corner,
-    olive along the bottom edge, one rose and a bud."""
+def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
+    """One full-height curtain (left side; the right is the same image mirrored),
+    tied back about a third of the way down, with a garland laid along its inner
+    edge: a cluster where the fabric gathers at the rod, another at the tie,
+    single blooms spaced between, and buds toward the hem. Blooms sit on the
+    fabric (nudged outward from the edge) so nothing spills toward the text.
+    k scales flower size for the slimmer phone version."""
     F = Flora(seed)
-    W, H = 200, 220
-    F.olive_sprig([(196, 214), (150, 202), (102, 208)], L=16, pairs=4)
-    F.laurel_sprig([(196, 216), (172, 170), (162, 120), (168, 70)], L=18, pairs=5)
-    F.rose_leaflets(166, 168, math.radians(200), 22)
-    F.rosebud(166, 70, math.radians(-100), 16)
-    F.rose(166, 168, 20)
+    x0 = 4
+    tie_y, hem_y = H * tie_frac, H - hem_pad
+    drape(F, x0, 0, w, tie_y, hem_y, +1)
+    edge = drape_edge(x0, w, tie_y, hem_y, +1)
+    segs = F.stem(edge, cls="s2")
+    F.rose_stem_foliage(segs, [0.015 + 0.03 * i for i in range(33)], 20 * k, side0=-1)
+    tf = tie_y / hem_y                      # roughly where the tie falls along the edge
+    plan = [  # (t, kind, size) — rod cluster, spaced blooms, tie cluster, tapering to buds
+        (0.010, "rose", 26), (0.035, "peony", 20), (0.060, "rose_side", 15), (0.085, "bud", 13),
+        (0.13, "rose", 16), (0.19, "bud", 12), (0.25, "rose", 15), (0.31, "bud", 12),
+        (tf - 0.035, "peony", 19), (tf - 0.01, "rose", 24), (tf + 0.02, "rose_side", 15), (tf + 0.045, "bud", 13),
+        (tf + 0.10, "rose", 15), (tf + 0.17, "bud", 12), (tf + 0.24, "rose", 14), (tf + 0.31, "peony", 13),
+        (tf + 0.38, "bud", 11), (tf + 0.45, "rose", 12), (tf + 0.52, "bud", 10), (0.985, "bud", 9),
+    ]
+    for t, kind, R in plan:
+        t = min(max(t, 0.005), 0.995)
+        x, y, a = F.at(segs, t)
+        R *= k
+        off = R * 0.55                       # toward the card edge, onto the fabric
+        x, y = x + off * math.cos(a + math.pi / 2), y + off * math.sin(a + math.pi / 2)
+        F.bloom(kind, x, y, a + F.r.uniform(-0.4, 0.4), R)
+    for t in (0.11, 0.28, tf + 0.14, tf + 0.35):
+        x, y, a = F.at(segs, t)
+        L = 30 * k
+        F.laurel_sprig([(x, y), (x - 0.5 * L * math.cos(a - 0.6), y + 0.5 * L), (x - L * math.cos(a - 0.5), y + L)],
+                       L=12 * k, pairs=3)
     return svg_doc(F, W, H)
 
 
 if __name__ == "__main__":
     out = sys.argv[1]
-    for name, svg in (("spray-main", corner_main()), ("spray-counter", corner_counter())):
+    for name, svg in (("drape-wide", tall_drape(150, 1720, 92, 0.37, 30, 1.0, 4)),
+                      ("drape-narrow", tall_drape(40, 2020, 28, 0.37, 30, 0.36, 4))):
         open(f"{out}/{name}.svg", "w").write(svg)
         print(name, len(svg) // 1024, "KB")

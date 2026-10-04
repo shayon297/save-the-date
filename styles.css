@@ -156,26 +156,28 @@ body{
 }
 @media (min-width: 560px){ .name-and{ padding-top: 22px; } }
 
-/* ---------- florals: composed pieces on the border, none under the text ----------
-   A dominant spray at the top-left corner trailing down the left edge, and
-   a small counter-touch at the bottom-right. Drawn by tools-flora.py. */
-.spray{
+/* ---------- florals: a pair of full-height drapes, flowers along the fabric ----------
+   One drawing (tools-flora.py), mirrored for the right side. Each runs the full
+   card height inside the pinstripe border; the image keeps its proportions, so
+   its width follows the card height. Phones get a slimmer version. */
+.drape-side{
   position: absolute;
+  top: var(--stripe);
+  bottom: var(--stripe);
   z-index: 0;
+  display: block;
   pointer-events: none;
-  height: auto;
-  opacity: 0.78;
+  opacity: 0.8;
 }
-.spray-main{ top: 0; left: 0; width: 340px; }
-.spray-counter{ bottom: 0; right: 0; width: 200px; }
+.drape-left{ left: var(--stripe); }
+.drape-right{ right: var(--stripe); transform: scaleX(-1); }
+.drape-side img{ display: block; height: 100%; width: auto; }
 @media (max-width: 699px){
-  .spray-main{ width: 270px; }
-  .spray-counter{ width: 150px; }
+  .card-inner{ padding-left: 40px; padding-right: 40px; }   /* keep text inside the curtains */
 }
 @media (max-width: 480px){
-  .spray-main{ width: 190px; }
-  .spray-counter{ width: 110px; }
-  .card-inner{ padding-top: 74px; padding-bottom: 52px; }  /* clear the corner pieces */
+  .card-inner{ padding-left: 26px; padding-right: 26px; }
+  .date-caps{ font-size: 10.5px; letter-spacing: 0.04em; white-space: nowrap; }
 }
 
 .rule span{
