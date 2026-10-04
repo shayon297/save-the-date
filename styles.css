@@ -150,7 +150,7 @@ body{
 .name-and{
   font-family: var(--script);
   font-size: 30px;
-  color: var(--ink);
+  color: var(--gold);
   line-height: 1;
   padding-top: 2px;
 }
