@@ -22,7 +22,7 @@
 
   --frame: 14px;            /* outer rule's distance from the card edge */
   --inset: 26px;            /* inside the inner rule: sets the text margin */
-  --hang: calc(var(--frame) + 6px);   /* just inside the inner rule: the drapes hang from the frame */
+  --hang: calc(var(--frame) + 6px);   /* just inside the inner rule: the curtains hang from the frame */
 }
 @media (max-width: 480px){
   :root{ --frame: 9px; --inset: 18px; }
@@ -78,11 +78,11 @@ body{
   position: relative;
   z-index: 1;
   margin: calc(var(--inset) + 6px);
-  padding: 84px 22px 30px;   /* top clears the middle of the swag */
+  padding: 84px 22px 30px;   /* top: room under the curtains' meeting point */
   text-align: center;
 }
 @media (min-width: 700px){
-  .card-inner{ padding: 84px 56px 44px; }   /* top clears the middle of the swag */
+  .card-inner{ padding: 84px 56px 44px; }   /* top: room under the curtains' meeting point */
 }
 
 /* ---------- hero ---------- */
@@ -138,33 +138,15 @@ body{
   margin: 14px 0 0;
 }
 
-/* ---------- florals: a pair of full-height drapes, flowers along the fabric ----------
-   One drawing (tools-flora.py), mirrored for the right side, hanging just inside
-   the frame. The image keeps its proportions, so its width follows the card
-   height. Phones get a proportionally scaled version. */
-.drape-side{
+/* ---------- curtains: drawn by script.js as one SVG filling the frame ---------- */
+.curtains{
   position: absolute;
-  top: var(--hang);
-  bottom: var(--hang);
-  z-index: 0;
-  display: block;
-  pointer-events: none;
-}
-/* the curtains' tops, sweeping in to meet at the centre (assets/swag.svg). It spans exactly
-   between the side curtains' inner edges: script.js measures those into --drape-in. */
-.swag{
-  position: absolute;
-  top: var(--hang);
-  left: calc(var(--hang) + var(--drape-in, 90px));
-  width: calc(100% - 2 * (var(--hang) + var(--drape-in, 90px)));   /* an img ignores right: set the width */
-  height: 230px;            /* where the arch meets the side curtains */
+  top: var(--hang); left: var(--hang); right: var(--hang); bottom: var(--hang);
+  width: calc(100% - 2 * var(--hang)); height: calc(100% - 2 * var(--hang));
   z-index: 0;
   pointer-events: none;
+  overflow: visible;
 }
-@media (max-width: 480px){ .swag{ height: 74px; } }
-.drape-left{ left: var(--hang); }
-.drape-right{ right: var(--hang); transform: scaleX(-1); }
-.drape-side img{ display: block; height: 100%; width: auto; }
 @media (max-width: 699px){
   .card-inner{ padding-left: 40px; padding-right: 40px; }   /* keep text inside the curtains */
 }
@@ -425,8 +407,6 @@ body{
 .preview-og .names-caps .amp{ display: inline; margin: 0 0.6em 0 0.3em; }
 .preview-og .date-line{ font-size: 25px; }
 .preview-og .hebrew-verse{ font-size: 26px; }
-.preview-og .drape-side{ overflow: hidden; -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
-.preview-og .drape-side img{ height: 1300px; }
 
 .hp{ position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 

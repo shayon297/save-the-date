@@ -1,6 +1,7 @@
 """Botanical line art for the save-the-date, restricted to the floral brief's
 florist's selection: cream garden roses and spray roses, peony, olive / bay laurel foliage.
-Full-height drapes echo the chuppah."""
+Writes assets/flora.svg, a sprite of flowers and leaves that script.js places along the
+curtains (the curtains themselves are drawn in script.js, to the card's exact size)."""
 import math, random, sys
 
 PREC = 1
@@ -404,67 +405,6 @@ class Flora:
         return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0} {y0} {w} {h}">' + "".join(self.out) + "</svg>"
 
 
-def drape(F, x0, y0, w, tie_y, hem_y, side=1):
-    """A tied-back curtain (left side; the right is the mirror image). The fabric hangs
-    from the full width of the rod, its inner edge sweeps in a curve to a tie near the
-    frame, then falls and flares into a full skirt at the hem. Folds have uneven widths
-    and every other one is shaded, so the cloth reads as having volume.
-    Returns the inner edge as two cubic segments (rod->tie, tie->hem)."""
-    r = F.r
-    k = 10
-    ts = sorted([0.0, 1.0] + [(i + r.uniform(-0.3, 0.3)) / (k - 1) for i in range(1, k - 1)])
-    tie_x = x0 + 0.24 * w                  # pulled to the side, toward the frame
-    bundle = 0.2 * w                       # width of the gathered folds at the tie
-    span = tie_y - y0
-    strands = []
-    for t in ts:
-        sx = x0 + t * w
-        tx = tie_x + (t - 0.5) * bundle
-        c1 = (sx + r.uniform(-1.5, 1.5), y0 + span * (0.5 + 0.12 * t))       # falls straight, then sweeps
-        c2 = (tx + (sx - tx) * (0.25 + 0.25 * t), tie_y - span * 0.16)       # inner folds belly outward
-        hx = x0 + 0.02 * w + t * 1.12 * w + r.uniform(-2, 2)                # skirt spreads as it pools
-        hy = hem_y - 4 + r.uniform(-4, 5) - 6 * math.sin(math.pi * t)
-        c3 = (tx + (hx - tx) * 0.05, tie_y + (hy - tie_y) * 0.35)
-        c4 = (tx + (hx - tx) * 0.55, hy - (hy - tie_y) * 0.12)                # bends outward onto the floor
-        strands.append(((sx, y0), c1, c2, (tx, tie_y), c3, c4, (hx, hy)))
-
-    def fwd(st):
-        return (f"C{f(st[1][0])} {f(st[1][1])} {f(st[2][0])} {f(st[2][1])} {f(st[3][0])} {f(st[3][1])}"
-                f"C{f(st[4][0])} {f(st[4][1])} {f(st[5][0])} {f(st[5][1])} {f(st[6][0])} {f(st[6][1])}")
-
-    def back(st):
-        return (f"C{f(st[5][0])} {f(st[5][1])} {f(st[4][0])} {f(st[4][1])} {f(st[3][0])} {f(st[3][1])}"
-                f"C{f(st[2][0])} {f(st[2][1])} {f(st[1][0])} {f(st[1][1])} {f(st[0][0])} {f(st[0][1])}")
-
-    a, b = strands[0], strands[-1]
-    # whole fabric, then shading on alternate folds
-    F.path(f"M{f(a[0][0])} {f(a[0][1])}L{f(b[0][0])} {f(b[0][1])}{fwd(b)}L{f(a[6][0])} {f(a[6][1])}{back(a)}Z", "fab")
-    for i in range(0, k - 1, 2):        # shadowed folds, of uneven depth like heavy satin
-        p, q = strands[i], strands[i + 1]
-        op = r.uniform(0.06, 0.17)
-        F.out.append(f'<path class="fabd" style="opacity:{op:.2f}" d="M{f(p[0][0])} {f(p[0][1])}{fwd(p)}L{f(q[6][0])} {f(q[6][1])}{back(q)}Z"/>')
-    for i, st in enumerate(strands):    # edges drawn firmly, interior folds lightly
-        F.path(f"M{f(st[0][0])} {f(st[0][1])}{fwd(st)}", "d" if i in (0, k - 1) else "d2")
-    # hem: soft scallops between the fold ends
-    d = f"M{f(a[6][0])} {f(a[6][1])}"
-    for p, q in zip(strands, strands[1:]):
-        (ax, ay), (bx, by) = p[6], q[6]
-        d += f"Q{f((ax + bx) / 2)} {f(max(ay, by) + 5)} {f(bx)} {f(by)}"
-    F.path(d, "d")
-    # fabric pooled on the floor: a few soft folds lying along the hem
-    for j in range(4):
-        u0 = r.uniform(0.0, 0.5); u1 = u0 + r.uniform(0.3, 0.5)
-        xa, xb = x0 + u0 * 1.1 * w, x0 + min(u1, 1.0) * 1.1 * w
-        ya = hem_y - r.uniform(6, 18)
-        F.path(f"M{f(xa)} {f(ya + 4)}Q{f((xa + xb) / 2)} {f(ya - 6)} {f(xb)} {f(ya + 2)}", "d2")
-    # tie-back: a fabric band wrapped round the gathered folds
-    tx0 = tie_x - bundle / 2 - 6; tx1 = tie_x + bundle / 2 + 6
-    F.path(f"M{f(tx0)} {f(tie_y-6)}Q{f(tie_x)} {f(tie_y-2)} {f(tx1)} {f(tie_y-6)}L{f(tx1)} {f(tie_y+5)}"
-           f"Q{f(tie_x)} {f(tie_y+9)} {f(tx0)} {f(tie_y+5)}Z", "p")
-    F.path(f"M{f(tx0+2)} {f(tie_y-0.5)}Q{f(tie_x)} {f(tie_y+3.5)} {f(tx1-2)} {f(tie_y-0.5)}", "v")
-    return (b[0], b[1], b[2], b[3]), (b[3], b[4], b[5], b[6])
-
-
 STYLE = ("<style>"
          ".p{fill:#fbf8f0;stroke:#7f8a4e;stroke-width:1;stroke-linejoin:round}"
          ".l,.s,.s2{fill:none;stroke:#7f8a4e;stroke-width:1;stroke-linecap:round}"
@@ -484,98 +424,51 @@ def svg_doc(F, W, H):
             + STYLE + "".join(F.out) + "</svg>")
 
 
-def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
-    """One full-height curtain (left side; the right is the same image mirrored),
-    tied back low toward the frame so the fabric pools at the hem, with a garland
-    laid along its inner edge: the fullest cluster where the fabric gathers at the
-    rod, a few larger blooms spaced below, and buds toward the hem. Blooms sit on the
-    fabric (nudged outward from the edge) so nothing spills toward the text.
-    k scales flower size for the slimmer phone version."""
-    F = Flora(seed)
-    x0 = 0.5                                # flush with the image edge, so the fabric meets the frame
-    tie_y, hem_y = H * tie_frac, H - hem_pad
-    upper, lower = drape(F, x0, 0, w, tie_y, hem_y)
-    # sample the inner edge, spacing points by height so t along the garland ~ height
-    n_up = max(3, round(18 * tie_frac)); n_lo = 18 - n_up
-    edge = [Flora.bez(upper, i / n_up)[:2] for i in range(n_up)] + [Flora.bez(lower, i / n_lo)[:2] for i in range(n_lo + 1)]
-    edge[0] = (edge[0][0] - 2, 4)
-    segs = F.stem(edge, cls="s2")
-    F.rose_stem_foliage(segs, [0.02 + 0.045 * i for i in range(22)], 21 * k, side0=-1)
-    tf = tie_y / hem_y                      # the tie's height, as a fraction
-    def t_at(frac):                      # garland position at a given fraction of the height
-        best, bt = 1e9, 0.5
-        for i in range(401):
-            t = i / 400
-            dy = abs(F.at(segs, t)[1] - frac * hem_y)
-            if dy < best: best, bt = dy, t
-        return bt
-    plan = [  # (height, kind, size) — a full cluster at the rod, open roses down the sweep, a cluster at the low tie
-        (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.074, "rose_side", 18),
-        (0.17, "rose", 18), (0.28, "rose_side", 15), (0.38, "rose", 17),
-        (0.64, "rose", 16),   # nothing between 0.40 and 0.62 of the height: the event titles sit there
-        (tf - 0.035, "rose_side", 17), (tf - 0.012, "peony", 22), (tf + 0.012, "rose", 24),
-        (tf + 0.09, "rose", 15),
-    ]
-    for h, kind, R in plan:
-        t = min(max(t_at(h), 0.005), 0.995)
-        x, y, a = F.at(segs, t)
-        R *= k
-        off = R * 0.85                       # toward the card edge, onto the fabric
-        x, y = x + off * math.cos(a + math.pi / 2), y + off * math.sin(a + math.pi / 2)
-        F.bloom(kind, x, y, a + F.r.uniform(-0.4, 0.4), R)
-    for t in (0.06, 0.12, 0.33, 0.56, tf + 0.05):
-        x, y, a = F.at(segs, t)
-        L = 30 * k
-        F.laurel_sprig([(x, y), (x - 0.5 * L * math.cos(a - 0.6), y + 0.5 * L), (x - L * math.cos(a - 0.5), y + L)],
-                       L=12 * k, pairs=3)
-    return svg_doc(F, W, H)
+# presentation attributes for each class, so the symbols render the same when
+# referenced from another document with <use> (a referenced file's <style> may not apply)
+ATTRS = {
+    "p": 'fill="#fbf8f0" stroke="#7f8a4e" stroke-width="1" stroke-linejoin="round"',
+    "l": 'fill="none" stroke="#7f8a4e" stroke-width="1" stroke-linecap="round"',
+    "s2": 'fill="none" stroke="#7f8a4e" stroke-width="1" stroke-linecap="round"',
+    "s": 'fill="none" stroke="#7f8a4e" stroke-width="1.3" stroke-linecap="round"',
+    "g": 'fill="none" stroke="#b0975a" stroke-width=".8"',
+    "gd": 'fill="#b0975a"',
+    "k": 'fill="#5f6a3a"',
+    "kd": 'fill="#7f8a4e"',
+    "v": 'fill="none" stroke="#7f8a4e" stroke-width=".7" stroke-linecap="round" opacity=".7"',
+    "ol": 'fill="#d9dcc2" stroke="#7f8a4e" stroke-width=".8"',
+}
 
 
-def swag(W=1000, H=100):
-    """The top of the two curtains: from each side curtain's inner edge the fabric
-    sweeps up and across to meet the other at the top centre, so the opening between
-    them is a round arch (as in the satin-drapery reference). Folds are nested arches
-    pulled toward each corner. Spans exactly between the side curtains' inner edges
-    (script.js sets that) and stretches to fit (preserveAspectRatio none)."""
-    F = Flora(11)
-    K = 0.5523                            # cubic approximation of a quarter ellipse
-    cx = W / 2
+def symbol(name, F, vb):
+    body = "".join(F.out)
+    for cls, attrs in ATTRS.items():
+        body = body.replace(f'class="{cls}"', attrs)
+    x, y, w, h = vb
+    return f'<symbol id="{name}" viewBox="{x} {y} {w} {h}" overflow="visible">{body}</symbol>'
 
-    def left(k):                          # quarter arch from (k*cx, 0) down to (0, k*H)
-        a, b = k * cx, k * H
-        return f"M{f(a)} 0C{f(a * (1 - K))} 0 0 {f(b * (1 - K))} 0 {f(b)}"
 
-    def right(k):                         # mirror image, from (W - k*cx, 0) down to (W, k*H)
-        a, b = k * cx, k * H
-        return f"M{f(W - a)} 0C{f(W - a * (1 - K))} 0 {f(W)} {f(b * (1 - K))} {f(W)} {f(b)}"
-
-    # fabric: everything above the arch whose apex is the top centre
-    F.path(f"M0 0L{f(W)} 0L{f(W)} {f(H)}C{f(W)} {f(H * (1 - K))} {f(cx + cx * K)} 0 {f(cx)} 0"
-           f"C{f(cx - cx * K)} 0 0 {f(H * (1 - K))} 0 {f(H)}Z", "fab")
-    ks = [0.22, 0.4, 0.58, 0.76, 0.9]
-    for i in range(0, len(ks) - 1, 2):    # shade alternate bands
-        k0, k1 = ks[i], ks[i + 1]
-        for side, fn in ((1, left), (-1, right)):
-            a0, b0, a1, b1 = k0 * cx, k0 * H, k1 * cx, k1 * H
-            if side == 1:
-                d = (f"M{f(a0)} 0C{f(a0 * (1 - K))} 0 0 {f(b0 * (1 - K))} 0 {f(b0)}L0 {f(b1)}"
-                     f"C0 {f(b1 * (1 - K))} {f(a1 * (1 - K))} 0 {f(a1)} 0Z")
-            else:
-                d = (f"M{f(W - a0)} 0C{f(W - a0 * (1 - K))} 0 {f(W)} {f(b0 * (1 - K))} {f(W)} {f(b0)}L{f(W)} {f(b1)}"
-                     f"C{f(W)} {f(b1 * (1 - K))} {f(W - a1 * (1 - K))} 0 {f(W - a1)} 0Z")
-            F.path(d, "fabd")
-    for k in ks:
-        F.path(left(k), "d2"); F.path(right(k), "d2")
-    F.path(left(1.0), "d"); F.path(right(1.0), "d")   # the arch's edge
-    doc = svg_doc(F, W, H).replace('<svg ', '<svg preserveAspectRatio="none" ', 1)
-    return doc.replace("<style>", "<style>path{vector-effect:non-scaling-stroke}", 1)
+def sprite():
+    """The flowers and leaves script.js places along the curtains' edges, as <symbol>s
+    drawn around their origin: blooms centred on it, leaves and sprigs growing along +x."""
+    out = []
+    for i, seed in enumerate((3, 8, 21)):
+        F = Flora(seed); F.rose(0, 0, 20)
+        out.append(symbol(f"rose{i + 1}", F, (-26, -26, 52, 52)))
+    F = Flora(5); F.peony(0, 0, 20)
+    out.append(symbol("peony", F, (-26, -26, 52, 52)))
+    F = Flora(9); F.rose_side(0, 0, -math.pi / 2, 14)
+    out.append(symbol("roseside", F, (-26, -26, 52, 52)))
+    F = Flora(13); F.rosebud(0, 0, 0, 16)
+    out.append(symbol("bud", F, (-4, -14, 30, 28)))
+    F = Flora(17); F.rose_leaflets(0, 0, 0, 30)
+    out.append(symbol("leaves", F, (-4, -16, 40, 32)))
+    F = Flora(19); F.laurel_sprig([(0, 0), (16, -2), (32, 0)], L=10, pairs=3)
+    out.append(symbol("sprig", F, (-4, -14, 44, 28)))
+    return '<svg xmlns="http://www.w3.org/2000/svg">' + "".join(out) + "</svg>"
 
 
 if __name__ == "__main__":
     out = sys.argv[1]
-    for name, svg in (("drape-wide", tall_drape(160, 1720, 86, 0.76, 8, 1.0, 4)),
-                      ("drape-narrow", tall_drape(84, 2020, 46, 0.76, 8, 0.55, 4))):
-        open(f"{out}/{name}.svg", "w").write(svg)
-        print(name, len(svg) // 1024, "KB")
-    open(f"{out}/swag.svg", "w").write(swag())
-    print("swag")
+    open(f"{out}/flora.svg", "w").write(sprite())
+    print("flora.svg")

@@ -12,11 +12,10 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 |---|---|
 | `index.html` | The card: header, engagement photo, countdown, The Weekend, address form, closing |
 | `styles.css` | All styling. Palette and fonts are CSS variables at the top |
-| `script.js` | Countdown, "Add to calendar" links (Google Calendar URL built here), address form |
+| `script.js` | Curtains (drawn as SVG at the card's size), countdown, "Add to calendar" links, address form |
 | `assets/welcome-party.ics`, `assets/wedding.ics` | Calendar files for Apple / Outlook. Keep in sync with `EVENTS` in `script.js` |
-| `tools-flora.py` | Draws the drapes and flowers. Run `python3 tools-flora.py assets` to regenerate them |
-| `assets/drape-wide.svg`, `assets/drape-narrow.svg` | Generated drapes (desktop / phone and tablet). Don't hand-edit; change `tools-flora.py` |
-| `assets/swag.svg` | Generated curtain tops: from each side curtain's inner edge the fabric sweeps in to meet at the top centre, leaving a round-arch opening. Spans between the curtains' inner edges (`--drape-in`, set in `script.js`); keep the edge fractions there in sync with `tall_drape()` |
+| `tools-flora.py` | Draws the flowers and leaves into `assets/flora.svg`. Run `python3 tools-flora.py assets` to regenerate |
+| `assets/flora.svg` | Generated sprite of roses, peony, buds and leaves that `script.js` places along the curtains. Don't hand-edit |
 | `assets/engagement.jpg` | Engagement photo in the arched frame under the header (the figure hides itself if the file is missing) |
 | `assets/og.jpg` | Link preview (1200×630), rendered from the page with `?preview=og` |
 | `assets/card-email.jpg` | Image used in `email.html`, rendered with `?preview=email` |
@@ -82,22 +81,21 @@ and a phone width (375px) before calling a change done.
 - Countdown is a quiet line in the closing ("224 days to go"); "formal invitation
   to follow" sits under the date line in lowercase italics.
 - Calendar buttons are outlined (ghost); only Send is solid.
-- Drapes (after the satin-drapery-before-columns reference): a swag across the
-  top joins a symmetric pair of curtains that hang inside the frame, sweep in a
-  curve to a tie low on the outer side (about 3/4 down), and pool at the hem.
-  Fewer, deeper folds with uneven shading; edges drawn firmly, inner folds lightly.
-- Florals: a garland along each curtain's inner edge, placed by height: the
-  fullest cluster at the top corner, open roses down the sweep, a cluster at the
-  tie. No flowers between 40% and 62% of the height, where the event titles sit;
-  no tiny buds (they read as specks). Flowers stay at the
-  borders and never sit under the text. Classical palette from the floral brief:
-  roses as the lead, peony, laurel, olive.
+- Curtains (after the satin-drapery references): two curtains hang from a gathered
+  rod across the top, meet at the centre, and are tied back low (about 78% down) at
+  each side, where the fabric pools. `script.js` draws them as one SVG at the card's
+  exact size and fits the leading edge to clear every line of text (a pointed arch
+  through the header, straight past the content). Folds fan from the rod into the
+  tie; alternate folds are shaded. Redrawn on resize.
+- Florals: greenery and a few roses climb each curtain's leading edge, angled onto
+  the fabric (never into the opening), with the fullest cluster at the tie.
 - Phones should look like a scaled-down desktop, not a different design, and
   text must not touch the drapes.
-- Tried and rejected: a separate swag band across the top (scalloped, or a shallow arch) and a knot with a hanging tail at its centre; literal classical motifs (Cinzel inscription capitals,
+- Tried and rejected: side-strip drapes with a separate swag band across the top (scalloped, a shallow arch, or nested arcs) and a knot with a hanging tail; literal classical motifs (Cinzel inscription capitals,
   Greek-key dividers, a laurel wreath around the monogram, Roman-numeral date),
   pinstripe borders, all-over flower patterns, extra frames
-  competing with the drapes, flowers bunched at the drape ties.
+  competing with the drapes. (An earlier note rejected flowers bunched at the ties;
+  the curtain references Amanda chose have a cluster there, so the tie cluster stays.)
 - The page has `noindex` so it stays out of search results.
 
 ## Working on this site
