@@ -497,15 +497,15 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     n_up = max(3, round(18 * tie_frac)); n_lo = 18 - n_up
     edge = [Flora.bez(upper, i / n_up)[:2] for i in range(n_up)] + [Flora.bez(lower, i / n_lo)[:2] for i in range(n_lo + 1)]
     edge[0] = (edge[0][0] - 2, 4)
-    segs = F.stem(edge, cls="vine")   # light, so long bare stretches don't read as a wire
-    F.rose_stem_foliage(segs, [0.03 + 0.09 * i for i in range(11)], 21 * k, side0=-1)   # sparse: museo is quiet
+    segs = F.catmull(edge)                 # positions along the whole edge
+    F.stem(edge[:n_up + 3], cls="vine")    # the vine is drawn only down to the tie: below it the drape stays plain
     tf = tie_y / hem_y                      # roughly where the tie falls along the edge
+    F.rose_stem_foliage(segs, [t for t in (0.03 + 0.09 * i for i in range(11)) if t < tf], 21 * k, side0=-1)   # sparse, and only above the tie
     plan = [  # (t, kind, size) — a full cluster at the rod and at the tie, only a few single roses between
         (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.076, "rose", 17),   # no side-view roses: at this size they read as doodles
         (0.21, "rose", 18),
         (tf - 0.055, "peony", 21), (tf + 0.05, "rose", 22),   # above and below the tie band, not over it
-        (tf + 0.25, "rose", 16), (tf + 0.48, "rose", 14),
-    ]
+    ]   # nothing further down: the schedule and form get room to breathe
     for t, kind, R in plan:
         t = min(max(t, 0.005), 0.995)
         x, y, a = F.at(segs, t)
@@ -514,7 +514,7 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
         x, y = x + off * math.cos(a + math.pi / 2), y + off * math.sin(a + math.pi / 2)
         x = max(x, R * 0.9)                  # never over the frame
         F.bloom(kind, x, y, a + F.r.uniform(-0.4, 0.4), R)
-    for t in (0.09, tf + 0.14, tf + 0.38):
+    for t in (0.09, 0.2):
         x, y, a = F.at(segs, t)
         L = 30 * k
         F.laurel_sprig([(x, y), (x - 0.5 * L * math.cos(a - 0.6), y + 0.5 * L), (x - L * math.cos(a - 0.5), y + L)],

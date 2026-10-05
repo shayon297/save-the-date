@@ -89,14 +89,14 @@ body{
 .script-title{
   font-family: var(--script);
   font-weight: 400;
-  font-size: clamp(50px, 10.5vw, 80px);
+  font-size: clamp(44px, 9.2vw, 70px);   /* ~12% smaller, so the names lead */
   line-height: 1.15;
   margin: 0 0 12px;
   color: var(--ink);
 }
 .names-caps{
   font-weight: 600;
-  font-size: clamp(15px, 3.1vw, 21px);
+  font-size: clamp(15px, 3.4vw, 24px);
   letter-spacing: 0.3em;
   padding-left: 0.3em;      /* optically centre tracked caps */
   text-transform: uppercase;
@@ -171,7 +171,7 @@ body{
 @media (max-width: 480px){
   .card-inner{ padding-left: 44px; padding-right: 44px; }
   .card-inner .closing-caps{ font-size: 12px; letter-spacing: 0.22em; padding-left: 0.22em; }
-  .script-title{ font-size: 40px; white-space: nowrap; }
+  .script-title{ font-size: 36px; white-space: nowrap; }
   .names-caps{ letter-spacing: 0.22em; padding-left: 0.22em; }
   .date-line .bar{ display: none; }
   .date-line .d, .date-line .c{ display: block; }
@@ -266,9 +266,9 @@ body{
   text-wrap: balance;
 }
 .event-time{
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  color: var(--ink-soft);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
   margin: 0 0 12px;
 }
 .event-venue{
@@ -278,27 +278,39 @@ body{
   color: var(--ink);
 }
 .event-address{
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.45;
-  color: var(--ink-soft);
+  color: var(--ink);
   margin: 4px 0 14px;
 }
 .event-actions{
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
 }
-.cal-options{ margin: 4px 0 0; font-size: 13px; }
+/* the two calendar choices open as a small pop-over under the button, so nothing below moves */
+.cal-options{
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  margin: 0;
+  padding: 6px 0;
+  min-width: 210px;
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 28px -12px rgba(0,0,0,0.35);
+  text-align: center;
+}
 .cal-options[hidden]{ display: none; }
-.cal-options .link-btn{ font-size: 13px; padding: 6px 2px; display: inline-block; }   /* comfortable tap targets */
-.cal-dot{ color: var(--ink-soft); margin: 0 6px; }
-@media (max-width: 480px){
-  .cal-options .link-btn{ display: block; padding: 7px 0; }
-  .cal-dot{ display: none; }
-}
+.cal-options .link-btn{ display: block; font-size: 15px; padding: 9px 16px; text-decoration: none; color: var(--ink); }
+.cal-options .link-btn:hover{ background: rgba(127,138,78,0.12); }
+.cal-dot{ display: none; }
 
 .btn{
   font-family: var(--serif);
-  font-size: 11.5px;
-  letter-spacing: 0.18em;
+  font-size: 13px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   padding: 9px 14px;
   border: 1px solid var(--ink);
@@ -308,11 +320,13 @@ body{
   line-height: 1;
 }
 .btn-solid{ background: var(--ink); color: var(--ivory); }
-@media (hover: hover){   /* no sticky dark state after a tap on phones */
-  .btn-solid:hover{ background: var(--page-deep); border-color: var(--page-deep); }
-  .btn-ghost:hover{ background: var(--ink); color: var(--ivory); }
-}
 .btn-ghost{ background: transparent; color: var(--ink); border-color: var(--line); }
+@media (hover: hover){   /* no sticky dark state after a tap on phones */
+  .btn-solid:hover{ background: var(--page-deep); border-color: var(--page-deep); color: var(--ivory); }
+  .btn-ghost:hover{ background: var(--ink); border-color: var(--ink); color: var(--ivory); }
+}
+.btn-ghost[aria-expanded="true"]{ background: var(--ink); border-color: var(--ink); color: var(--ivory); }
+.btn:focus-visible{ outline: 2px solid var(--olive); outline-offset: 2px; }
 
 /* ---------- mailing address form ---------- */
 .address{ text-align: center; }
@@ -333,10 +347,11 @@ body{
 .field{ display: block; margin: 0 0 16px; position: relative; }
 .field-label{
   display: block;
-  font-size: 11px;
-  letter-spacing: 0.24em;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-soft);
+  color: var(--ink);
   margin: 0 0 6px;
 }
 .field-optional{ letter-spacing: 0.04em; text-transform: none; font-style: italic; }
@@ -345,17 +360,16 @@ body{
   font-family: var(--serif);
   font-size: 16px;
   color: var(--ink);
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  padding: 6px 2px 8px;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid var(--line);   /* a visible box, so the fields aren't overlooked */
+  padding: 10px 12px;
   outline: none;
   border-radius: 0;
   transition: border-color 0.2s ease;
 }
-.field input::placeholder{ color: rgba(74,85,48,0.6); font-style: italic; }
-.field input:focus{ border-bottom-color: var(--ink); }
-.field input[aria-invalid="true"]{ border-bottom-color: #9a5a3a; }
+.field input::placeholder{ color: var(--ink-soft); font-style: italic; }
+.field input:focus{ border-color: var(--ink); background: #fff; }
+.field input[aria-invalid="true"]{ border-color: #9a5a3a; }
 
 .addr-fields{
   display: grid;
@@ -416,11 +430,17 @@ body{
 }
 .btn-submit{
   display: block;
-  margin: 10px auto 0;
-  padding: 12px 44px;
-  font-size: 12px;
+  width: 100%;
+  margin: 14px auto 0;
+  padding: 15px 20px;
+  font-size: 14px;
 }
 .btn-submit[disabled]{ opacity: 0.6; cursor: default; }
+@media (max-width: 480px){
+  .field input{ padding: 10px 9px; }
+  .field input::placeholder{ font-size: 14px; }
+  .btn-submit{ letter-spacing: 0.05em; font-size: 12px; padding: 14px 6px; white-space: nowrap; }
+}
 .addr-thanks{ padding: 8px 0 2px; }
 
 /* ---------- preview renders (share images for email / text) ---------- */

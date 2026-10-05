@@ -57,12 +57,24 @@
     var opts = btn.parentNode.querySelector(".cal-options");
     if (!ev || !opts) return;
     opts.querySelector("[data-gcal]").href = googleUrl(ev);
-    btn.addEventListener("click", function () {
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
       var open = opts.hidden;
+      closeCalendars();
       opts.hidden = !open;
       btn.setAttribute("aria-expanded", open ? "true" : "false");
     });
   });
+
+  // close an open calendar pop-over on an outside click or Escape
+  function closeCalendars() {
+    document.querySelectorAll(".cal-options").forEach(function (o) { o.hidden = true; });
+    document.querySelectorAll("[data-cal]").forEach(function (b) { b.setAttribute("aria-expanded", "false"); });
+  }
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".event-actions")) closeCalendars();
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeCalendars(); });
 
   // ---- mailing address form ----
   var form = document.getElementById("addr-form");
@@ -344,7 +356,7 @@
     };
     var fail = function () {
       submitBtn.disabled = false;
-      submitBtn.textContent = "Send";
+      submitBtn.textContent = "Submit mailing address";
       setError("Something went wrong sending that — please try again in a moment.");
     };
 

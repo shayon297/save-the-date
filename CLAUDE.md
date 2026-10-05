@@ -85,7 +85,12 @@ and a phone width (375px) before calling a change done.
   are widely letter-spaced, as on the museo website.
 - Countdown is a quiet line in the closing ("224 days to go"); "formal invitation
   to follow" sits under the date line in lowercase italics.
-- Calendar buttons are outlined (ghost); only Send is solid.
+- Calendar buttons are outlined (ghost) and open a small pop-over with the two
+  choices (nothing below moves); filled states always use ivory text.
+- Practical text (times, addresses, labels, placeholders, buttons) is 13–16px in full
+  ink for screen readability. Form fields are visible boxes; the button reads
+  "Submit mailing address".
+- "Save the Date" is ~12% smaller than before so the names lead.
 - Drapes (Amanda's pick, "B" + "C"'s swag): full-height drapes hanging from the
   frame's top corners with a pale fabric fill; the outer edge stays flush with the
   frame and the tie-back (about a third of the way down) gathers the folds against
@@ -94,7 +99,8 @@ and a phone width (375px) before calling a change done.
   the tie, and only a few single roses and leaves between (thinned by half to stay as
   quiet as museo). No tiny buds (they read as specks) and no side-view roses (they
   read as doodles). Line weights are engraving-style: crisp petal outlines, lighter
-  inner curves and veins. A shallow scalloped swag runs across the top from
+  inner curves and veins. Below the tie-backs the drapes are plain fabric (no vine or
+  flowers), so the schedule and form have room. A shallow scalloped swag runs across the top from
   each drape and the two halves meet at the centre (no knot, tail or centre tie);
   it sits behind the drapes.
 - The monogram is museo's own: A over S in Baskervville capitals inside a double-ruled
