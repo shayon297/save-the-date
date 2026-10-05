@@ -1,23 +1,29 @@
 /* ---------------------------------------------------
    Shayon & Amanda — Save the Date
-   A letterpress-style card on a deep olive page.
+   After Minted's "museo" suite: ivory card, double-rule frame, copperplate
+   script, spaced Baskerville capitals, lowercase italics, one olive ink.
+   (Pinyon Script and Baskervville stand in for museo's licensed fonts.)
 --------------------------------------------------- */
 
 :root{
   --page:       #5f6a3a;   /* deep olive backdrop */
   --page-deep:  #4c5530;
   --ivory:      #fbf8f0;
-  --ink:        #3f4a25;   /* card ink */
-  --ink-soft:   #66703f;
+  --ink:        #4a5530;   /* olive ink */
+  --ink-soft:   #6b7449;
   --olive:      #7f8a4e;
   --olive-pale: #d9dcc2;
-  --gold:       #b0975a;   /* metal accent only, per the floral brief */
-  --line:       rgba(63,74,37,0.45);
+  --gold:       #b0975a;
+  --line:       rgba(74,85,48,0.45);
 
-  --serif:  "Cormorant Garamond", "Times New Roman", serif;
-  --script: "Beau Rivage", "Brush Script MT", cursive;
+  --serif:  "Baskervville", "Baskerville", "Times New Roman", serif;
+  --script: "Pinyon Script", "Snell Roundhand", cursive;
 
-  --stripe: 12px;
+  --frame: 14px;            /* outer rule's distance from the card edge */
+  --inset: 26px;            /* inside the inner rule: where the drapes hang */
+}
+@media (max-width: 480px){
+  :root{ --frame: 9px; --inset: 18px; }
 }
 
 *{ box-sizing: border-box; }
@@ -45,143 +51,93 @@ body{
   .page{ padding: 56px 24px 72px; }
 }
 
-/* ---------- card ---------- */
+/* ---------- card + museo double-rule frame ---------- */
 .card{
   position: relative;
   width: 100%;
   max-width: 680px;
   background: var(--ivory);
+  overflow: hidden;
   box-shadow:
     0 1px 0 rgba(255,255,255,0.35) inset,
     0 20px 50px -20px rgba(0,0,0,0.55),
     0 6px 14px -8px rgba(0,0,0,0.35);
 }
-
-/* pinstripe edges, perpendicular to each side like the RSVP card */
-.stripe{ position: absolute; pointer-events: none; }
-.stripe-top, .stripe-bottom{
-  left: 0; right: 0; height: var(--stripe);
-  background: repeating-linear-gradient(90deg, var(--olive) 0 1.5px, transparent 1.5px 5px);
+.card::before, .card::after{
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
 }
-.stripe-top{ top: 0; } .stripe-bottom{ bottom: 0; }
-.stripe-left, .stripe-right{
-  top: 0; bottom: 0; width: var(--stripe);
-  background: repeating-linear-gradient(180deg, var(--olive) 0 1.5px, transparent 1.5px 5px);
-}
-.stripe-left{ left: 0; } .stripe-right{ right: 0; }
+.card::before{ inset: var(--frame); border: 2px solid var(--ink); }
+.card::after{ inset: calc(var(--frame) + 5px); border: 1px solid var(--ink); }
 
-.card{ overflow: hidden; }
 .card-inner{
   position: relative;
   z-index: 1;
-  margin: calc(var(--stripe) + 10px);
-  padding: 40px 22px 30px;
+  margin: calc(var(--inset) + 6px);
+  padding: 44px 22px 30px;
   text-align: center;
 }
 @media (min-width: 700px){
-  .card-inner{
-    margin: calc(var(--stripe) + 16px);
-    padding: 60px 56px 40px;
-  }
-  .eyebrow{ font-size: 12px; letter-spacing: 0.32em; }
-  .date-caps{ letter-spacing: 0.26em; }
+  .card-inner{ padding: 64px 56px 44px; }
 }
-
-/* ---------- type helpers ---------- */
-.eyebrow{
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  margin: 0;
-}
-.eyebrow-lower{ margin-top: 6px; }
 
 /* ---------- hero ---------- */
-.caps-title{
-  font-family: var(--serif);
-  font-weight: 500;
-  font-size: clamp(20px, 4.4vw, 34px);
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  line-height: 1.1;
-  margin: 14px 0 12px;
-  padding-left: 0.26em;
-  color: var(--ink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-}
-@media (max-width: 559px){
-  .caps-title .sprig{ display: none; }
-}
-
-.names{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  margin: 22px 0 0;
-}
-@media (min-width: 560px){
-  .names{ flex-direction: row; justify-content: center; gap: 26px; }
-}
-.name{ display: flex; flex-direction: column; align-items: center; }
-.name-script{
+.script-title{
   font-family: var(--script);
-  font-size: clamp(52px, 11vw, 72px);
-  line-height: 1;
+  font-weight: 400;
+  font-size: clamp(50px, 10.5vw, 80px);
+  line-height: 1.15;
+  margin: 0 0 12px;
   color: var(--ink);
 }
-.name-caps{
-  font-size: 13px;
-  letter-spacing: 0.34em;
+.names-caps{
+  font-weight: 600;
+  font-size: clamp(13px, 2.3vw, 16px);
+  letter-spacing: 0.3em;
+  padding-left: 0.3em;      /* optically centre tracked caps */
   text-transform: uppercase;
-  color: var(--ink);
-  margin-top: 4px;
-  padding-left: 0.34em; /* optically centre tracked caps */
+  margin: 0 0 10px;
 }
-.name-and{
-  font-family: var(--script);
-  font-size: 30px;
-  color: var(--gold);
-  line-height: 1;
-  padding-top: 2px;
+.names-caps .amp{ letter-spacing: 0; margin: 0 0.35em 0 0.05em; }
+.date-line{
+  font-style: italic;
+  font-size: clamp(15px, 2.6vw, 19px);
+  letter-spacing: 0.08em;
+  margin: 0;
 }
-@media (min-width: 560px){ .name-and{ padding-top: 22px; } }
 
 /* ---------- florals: a pair of full-height drapes, flowers along the fabric ----------
-   One drawing (tools-flora.py), mirrored for the right side. Each runs the full
-   card height inside the pinstripe border; the image keeps its proportions, so
-   its width follows the card height. Phones get a slimmer version. */
+   One drawing (tools-flora.py), mirrored for the right side, hanging just inside
+   the frame. The image keeps its proportions, so its width follows the card
+   height. Phones get a proportionally scaled version. */
 .drape-side{
   position: absolute;
-  top: var(--stripe);
-  bottom: var(--stripe);
+  top: var(--inset);
+  bottom: var(--inset);
   z-index: 0;
   display: block;
   pointer-events: none;
   opacity: 0.8;
 }
-.drape-left{ left: var(--stripe); }
-.drape-right{ right: var(--stripe); transform: scaleX(-1); }
+.drape-left{ left: var(--inset); }
+.drape-right{ right: var(--inset); transform: scaleX(-1); }
 .drape-side img{ display: block; height: 100%; width: auto; }
 @media (max-width: 699px){
   .card-inner{ padding-left: 40px; padding-right: 40px; }   /* keep text inside the curtains */
 }
 @media (max-width: 480px){
-  .card-inner{ padding-left: 50px; padding-right: 50px; }
-  .eyebrow, .date-caps, .closing-caps, .place-caps{ text-wrap: balance; }
-  .eyebrow{ letter-spacing: 0.14em; }
-  .caps-title{ font-size: 18px; letter-spacing: 0.2em; padding-left: 0.2em; }
-  .date-caps{ font-size: 12px; letter-spacing: 0.12em; white-space: normal; line-height: 1.5; }
-  .name-script{ font-size: 46px; }
+  .card-inner{ padding-left: 44px; padding-right: 44px; }
+  .closing-caps{ text-wrap: balance; }
+  .script-title{ font-size: 40px; white-space: nowrap; }
+  .names-caps{ letter-spacing: 0.22em; padding-left: 0.22em; }
+  .date-line .bar{ display: none; }
+  .date-line .d, .date-line .c{ display: block; }
   .card-inner .countdown{ gap: 6px; }
   .card-inner .count{ min-width: 0; padding: 0 6px; }
-  .card-inner .count-num{ font-size: 28px; }
-  .card-inner .count-label{ font-size: 9.5px; letter-spacing: 0.14em; padding-left: 0.14em; }
+  .card-inner .count-num{ font-size: 26px; }
+  .card-inner .count-label{ font-size: 9px; letter-spacing: 0.14em; padding-left: 0.14em; }
 }
 
 .rule span{
@@ -189,36 +145,6 @@ body{
   border: 1px solid var(--olive);
   transform: rotate(45deg);
   background: var(--olive-pale);
-}
-
-/* ---------- when / where ---------- */
-.when-where{ margin-top: 36px; }
-.date-caps{
-  font-size: clamp(13px, 2.6vw, 17px);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  margin: 0;
-  color: var(--ink);
-}
-.date-italic{
-  font-style: italic;
-  font-size: clamp(19px, 3.2vw, 23px);
-  margin: 4px 0 14px;
-  color: var(--ink-soft);
-}
-.venue-script{
-  font-family: var(--script);
-  font-size: clamp(30px, 9.4vw, 54px);
-  line-height: 1;
-  margin: 0;
-  color: var(--ink);
-}
-.place-caps{
-  font-size: 13px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  margin: 8px 0 0;
-  color: var(--ink-soft);
 }
 
 /* ---------- countdown ---------- */
@@ -231,8 +157,8 @@ body{
 }
 .count{ display: flex; flex-direction: column; align-items: center; min-width: 64px; }
 .count-num{
-  font-size: clamp(30px, 6vw, 40px);
-  font-weight: 500;
+  font-size: clamp(26px, 5vw, 34px);
+  font-weight: 400;
   line-height: 1;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
@@ -284,8 +210,8 @@ body{
   margin: 0 0 6px;
 }
 .event-name{
-  font-weight: 600;
-  font-size: clamp(22px, 4vw, 26px);
+  font-weight: 500;
+  font-size: clamp(19px, 3.4vw, 22px);
   margin: 0 0 4px;
   color: var(--ink);
 }
@@ -354,7 +280,7 @@ body{
 .field input{
   width: 100%;
   font-family: var(--serif);
-  font-size: 18px;
+  font-size: 16px;
   color: var(--ink);
   background: transparent;
   border: 0;
@@ -441,10 +367,16 @@ body{
 .preview-email body{ background: var(--page); }
 .preview-email .page{ min-height: 100vh; align-items: center; padding: 40px; }
 .preview-email .card{ box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6); }
+/* link preview: a complete card that ends after the date line */
 .preview-og body{ overflow: hidden; }
-.preview-og .page{ padding: 0; align-items: flex-start; justify-content: flex-start; }
-.preview-og .card{ width: 100%; max-width: none; box-shadow: none; }
-.preview-og .card-inner{ padding-top: 34px; }
+.preview-og .page{ min-height: 100vh; padding: 0; align-items: center; }
+.preview-og .card{ max-width: 980px; box-shadow: 0 24px 50px -24px rgba(0,0,0,0.6); }
+.preview-og .card-inner > :not(.hero){ display: none; }
+.preview-og .card-inner{ padding: 58px 150px 64px; }
+.preview-og .script-title{ font-size: 104px; margin-bottom: 18px; }
+.preview-og .names-caps{ font-size: 21px; margin-bottom: 16px; }
+.preview-og .date-line{ font-size: 25px; }
+.preview-og .drape-side img{ height: 1300px; }
 
 .hp{ position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 

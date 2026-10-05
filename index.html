@@ -24,8 +24,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Beau+Rivage&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20" />
+<link href="https://fonts.googleapis.com/css2?family=Baskervville:ital,wght@0,400;0,500;0,600;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=23" />
 <script>
   // ?preview=email / ?preview=og switch the page into fixed layouts used to render the share images
   var pv = new URLSearchParams(location.search).get("preview");
@@ -36,10 +36,6 @@
 
 <main class="page">
   <article class="card">
-    <span class="stripe stripe-top" aria-hidden="true"></span>
-    <span class="stripe stripe-bottom" aria-hidden="true"></span>
-    <span class="stripe stripe-left" aria-hidden="true"></span>
-    <span class="stripe stripe-right" aria-hidden="true"></span>
     <picture class="drape-side drape-left" aria-hidden="true">
       <source media="(max-width: 699px)" srcset="assets/drape-narrow.svg?v=3">
       <img src="assets/drape-wide.svg?v=1" alt="">
@@ -51,34 +47,12 @@
 
     <div class="card-inner">
 
-      <!-- HEADER -->
+      <!-- HEADER — laid out after Minted's "museo" save the date -->
       <header class="hero">
-        <p class="eyebrow">together with their families</p>
-        <h1 class="caps-title">
-          <span>Save the&nbsp;Date</span>
-        </h1>
-        <p class="eyebrow eyebrow-lower">for the wedding of</p>
-
-        <div class="names">
-          <div class="name">
-            <span class="name-script">Shayon</span>
-            <span class="name-caps">Sengupta</span>
-          </div>
-          <span class="name-and">and</span>
-          <div class="name">
-            <span class="name-script">Amanda</span>
-            <span class="name-caps">Young</span>
-          </div>
-        </div>
+        <h1 class="script-title">Save the Date</h1>
+        <p class="names-caps">Shayon <span class="amp">&amp;</span> Amanda</p>
+        <p class="date-line"><span class="d">may 16, 2027</span><span class="bar"> | </span><span class="c">cincinnati, ohio</span></p>
       </header>
-
-      <!-- WHEN / WHERE -->
-      <section class="when-where">
-        <p class="date-caps">Sunday, the sixteenth of May</p>
-        <p class="date-italic">two thousand twenty-seven</p>
-        <p class="venue-script">Cincinnati Art Museum</p>
-        <p class="place-caps">Cincinnati, Ohio</p>
-      </section>
 
       <!-- COUNTDOWN -->
       <section class="countdown" aria-label="Countdown to the wedding">
@@ -98,7 +72,7 @@
         <div class="events">
           <div class="event">
             <p class="event-day">Saturday, May 15</p>
-            <h3 class="event-name">Welcome Dinner</h3>
+            <h3 class="event-name">Welcome Party</h3>
             <p class="event-time">6:30 – 9:30 PM</p>
             <p class="event-venue">Via Vite</p>
             <p class="event-address">520 Vine Street<br>Cincinnati, Ohio</p>

@@ -30,7 +30,7 @@
   // ---- add-to-calendar (.ics, times given in UTC — Cincinnati is Eastern/EDT in May) ----
   var EVENTS = {
     reception: {
-      title: "Shayon & Amanda — Welcome Dinner",
+      title: "Shayon & Amanda — Welcome Party",
       location: "Via Vite, 520 Vine St, Cincinnati, OH 45202",
       start: "20270515T223000Z", // May 15, 6:30 PM EDT
       end: "20270516T013000Z",   // May 15, 9:30 PM EDT
