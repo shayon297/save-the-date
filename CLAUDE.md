@@ -85,8 +85,9 @@ and a phone width (375px) before calling a change done.
 - Drapes (Amanda's pick, "B" + "C"'s swag): full-height drapes hanging from the
   frame's top corners with a pale fabric fill, a visible tie-back band about a third
   of the way down, and a garland along each inner edge (fullest at the top corner,
-  open roses spaced to the hem). A shallow scalloped swag with a small gathered
-  knot runs across the top and joins them at the centre; it sits behind the drapes.
+  open roses spaced to the hem). A shallow scalloped swag runs across the top from
+  each drape and the two halves meet at the centre (no knot, tail or centre tie);
+  it sits behind the drapes.
 - Phones should look like a scaled-down desktop, not a different design, and
   text must not touch the drapes.
 - Tried and rejected: a deep swag with a long hanging tail; a curtain-top arch; curtains drawn from a rod meeting at the centre (round or pointed opening); literal classical motifs (Cinzel inscription capitals,

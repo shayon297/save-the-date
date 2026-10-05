@@ -527,8 +527,8 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
 
 
 def swag(W=1000, H=60):
-    """A shallow fabric swag across the top of the card, joining the two drapes:
-    two scallops of nested folds meeting at a gathered knot in the centre. Drawn to
+    """A shallow fabric swag across the top of the card: each drape's fabric sweeps
+    in from its side as a scallop of nested folds, and the two meet at the centre. Drawn to
     be stretched to the card's width (preserveAspectRatio none; strokes don't scale)."""
     F = Flora(11)
     cx = W / 2
@@ -539,10 +539,6 @@ def swag(W=1000, H=60):
         for j, depth in enumerate((0.28, 0.5, 0.7, 0.86)):
             F.path(f"M{f(x0)} 0Q{f(m)} {f(H * depth * 1.8)} {f(x1)} 0", "d" if j == 3 else "d2")
         F.path(f"M{f(x0)} 0Q{f(m)} {f(H * 0.42 * 1.8)} {f(x1)} 0L{f(x1)} 0Q{f(m)} {f(H * 0.62 * 1.8)} {f(x0)} 0Z", "fabd")
-    # gathered knot where the swags meet
-    F.path(f"M{f(cx-9)} 0L{f(cx+9)} 0L{f(cx+6)} {f(H*0.5)}Q{f(cx)} {f(H*0.62)} {f(cx-6)} {f(H*0.5)}Z", "p")
-    for dx in (-3, 0, 3):
-        F.path(f"M{f(cx+dx)} 2L{f(cx+dx*0.8)} {f(H*0.48)}", "v")
     doc = svg_doc(F, W, H).replace('<svg ', '<svg preserveAspectRatio="none" ', 1)
     return doc.replace("<style>", "<style>path{vector-effect:non-scaling-stroke}", 1)
 
