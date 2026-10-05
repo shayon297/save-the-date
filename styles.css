@@ -466,9 +466,10 @@ body{
   align-items: center;
 }
 .footer-mark{
-  font-family: "Great Vibes", var(--script);   /* Pinyon's capital S reads as an L at this size */
-  font-size: 40px;
+  font-family: var(--script);
+  font-size: 30px;
   line-height: 1;
   color: var(--ink);
 }
 .footer-mark em{ font-style: normal; color: var(--olive); }
+.footer-mark .s{ font-family: "Alex Brush", var(--script); font-size: 1.03em; }   /* Pinyon's capital S reads as an L */
