@@ -16,7 +16,7 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 | `assets/welcome-party.ics`, `assets/wedding.ics` | Calendar files for Apple / Outlook. Keep in sync with `EVENTS` in `script.js` |
 | `tools-flora.py` | Draws the drapes and flowers. Run `python3 tools-flora.py assets` to regenerate them |
 | `assets/drape-wide.svg`, `assets/drape-narrow.svg` | Generated drapes (desktop / phone and tablet). Don't hand-edit; change `tools-flora.py` |
-| `assets/swag.svg`, `assets/swag-tail.svg` | Generated swag across the top joining the drapes (stretches to the card width) and the folded tail at its centre |
+| `assets/swag.svg` | Generated swag across the top joining the drapes: shallow in the middle, curving down into the curtains at the sides (stretches to the card width) |
 | `assets/engagement.jpg` | Engagement photo in the arched frame under the header (the figure hides itself if the file is missing) |
 | `assets/og.jpg` | Link preview (1200×630), rendered from the page with `?preview=og` |
 | `assets/card-email.jpg` | Image used in `email.html`, rendered with `?preview=email` |
@@ -94,7 +94,7 @@ and a phone width (375px) before calling a change done.
   roses as the lead, peony, laurel, olive.
 - Phones should look like a scaled-down desktop, not a different design, and
   text must not touch the drapes.
-- Tried and rejected: literal classical motifs (Cinzel inscription capitals,
+- Tried and rejected: a knot and hanging tail at the centre of the swag; literal classical motifs (Cinzel inscription capitals,
   Greek-key dividers, a laurel wreath around the monogram, Roman-numeral date),
   pinstripe borders, all-over flower patterns, extra frames
   competing with the drapes, flowers bunched at the drape ties.

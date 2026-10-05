@@ -473,7 +473,7 @@ STYLE = ("<style>"
          ".k{fill:#5f6a3a}.kd{fill:#7f8a4e}"
          ".v{fill:none;stroke:#7f8a4e;stroke-width:.7;stroke-linecap:round;opacity:.7}"
          ".d{fill:none;stroke:#7f8a4e;stroke-width:1.05;stroke-linecap:round}"
-         ".fab{fill:#e8eAd6;opacity:.7}"
+         ".fab{fill:#eeeede}"   # opaque, so the swag tucks cleanly behind the drapes
          ".fabd{fill:#7f8a4e;opacity:.1}"
          ".d2{fill:none;stroke:#7f8a4e;stroke-width:.75;stroke-linecap:round;opacity:.5}"
          ".ol{fill:#d9dcc2;stroke:#7f8a4e;stroke-width:.8}"
@@ -532,49 +532,35 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
 
 
 def swag(W=1000, H=100):
-    """Fabric swag across the top of the card, joining the two drapes: two deep
-    scallops of nested folds meeting in the centre (where swag_tail() hangs).
-    Stretched to the card's width (preserveAspectRatio none; strokes don't scale)."""
+    """One fabric swag across the top of the card, joining the two drapes: shallow in
+    the middle, curving down at each side into the curtains, like the top of a
+    theatre curtain. Nested folds follow the same curve. Stretched to the card's
+    width (preserveAspectRatio none; strokes don't scale)."""
     F = Flora(11)
-    cx = W / 2
-    for x0, x1 in ((0, cx), (cx, W)):
-        m = (x0 + x1) / 2
-        # a quadratic's lowest point is half its control depth: the hem dips to ~0.92 H
-        F.path(f"M{f(x0)} 0L{f(x1)} 0Q{f(m)} {f(H * 1.84)} {f(x0)} 0Z", "fab")
-        F.path(f"M{f(x0)} 0Q{f(m)} {f(H * 0.7)} {f(x1)} 0L{f(x1)} 0Q{f(m)} {f(H * 1.1)} {f(x0)} 0Z", "fabd")
-        F.path(f"M{f(x0)} 0Q{f(m)} {f(H * 1.4)} {f(x1)} 0L{f(x1)} 0Q{f(m)} {f(H * 1.62)} {f(x0)} 0Z", "fabd")
-        for depth in (0.35, 0.7, 1.1, 1.4, 1.62):
-            F.path(f"M{f(x0)} 0Q{f(m)} {f(H * depth)} {f(x1)} 0", "d2")
-        F.path(f"M{f(x0)} 0Q{f(m)} {f(H * 1.84)} {f(x1)} 0", "d")
+
+    def edge(side_y, mid_y):
+        """Bottom edge from the left side down at side_y, rising to mid_y in the middle."""
+        return (f"M0 {f(side_y)}C{f(W * 0.07)} {f(mid_y + (side_y - mid_y) * 0.25)} {f(W * 0.22)} {f(mid_y)} {f(W / 2)} {f(mid_y)}"
+                f"C{f(W * 0.78)} {f(mid_y)} {f(W * 0.93)} {f(mid_y + (side_y - mid_y) * 0.25)} {f(W)} {f(side_y)}")
+
+    hem_side, hem_mid = H, H * 0.3
+    # fabric: top edge, down the right side, then the hem traced right to left
+    F.path(f"M0 0L{f(W)} 0L{f(W)} {f(hem_side)}" + _reverse_edge(W, hem_side, hem_mid) + "Z", "fab")
+    folds = [(0.22, 0.07), (0.42, 0.13), (0.62, 0.19), (0.82, 0.25)]   # (depth at the sides, depth in the middle) / H
+    for j, (sd, md) in enumerate(folds):
+        if j % 2 == 0:                    # shade alternate bands
+            nd, nm = (folds[j + 1] if j + 1 < len(folds) else (1.0, 0.3))
+            F.path(edge(sd * H, md * H) + f"L{f(W)} {f(nd * H)}" + _reverse_edge(W, nd * H, nm * H) + "Z", "fabd")
+        F.path(edge(sd * H, md * H), "d2")
+    F.path(edge(hem_side, hem_mid), "d")
     doc = svg_doc(F, W, H).replace('<svg ', '<svg preserveAspectRatio="none" ', 1)
     return doc.replace("<style>", "<style>path{vector-effect:non-scaling-stroke}", 1)
 
 
-def swag_tail(W=64, H=130):
-    """The tail hanging where the two swags meet: a gathered knot, then fabric that
-    widens as it falls and ends in a cascade of points, with folds running down it."""
-    F = Flora(12)
-    cx, ky = W / 2, 14                    # knot centre
-    top_l, top_r = (cx - 7, ky + 4), (cx + 7, ky + 4)
-    hem = [(3, H - 22), (16, H - 6), (cx, H - 1), (W - 16, H - 9), (W - 3, H - 26)]   # cascade points
-    valleys = [(10, H - 30), (24, H - 20), (W - 24, H - 22), (W - 10, H - 34)]
-    out = f"M{f(top_l[0])} {f(top_l[1])}Q{f(cx - 16)} {f(H * 0.45)} {f(hem[0][0])} {f(hem[0][1])}"
-    for p, v in zip(hem[1:], valleys):
-        out += f"L{f(v[0])} {f(v[1])}L{f(p[0])} {f(p[1])}"
-    out += f"Q{f(cx + 16)} {f(H * 0.45)} {f(top_r[0])} {f(top_r[1])}Z"
-    F.path(out, "fab")
-    # shaded folds: panels from the knot down to alternate cascade points
-    for (a, b) in ((hem[0], valleys[0]), (valleys[1], hem[2]), (valleys[2], hem[3])):
-        F.path(f"M{f(cx)} {f(ky + 4)}L{f(a[0])} {f(a[1])}L{f(b[0])} {f(b[1])}Z", "fabd")
-    F.path(out, "d")
-    for p in hem[1:-1] + valleys:          # fold lines from the knot to each point and valley
-        F.path(f"M{f(cx + (p[0] - cx) * 0.08)} {f(ky + 6)}Q{f(cx + (p[0] - cx) * 0.35)} {f(H * 0.5)} {f(p[0])} {f(p[1])}", "d2")
-    # gathered knot
-    F.path(f"M{f(cx - 11)} {f(ky)}Q{f(cx - 11)} {f(ky - 9)} {f(cx)} {f(ky - 9)}Q{f(cx + 11)} {f(ky - 9)} {f(cx + 11)} {f(ky)}"
-           f"Q{f(cx + 11)} {f(ky + 8)} {f(cx)} {f(ky + 8)}Q{f(cx - 11)} {f(ky + 8)} {f(cx - 11)} {f(ky)}Z", "p")
-    for dx in (-5, 0, 5):
-        F.path(f"M{f(cx + dx)} {f(ky - 7)}Q{f(cx + dx * 1.3)} {f(ky)} {f(cx + dx)} {f(ky + 6)}", "v")
-    return svg_doc(F, W, H)
+def _reverse_edge(W, side_y, mid_y):
+    """swag()'s bottom edge traced right to left (continuing a path from its right end)."""
+    return (f"C{f(W * 0.93)} {f(mid_y + (side_y - mid_y) * 0.25)} {f(W * 0.78)} {f(mid_y)} {f(W / 2)} {f(mid_y)}"
+            f"C{f(W * 0.22)} {f(mid_y)} {f(W * 0.07)} {f(mid_y + (side_y - mid_y) * 0.25)} 0 {f(side_y)}")
 
 
 if __name__ == "__main__":
@@ -584,5 +570,4 @@ if __name__ == "__main__":
         open(f"{out}/{name}.svg", "w").write(svg)
         print(name, len(svg) // 1024, "KB")
     open(f"{out}/swag.svg", "w").write(swag())
-    open(f"{out}/swag-tail.svg", "w").write(swag_tail())
-    print("swag, swag-tail")
+    print("swag")
