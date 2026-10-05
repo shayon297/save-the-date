@@ -72,6 +72,8 @@ and a phone width (375px) before calling a change done.
 - Direction: classical Greek / Roman in spirit (restraint, symmetry, proportion),
   not literal. Script is used only for "Save the Date", the closing line and the
   monogram; section titles are Baskervville spaced capitals.
+- Hebrew: only the verse אֲנִי לְדוֹדִי וְדוֹדִי לִי at the top, with a small English
+  translation under it. No Hebrew date (that belongs on the formal invitation).
 - The engagement photo sits in an arch-topped frame under the header.
 - No ornamental dividers, as on museo: sections are separated by space and
   the change of type (script, spaced capitals, lowercase italics).
