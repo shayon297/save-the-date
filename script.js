@@ -232,6 +232,12 @@
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
+    // A bot filled the hidden honeypot: show the usual thank-you, send nothing.
+    if (f.website.value) {
+      form.hidden = true;
+      thanks.hidden = false;
+      return;
+    }
     var d = {
       name: f.name.value.trim(),
       email: f.email.value.trim(),
@@ -243,6 +249,8 @@
       country: f.country.value.trim(),
     };
     if (!d.name) return setError("Please add your name.", f.name);
+    if (!d.email) return setError("Please add your email.", f.email);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return setError("Please check your email address.", f.email);
     if (fields.hidden) {
       if (!search.value.trim()) return setError("Please add your mailing address.", search);
       // typed but never picked a suggestion: keep what they wrote as the street line

@@ -76,16 +76,12 @@ body{
   z-index: 1;
   margin: calc(var(--stripe) + 10px);
   padding: 40px 22px 30px;
-  border: 1px solid var(--line);
-  outline: 1px solid var(--line);
-  outline-offset: 3px;
   text-align: center;
 }
 @media (min-width: 700px){
   .card-inner{
     margin: calc(var(--stripe) + 16px);
     padding: 60px 56px 40px;
-    outline-offset: 4px;
   }
   .eyebrow{ font-size: 12px; letter-spacing: 0.32em; }
   .date-caps{ letter-spacing: 0.26em; }
@@ -449,6 +445,8 @@ body{
 .preview-og .page{ padding: 0; align-items: flex-start; justify-content: flex-start; }
 .preview-og .card{ width: 100%; max-width: none; box-shadow: none; }
 .preview-og .card-inner{ padding-top: 34px; }
+
+.hp{ position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 
 /* ---------- closing ---------- */
 .closing-script{
