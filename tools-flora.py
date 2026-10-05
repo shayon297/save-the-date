@@ -482,8 +482,9 @@ def svg_doc(F, W, H):
 def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     """One full-height curtain (left side; the right is the same image mirrored),
     tied back about a third of the way down, with a pale fabric fill and a garland
-    laid along its inner edge: the fullest cluster where the fabric gathers at the
-    rod, a few larger blooms spaced below, and buds toward the hem. Blooms sit on the
+    laid along its inner edge: full clusters where the fabric gathers at the rod and
+    at the tie, and only a few single roses and leaves between, so the border stays
+    as quiet as the museo type. Blooms sit on the
     fabric (nudged outward from the edge) so nothing spills toward the text.
     k scales flower size for the slimmer phone version."""
     F = Flora(seed)
@@ -495,14 +496,13 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     edge = [Flora.bez(upper, i / n_up)[:2] for i in range(n_up)] + [Flora.bez(lower, i / n_lo)[:2] for i in range(n_lo + 1)]
     edge[0] = (edge[0][0] - 2, 4)
     segs = F.stem(edge, cls="s2")
-    F.rose_stem_foliage(segs, [0.02 + 0.045 * i for i in range(22)], 21 * k, side0=-1)
+    F.rose_stem_foliage(segs, [0.03 + 0.09 * i for i in range(11)], 21 * k, side0=-1)   # sparse: museo is quiet
     tf = tie_y / hem_y                      # roughly where the tie falls along the edge
-    plan = [  # (t, kind, size) — a full cluster at the rod, roses at the tie, open roses spaced to the hem
+    plan = [  # (t, kind, size) — a full cluster at the rod and at the tie, only a few single roses between
         (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.074, "rose_side", 18),
-        (0.17, "rose", 19), (0.26, "rose", 16),
+        (0.21, "rose", 18),
         (tf - 0.055, "peony", 21), (tf + 0.05, "rose", 22),   # above and below the tie band, not over it
-        (tf + 0.13, "rose", 18), (tf + 0.24, "rose", 16), (tf + 0.34, "rose", 17),
-        (tf + 0.45, "peony", 15), (tf + 0.55, "rose", 14),
+        (tf + 0.25, "rose", 16), (tf + 0.48, "rose", 14),
     ]
     for t, kind, R in plan:
         t = min(max(t, 0.005), 0.995)
@@ -512,7 +512,7 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
         x, y = x + off * math.cos(a + math.pi / 2), y + off * math.sin(a + math.pi / 2)
         x = max(x, R * 0.9)                  # never over the frame
         F.bloom(kind, x, y, a + F.r.uniform(-0.4, 0.4), R)
-    for t in (0.06, 0.12, 0.30, tf + 0.20, tf + 0.46):
+    for t in (0.09, tf + 0.14, tf + 0.38):
         x, y, a = F.at(segs, t)
         L = 30 * k
         F.laurel_sprig([(x, y), (x - 0.5 * L * math.cos(a - 0.6), y + 0.5 * L), (x - L * math.cos(a - 0.5), y + L)],
