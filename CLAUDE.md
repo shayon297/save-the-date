@@ -73,8 +73,8 @@ and a phone width (375px) before calling a change done.
   double-rule frame, one olive ink throughout. Fonts are Pinyon Script and
   Baskervville, free stand-ins for museo's licensed Monalisa Script and Mrs Eaves.
 - Direction: classical Greek / Roman in spirit (restraint, symmetry, proportion),
-  not literal. Script is used only for "Save the Date", the closing line and the
-  monogram; section titles are Baskervville spaced capitals.
+  not literal. Script is used only for "Save the Date" and the closing line;
+  section titles are Baskervville spaced capitals.
 - Hebrew: only the verse אֲנִי לְדוֹדִי וְדוֹדִי לִי at the top, no translation.
   No Hebrew date (that belongs on the formal invitation).
 - The engagement photo sits in an arch-topped frame under the header.
@@ -88,8 +88,12 @@ and a phone width (375px) before calling a change done.
 - Drapes (Amanda's pick, "B" + "C"'s swag): full-height drapes hanging from the
   frame's top corners with a pale fabric fill; the outer edge stays flush with the
   frame and the tie-back (about a third of the way down) gathers the folds against
-  it, widening gradually to the hem, and a garland along each inner edge (fullest at the top corner,
-  open roses spaced to the hem). A shallow scalloped swag runs across the top from
+  it, widening gradually to the hem, which rests on the bottom inner rule. A light
+  vine runs along each inner edge with full rose clusters at the top corner and at
+  the tie, and only a few single roses and leaves between (thinned by half to stay as
+  quiet as museo). No tiny buds (they read as specks) and no side-view roses (they
+  read as doodles). Line weights are engraving-style: crisp petal outlines, lighter
+  inner curves and veins. A shallow scalloped swag runs across the top from
   each drape and the two halves meet at the centre (no knot, tail or centre tie);
   it sits behind the drapes.
 - The monogram is museo's own: A over S in Baskervville capitals inside a double-ruled
