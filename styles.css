@@ -122,6 +122,13 @@ body{
   font-size: clamp(15px, 2.5vw, 18px);
   margin: 8px 0 0;
 }
+.hero-note{
+  font-style: italic;
+  font-size: clamp(14px, 2.3vw, 16px);
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 14px 0 0;
+}
 
 /* ---------- florals: a pair of full-height drapes, flowers along the fabric ----------
    One drawing (tools-flora.py), mirrored for the right side, hanging just inside
@@ -163,33 +170,22 @@ body{
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
-  object-position: 50% 50%;
+  object-position: 50% 45%;
+  filter: sepia(0.12) saturate(0.85);
   border-radius: 400px 400px 0 0;
 }
 
 /* ---------- countdown ---------- */
 .countdown{
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  gap: 0.45em;
-  margin: 28px auto 0;
-}
-.count-num{
-  font-size: clamp(26px, 5vw, 32px);
-  font-weight: 400;
-  line-height: 1;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-.count-label{
   font-style: italic;
-  font-size: clamp(15px, 2.6vw, 18px);
+  font-size: 15px;
   letter-spacing: 0.04em;
   color: var(--ink-soft);
+  margin: 0;
 }
+.count-num{ font-style: normal; font-variant-numeric: tabular-nums; }
 
 /* ---------- sections: as on museo, no ornamental dividers, just generous space ---------- */
 .weekend, .address, .closing{ margin-top: 64px; }
@@ -218,7 +214,8 @@ body{
   /* subgrid: day, name, time, venue, address and button line up across both columns
      even when one event name wraps */
   .events{ grid-template-columns: 1fr 1fr; grid-template-rows: repeat(6, auto); gap: 0; }
-  .event{ display: grid; grid-row: span 6; grid-template-rows: subgrid; padding: 0 22px; }
+  .event{ display: grid; grid-row: span 6; grid-template-rows: subgrid; padding: 0 12px; }
+  .event-name{ white-space: nowrap; font-size: 20px; }
   .event + .event{ border-left: 1px solid var(--line); }
   .event-name{ align-self: end; }
 }
@@ -255,7 +252,15 @@ body{
   margin: 4px 0 14px;
 }
 .event-actions{
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.cal-options{ margin: 4px 0 0; font-size: 13px; }
+.cal-options[hidden]{ display: none; }
+.cal-options .link-btn{ font-size: 13px; padding: 6px 2px; display: inline-block; }   /* comfortable tap targets */
+.cal-dot{ color: var(--ink-soft); margin: 0 6px; }
+@media (max-width: 480px){
+  .cal-options .link-btn{ display: block; padding: 7px 0; }
+  .cal-dot{ display: none; }
 }
 
 .btn{
@@ -271,9 +276,11 @@ body{
   line-height: 1;
 }
 .btn-solid{ background: var(--ink); color: var(--ivory); }
-.btn-solid:hover{ background: var(--page-deep); border-color: var(--page-deep); }
+@media (hover: hover){   /* no sticky dark state after a tap on phones */
+  .btn-solid:hover{ background: var(--page-deep); border-color: var(--page-deep); }
+  .btn-ghost:hover{ background: var(--ink); color: var(--ivory); }
+}
 .btn-ghost{ background: transparent; color: var(--ink); border-color: var(--line); }
-.btn-ghost:hover{ background: var(--ink); color: var(--ivory); }
 
 /* ---------- mailing address form ---------- */
 .address{ text-align: center; }
@@ -384,10 +391,8 @@ body{
 
 /* ---------- preview renders (share images for email / text) ---------- */
 .preview .countdown, .preview .address, .preview .event-actions{ display: none; }
-.preview .closing{ margin-top: 0; }
-.preview-email body{ background: var(--page); }
-.preview-email .page{ min-height: 100vh; align-items: center; padding: 40px; }
-.preview-email .card{ box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6); }
+.preview-email .page{ min-height: 0; padding: 0; }
+.preview-email .card{ max-width: none; box-shadow: none; }
 /* link preview: a complete card that ends after the date line */
 .preview-og body{ overflow: hidden; }
 .preview-og .page{ min-height: 100vh; padding: 0; align-items: center; }

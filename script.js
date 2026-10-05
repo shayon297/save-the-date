@@ -21,7 +21,11 @@
   tick();
   setInterval(tick, 60000);
 
-  // ---- add-to-calendar (.ics, times given in UTC — Cincinnati is Eastern/EDT in May) ----
+  // ---- add-to-calendar ----
+  // Each button reveals two links: a static .ics file (assets/*.ics; iPhone and Mac open it
+  // straight into Calendar, Outlook imports it) and a Google Calendar link (Android, Gmail).
+  // A real file works in phone browsers and in-app browsers, where blob downloads often fail.
+  // Times are UTC — Cincinnati is on EDT (UTC−4) in May. Keep in sync with assets/*.ics.
   var EVENTS = {
     reception: {
       title: "Shayon & Amanda — Welcome Party",
@@ -37,47 +41,23 @@
     },
   };
 
-  function pad(n) { return n < 10 ? "0" + n : "" + n; }
-
-  function dtstamp() {
-    var d = new Date();
-    return (
-      d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + "T" +
-      pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + "Z"
-    );
-  }
-
-  function buildIcs(ev) {
-    return [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//Shayon and Amanda//Save the Date//EN",
-      "BEGIN:VEVENT",
-      "UID:" + ev.start + "-shayon-amanda@savethedate",
-      "DTSTAMP:" + dtstamp(),
-      "DTSTART:" + ev.start,
-      "DTEND:" + ev.end,
-      "SUMMARY:" + ev.title,
-      "LOCATION:" + ev.location,
-      "DESCRIPTION:Formal invitation with full details to follow.",
-      "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\r\n");
+  function googleUrl(ev) {
+    return "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+      "&text=" + encodeURIComponent(ev.title) +
+      "&dates=" + ev.start + "/" + ev.end +
+      "&location=" + encodeURIComponent(ev.location) +
+      "&details=" + encodeURIComponent("Formal invitation with full details to follow. https://shayon297.github.io/save-the-date/");
   }
 
   document.querySelectorAll("[data-cal]").forEach(function (btn) {
+    var ev = EVENTS[btn.dataset.cal];
+    var opts = btn.parentNode.querySelector(".cal-options");
+    if (!ev || !opts) return;
+    opts.querySelector("[data-gcal]").href = googleUrl(ev);
     btn.addEventListener("click", function () {
-      var ev = EVENTS[btn.dataset.cal];
-      if (!ev) return;
-      var blob = new Blob([buildIcs(ev)], { type: "text/calendar;charset=utf-8" });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = btn.dataset.cal + "-shayon-amanda.ics";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      var open = opts.hidden;
+      opts.hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
     });
   });
 

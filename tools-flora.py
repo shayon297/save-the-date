@@ -446,8 +446,12 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
         px = tie_x + side * r.uniform(-12, 14)
         ln = (hem_y - tie_y) * r.uniform(0.35, 0.7)
         F.path(f"M{f(px)} {f(tie_y+10)}q{f(r.uniform(-8,8))} {f(ln*0.5)} {f(r.uniform(-6,6))} {f(ln)}", "d")
-    F.path(f"M{f(tie_x-9)} {f(tie_y-4)}Q{f(tie_x)} {f(tie_y-10)} {f(tie_x+9)} {f(tie_y-4)}", "d")
-    F.path(f"M{f(tie_x-10)} {f(tie_y+3)}Q{f(tie_x)} {f(tie_y+9)} {f(tie_x+10)} {f(tie_y+3)}", "d")
+    # tie-back: a fabric band wrapped round the gathered folds
+    tx0 = min(s[3][0] for s in strands) - 6; tx1 = max(s[3][0] for s in strands) + 6
+    mx = (tx0 + tx1) / 2
+    F.path(f"M{f(tx0)} {f(tie_y-6)}Q{f(mx)} {f(tie_y-2)} {f(tx1)} {f(tie_y-6)}L{f(tx1)} {f(tie_y+5)}"
+           f"Q{f(mx)} {f(tie_y+9)} {f(tx0)} {f(tie_y+5)}Z", "p")
+    F.path(f"M{f(tx0+2)} {f(tie_y-0.5)}Q{f(mx)} {f(tie_y+3.5)} {f(tx1-2)} {f(tie_y-0.5)}", "v")
     for i in range(3):
         gx = x0 + w * r.uniform(0.15, 0.85)
         F.path(f"M{f(gx)} {f(y0)}q{f(side*3)} 18 {f(side*1)} 40", "d")
@@ -498,12 +502,12 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     segs = F.stem(edge, cls="s2")
     F.rose_stem_foliage(segs, [0.02 + 0.045 * i for i in range(22)], 21 * k, side0=-1)
     tf = tie_y / hem_y                      # roughly where the tie falls along the edge
-    plan = [  # (t, kind, size) — a full cluster at the rod, a few larger blooms below, buds at the hem
+    plan = [  # (t, kind, size) — a full cluster at the rod, roses at the tie, open roses spaced to the hem
         (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.074, "rose_side", 18),
-        (0.095, "bud", 14), (0.17, "rose", 19), (0.26, "bud", 13),
-        (tf - 0.02, "peony", 21), (tf + 0.01, "rose", 22), (tf + 0.04, "bud", 13),
-        (tf + 0.14, "rose", 18), (tf + 0.27, "rose_side", 15), (tf + 0.40, "rose", 15),
-        (tf + 0.52, "bud", 11), (0.985, "bud", 10),
+        (0.17, "rose", 19), (0.26, "rose_side", 15),
+        (tf - 0.02, "peony", 21), (tf + 0.01, "rose", 22),
+        (tf + 0.13, "rose", 18), (tf + 0.24, "rose_side", 16), (tf + 0.34, "rose", 17),
+        (tf + 0.45, "peony", 15), (tf + 0.55, "rose", 14),
     ]
     for t, kind, R in plan:
         t = min(max(t, 0.005), 0.995)

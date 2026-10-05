@@ -12,7 +12,8 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 |---|---|
 | `index.html` | The card: header, engagement photo, countdown, The Weekend, address form, closing |
 | `styles.css` | All styling. Palette and fonts are CSS variables at the top |
-| `script.js` | Countdown, "Add to calendar" `.ics` downloads, address form |
+| `script.js` | Countdown, "Add to calendar" links (Google Calendar URL built here), address form |
+| `assets/welcome-party.ics`, `assets/wedding.ics` | Calendar files for Apple / Outlook. Keep in sync with `EVENTS` in `script.js` |
 | `tools-flora.py` | Draws the drapes and flowers. Run `python3 tools-flora.py assets` to regenerate them |
 | `assets/drape-wide.svg`, `assets/drape-narrow.svg` | Generated drapes (desktop / phone and tablet). Don't hand-edit; change `tools-flora.py` |
 | `assets/engagement.jpg` | Engagement photo in the arched frame under the header (the figure hides itself if the file is missing) |
@@ -43,11 +44,11 @@ and a phone width (375px) before calling a change done.
     --window-size=1200,630 --force-device-scale-factor=2 --virtual-time-budget=10000 \
     --screenshot=og.png "http://localhost:8792/?preview=og"
   ```
-  (Use `--window-size=760,1440` and `?preview=email` for the email image. Headless
+  (For the email image use `?preview=email` with `--window-size=760,<card height>` so the card fills the image edge to edge. Headless
   Chrome sometimes doesn't exit on its own; stop it once the PNG is written.)
 - **Event times** (Eastern): Welcome Party Sat May 15, 6:30–9:30 PM at Via Vite;
-  Wedding Ceremony & Reception Sun May 16, 5:30–11:00 PM. The `.ics` times in
-  `script.js` are stored in UTC (EDT is UTC−4).
+  Wedding Ceremony & Reception Sun May 16, 5:30–11:00 PM. Times in `script.js`
+  and `assets/*.ics` are stored in UTC (EDT is UTC−4).
 
 ## Address form
 
@@ -73,11 +74,13 @@ and a phone width (375px) before calling a change done.
 - The engagement photo sits in an arch-topped frame under the header.
 - No ornamental dividers, as on museo: sections are separated by space and
   the change of type (script, spaced capitals, lowercase italics).
-- Countdown shows whole days only ("224 days to go").
+- Countdown is a quiet line in the closing ("224 days to go"); "formal invitation
+  to follow" sits under the date line in lowercase italics.
 - Calendar buttons are outlined (ghost); only Send is solid.
 - Florals: a symmetric pair of full-height, tied-back drapes inside the frame,
-  with a pale fabric fill and a garland along each curtain's inner edge; the
-  fullest cluster is at the top corner, with fewer, larger blooms below. Flowers stay at the
+  with a pale fabric fill, a visible tie-back band, and a garland along each
+  curtain's inner edge; the fullest cluster is at the top corner, with open roses
+  spaced to the hem (no tiny buds; they read as specks). Flowers stay at the
   borders and never sit under the text. Classical palette from the floral brief:
   roses as the lead, peony, laurel, olive.
 - Phones should look like a scaled-down desktop, not a different design, and
