@@ -1,4 +1,4 @@
-# Save the Date — Shayon & Amanda
+# Save the Date — Amanda & Shayon
 
 A static save-the-date site (plain HTML/CSS/JS, no build step) for the wedding on
 Sunday, May 16, 2027 at the Cincinnati Art Museum.
@@ -57,7 +57,7 @@ and a phone width (375px) before calling a change done.
   Each submission becomes a row in a Google Sheet that Shayon owns; ask him for
   access. If the script in `google-apps-script.gs` changes, it has to be pasted
   into the sheet and redeployed (Deploy → Manage deployments → New version).
-- Email is required. A hidden `website` field is a honeypot: if it's filled,
+- Email is optional (Amanda's call), but checked if given. A hidden `website` field is a honeypot: if it's filled,
   the form shows the thank-you and sends nothing.
 - By design there is no email/mailto fallback. Submissions go to the sheet only.
 - Address suggestions: Google Places (New) when `CONFIG.placesKey` is set in
@@ -89,6 +89,8 @@ and a phone width (375px) before calling a change done.
   open roses spaced to the hem). A shallow scalloped swag runs across the top from
   each drape and the two halves meet at the centre (no knot, tail or centre tie);
   it sits behind the drapes.
+- Names are bride first everywhere (card, titles, monogram A & S, calendar events,
+  email, text message), the usual order on wedding stationery.
 - Phones should look like a scaled-down desktop, not a different design, and
   text must not touch the drapes.
 - Tried and rejected: a deep swag with a long hanging tail; a curtain-top arch; curtains drawn from a rod meeting at the centre (round or pointed opening); literal classical motifs (Cinzel inscription capitals,

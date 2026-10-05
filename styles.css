@@ -324,6 +324,7 @@ body{
   color: var(--ink-soft);
   margin: 0 0 6px;
 }
+.field-optional{ letter-spacing: 0.04em; text-transform: none; font-style: italic; }
 .field input{
   width: 100%;
   font-family: var(--serif);

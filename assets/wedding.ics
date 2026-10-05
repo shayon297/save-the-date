@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Shayon and Amanda//Save the Date//EN
+PRODID:-//Amanda and Shayon//Save the Date//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
@@ -8,7 +8,7 @@ UID:20270516T213000Z-shayon-amanda@savethedate
 DTSTAMP:20261004T000000Z
 DTSTART:20270516T213000Z
 DTEND:20270517T030000Z
-SUMMARY:Shayon & Amanda — Wedding Ceremony & Reception
+SUMMARY:Amanda & Shayon — Wedding Ceremony & Reception
 LOCATION:Cincinnati Art Museum\, 953 Eden Park Dr\, Cincinnati\, OH 45202
 DESCRIPTION:Formal invitation with full details to follow.
 URL:https://shayon297.github.io/save-the-date/

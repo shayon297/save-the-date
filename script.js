@@ -1,4 +1,4 @@
-// Shayon & Amanda — Save the Date
+// Amanda & Shayon — Save the Date
 (function () {
   "use strict";
 
@@ -31,13 +31,13 @@
   // Times are UTC — Cincinnati is on EDT (UTC−4) in May. Keep in sync with assets/*.ics.
   var EVENTS = {
     reception: {
-      title: "Shayon & Amanda — Welcome Party",
+      title: "Amanda & Shayon — Welcome Party",
       location: "Via Vite, 520 Vine St, Cincinnati, OH 45202",
       start: "20270515T223000Z", // May 15, 6:30 PM EDT
       end: "20270516T013000Z",   // May 15, 9:30 PM EDT
     },
     wedding: {
-      title: "Shayon & Amanda — Wedding Ceremony & Reception",
+      title: "Amanda & Shayon — Wedding Ceremony & Reception",
       location: "Cincinnati Art Museum, 953 Eden Park Dr, Cincinnati, OH 45202",
       start: "20270516T213000Z", // May 16, 5:30 PM EDT
       end: "20270517T030000Z",   // May 16, 11:00 PM EDT
@@ -316,8 +316,8 @@
       country: f.country.value.trim(),
     };
     if (!d.name) return setError("Please add your name.", f.name);
-    if (!d.email) return setError("Please add your email.", f.email);
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return setError("Please check your email address.", f.email);
+    // email is optional, but if given it should look like one
+    if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return setError("Please check your email address.", f.email);
     if (fields.hidden) {
       if (!search.value.trim()) return setError("Please add your mailing address.", search);
       // typed but never picked a suggestion: keep what they wrote as the street line
