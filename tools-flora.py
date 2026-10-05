@@ -404,32 +404,34 @@ class Flora:
         return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0} {y0} {w} {h}">' + "".join(self.out) + "</svg>"
 
 
-def drape(F, x0, y0, w, tie_y, hem_y, side):
-    """Tied-back fabric hanging from the top edge (the draped chuppah)."""
+def drape(F, x0, y0, w, tie_y, hem_y, side=1):
+    """Tied-back fabric hanging from the top edge (the draped chuppah). The outer edge
+    stays flush with the frame all the way down; the tie gathers the folds into a
+    bundle against that side, and below it they widen gradually to the hem.
+    Returns the inner edge as two cubic segments (rod->tie, tie->hem)."""
     r = F.r
     k = 7
-    tie_x = x0 + (w * 0.55 if side > 0 else w * 0.45)
+    bundle = 0.3 * w                      # width of the gathered folds at the tie
     hem_pts = []
     strands = []
     fill_at = len(F.out)                  # the fabric fill goes under the fold lines
     for i in range(k):
-        t = i / (k - 1)
+        t = i / (k - 1)                   # 0 = outer edge (at the frame), 1 = inner edge
         sx = x0 + t * w
-        c1 = (sx + side * r.uniform(-4, 6), y0 + (tie_y - y0) * 0.35)
-        c2 = (tie_x + (sx - tie_x) * 0.35 + side * r.uniform(-3, 3), y0 + (tie_y - y0) * 0.8)
-        tx = tie_x + (sx - tie_x) * 0.12
+        tx = x0 + t * bundle
+        c1 = (sx + r.uniform(-4, 6) * t, y0 + (tie_y - y0) * 0.35)
+        c2 = (tx + (sx - tx) * 0.35 + r.uniform(-3, 3) * t, y0 + (tie_y - y0) * 0.8)
         d = f"M{f(sx)} {f(y0)}C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(tx)} {f(tie_y)}"
-        hx = tie_x + (t - 0.5) * w * 0.8 + side * 6 + r.uniform(-5, 5)
-        hy = hem_y + r.uniform(-30, 12) - abs(t - 0.5) * 30
-        c3 = (tx + (hx - tx) * 0.1 + r.uniform(-4, 4), tie_y + (hy - tie_y) * 0.4)
-        c4 = (hx + r.uniform(-8, 8), tie_y + (hy - tie_y) * 0.82)
+        hx = x0 + t * 0.92 * w + r.uniform(-3, 3) * t
+        hy = hem_y + r.uniform(-14, 6) * t - 10 * math.sin(math.pi * t)
+        c3 = (tx + (hx - tx) * 0.12, tie_y + (hy - tie_y) * 0.35)
+        c4 = (tx + (hx - tx) * 0.75 + r.uniform(-4, 4) * t, tie_y + (hy - tie_y) * 0.78)
         d += f"C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(hx)} {f(hy)}"
         F.path(d, "d")
         hem_pts.append((hx, hy))
         strands.append(((sx, y0), c1, c2, (tx, tie_y), c3, c4, (hx, hy)))
-    hp = hem_pts if side > 0 else hem_pts[::-1]
-    d = f"M{f(hp[0][0])} {f(hp[0][1])}"
-    for (ax, ay), (bx, by) in zip(hp, hp[1:]):
+    d = f"M{f(hem_pts[0][0])} {f(hem_pts[0][1])}"
+    for (ax, ay), (bx, by) in zip(hem_pts, hem_pts[1:]):
         d += f"Q{f((ax+bx)/2 + r.uniform(-3,3))} {f(max(ay,by)+4)} {f(bx)} {f(by)}"
     F.path(d, "d")
     # fabric: closed outline from the outer strand, across the hem, up the inner strand
@@ -442,20 +444,20 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
     fab += f"C{f(a[5][0])} {f(a[5][1])} {f(a[4][0])} {f(a[4][1])} {f(a[3][0])} {f(a[3][1])}"
     fab += f"C{f(a[2][0])} {f(a[2][1])} {f(a[1][0])} {f(a[1][1])} {f(a[0][0])} {f(a[0][1])}Z"
     F.out.insert(fill_at, f'<path class="fab" d="{fab}"/>')
-    for i in range(3):
-        px = tie_x + side * r.uniform(-12, 14)
+    for i in range(3):                    # extra folds falling from the tie
+        px = x0 + bundle * r.uniform(0.25, 0.85)
         ln = (hem_y - tie_y) * r.uniform(0.35, 0.7)
-        F.path(f"M{f(px)} {f(tie_y+10)}q{f(r.uniform(-8,8))} {f(ln*0.5)} {f(r.uniform(-6,6))} {f(ln)}", "d")
+        F.path(f"M{f(px)} {f(tie_y+10)}q{f(r.uniform(2, 10))} {f(ln*0.5)} {f(r.uniform(4, 14))} {f(ln)}", "d")
     # tie-back: a fabric band wrapped round the gathered folds
-    tx0 = min(s[3][0] for s in strands) - 6; tx1 = max(s[3][0] for s in strands) + 6
+    tx0 = max(0.5, x0 - 2); tx1 = x0 + bundle + 6
     mx = (tx0 + tx1) / 2
     F.path(f"M{f(tx0)} {f(tie_y-6)}Q{f(mx)} {f(tie_y-2)} {f(tx1)} {f(tie_y-6)}L{f(tx1)} {f(tie_y+5)}"
            f"Q{f(mx)} {f(tie_y+9)} {f(tx0)} {f(tie_y+5)}Z", "p")
     F.path(f"M{f(tx0+2)} {f(tie_y-0.5)}Q{f(mx)} {f(tie_y+3.5)} {f(tx1-2)} {f(tie_y-0.5)}", "v")
     for i in range(3):
         gx = x0 + w * r.uniform(0.15, 0.85)
-        F.path(f"M{f(gx)} {f(y0)}q{f(side*3)} 18 {f(side*1)} 40", "d")
-    return (tie_x, tie_y)
+        F.path(f"M{f(gx)} {f(y0)}q3 18 1 40", "d")
+    return (b[0], b[1], b[2], b[3]), (b[3], b[4], b[5], b[6])
 
 
 STYLE = ("<style>"
@@ -477,18 +479,6 @@ def svg_doc(F, W, H):
             + STYLE + "".join(F.out) + "</svg>")
 
 
-def drape_edge(x0, w, tie_y, hem_y, side):
-    """Points down the drape's inner (card-facing) edge: from the rod, in to the tie, out to the hem."""
-    tx = x0 + (w * 0.55 if side > 0 else w * 0.45)
-    if side > 0:
-        e = x0 + w
-        return [(e - 2, 4), (x0 + w * 0.92, tie_y * 0.45), (tx + (e - tx) * 0.12 + 3, tie_y),
-                (tx + 0.2 * w, tie_y + (hem_y - tie_y) * 0.5), (tx + 0.4 * w + 6, hem_y - 12)]
-    e = x0
-    return [(e + 2, 4), (x0 + w * 0.08, tie_y * 0.45), (tx - (tx - e) * 0.12 - 3, tie_y),
-            (tx - 0.2 * w, tie_y + (hem_y - tie_y) * 0.5), (tx - 0.4 * w - 6, hem_y - 12)]
-
-
 def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     """One full-height curtain (left side; the right is the same image mirrored),
     tied back about a third of the way down, with a pale fabric fill and a garland
@@ -499,16 +489,19 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     F = Flora(seed)
     x0 = 0.5                                # flush with the image edge, so the fabric meets the frame
     tie_y, hem_y = H * tie_frac, H - hem_pad
-    drape(F, x0, 0, w, tie_y, hem_y, +1)
-    edge = drape_edge(x0, w, tie_y, hem_y, +1)
+    upper, lower = drape(F, x0, 0, w, tie_y, hem_y)
+    # the garland follows the inner edge, sampled so t along it is roughly the height
+    n_up = max(3, round(18 * tie_frac)); n_lo = 18 - n_up
+    edge = [Flora.bez(upper, i / n_up)[:2] for i in range(n_up)] + [Flora.bez(lower, i / n_lo)[:2] for i in range(n_lo + 1)]
+    edge[0] = (edge[0][0] - 2, 4)
     segs = F.stem(edge, cls="s2")
     F.rose_stem_foliage(segs, [0.02 + 0.045 * i for i in range(22)], 21 * k, side0=-1)
     tf = tie_y / hem_y                      # roughly where the tie falls along the edge
     plan = [  # (t, kind, size) — a full cluster at the rod, roses at the tie, open roses spaced to the hem
         (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.074, "rose_side", 18),
-        (0.17, "rose", 19), (0.26, "rose_side", 15),
+        (0.17, "rose", 19), (0.26, "rose", 16),
         (tf - 0.02, "peony", 21), (tf + 0.01, "rose", 22),
-        (tf + 0.13, "rose", 18), (tf + 0.24, "rose_side", 16), (tf + 0.34, "rose", 17),
+        (tf + 0.13, "rose", 18), (tf + 0.24, "rose", 16), (tf + 0.34, "rose", 17),
         (tf + 0.45, "peony", 15), (tf + 0.55, "rose", 14),
     ]
     for t, kind, R in plan:
@@ -517,6 +510,7 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
         R *= k
         off = R * 0.55                       # toward the card edge, onto the fabric
         x, y = x + off * math.cos(a + math.pi / 2), y + off * math.sin(a + math.pi / 2)
+        x = max(x, R * 0.9)                  # never over the frame
         F.bloom(kind, x, y, a + F.r.uniform(-0.4, 0.4), R)
     for t in (0.06, 0.12, 0.30, tf + 0.20, tf + 0.46):
         x, y, a = F.at(segs, t)

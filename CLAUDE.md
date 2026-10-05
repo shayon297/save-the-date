@@ -84,8 +84,9 @@ and a phone width (375px) before calling a change done.
   to follow" sits under the date line in lowercase italics.
 - Calendar buttons are outlined (ghost); only Send is solid.
 - Drapes (Amanda's pick, "B" + "C"'s swag): full-height drapes hanging from the
-  frame's top corners with a pale fabric fill, a visible tie-back band about a third
-  of the way down, and a garland along each inner edge (fullest at the top corner,
+  frame's top corners with a pale fabric fill; the outer edge stays flush with the
+  frame and the tie-back (about a third of the way down) gathers the folds against
+  it, widening gradually to the hem, and a garland along each inner edge (fullest at the top corner,
   open roses spaced to the hem). A shallow scalloped swag runs across the top from
   each drape and the two halves meet at the centre (no knot, tail or centre tie);
   it sits behind the drapes.
