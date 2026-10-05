@@ -6,6 +6,9 @@
     // Web app URL (ends in /exec) of the Apps Script in google-apps-script.gs,
     // bound to the mailing-address spreadsheet. Each submission becomes a row.
     sheetEndpoint: "https://script.google.com/macros/s/AKfycbwte4JkUkFrMbIr9vCFheFrXyUqlp8kNnHFpgsEffheSdWF8FL3PkFY5gzFQzuQ5XNK/exec",
+    // Google Maps Platform API key with "Places API (New)" enabled, restricted to
+    // HTTP referrers shayon297.github.io/* (and localhost for testing). Empty = use Photon.
+    placesKey: "",
   };
 
   // ---- countdown: whole days to the ceremony start, 5:30 PM Eastern ----
@@ -97,28 +100,119 @@
     search.setAttribute("aria-expanded", "false");
   }
 
-  function label(p) {
-    var line1 = [p.housenumber, p.street].filter(Boolean).join(" ") || p.name || "";
-    var line2 = [p.city || p.town || p.village || p.county, p.state, p.postcode, p.country].filter(Boolean).join(", ");
-    return { line1: line1, line2: line2 };
+  // ---- address lookup ----
+  // Google Places (New) when CONFIG.placesKey is set: accurate US house-level addresses.
+  // Otherwise Photon (OpenStreetMap, no key), which often lacks US house numbers; for
+  // that case we keep the number the guest typed. Each suggestion is
+  // { line1, line2, resolve() -> Promise<{street, city, state, zip, country}> }.
+  var sessionToken = null;   // groups one guest's keystrokes + pick into one Google billing session
+
+  function newToken() {
+    return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random();
   }
 
-  function render(features) {
+  function googleSuggest(q) {
+    if (!sessionToken) sessionToken = newToken();
+    return fetch("https://places.googleapis.com/v1/places:autocomplete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Goog-Api-Key": CONFIG.placesKey },
+      body: JSON.stringify({
+        input: q,
+        sessionToken: sessionToken,
+        includedPrimaryTypes: ["street_address", "premise", "subpremise"],
+        regionCode: "us",
+        locationBias: { circle: { center: { latitude: 39.10, longitude: -84.51 }, radius: 50000 } },
+      }),
+    }).then(function (r) {
+      if (!r.ok) throw new Error("places " + r.status);
+      return r.json();
+    }).then(function (json) {
+      return (json.suggestions || []).filter(function (s) { return s.placePrediction; }).slice(0, 5).map(function (s) {
+        var p = s.placePrediction, sf = p.structuredFormat || {};
+        return {
+          line1: (sf.mainText && sf.mainText.text) || (p.text && p.text.text) || "",
+          line2: (sf.secondaryText && sf.secondaryText.text) || "",
+          resolve: function () { return googleDetails(p.placeId); },
+        };
+      });
+    });
+  }
+
+  function googleDetails(placeId) {
+    var url = "https://places.googleapis.com/v1/places/" + encodeURIComponent(placeId) +
+      "?sessionToken=" + encodeURIComponent(sessionToken);
+    sessionToken = null;   // a pick ends the session
+    return fetch(url, {
+      headers: { "X-Goog-Api-Key": CONFIG.placesKey, "X-Goog-FieldMask": "addressComponents" },
+    }).then(function (r) {
+      if (!r.ok) throw new Error("place " + r.status);
+      return r.json();
+    }).then(function (place) {
+      var c = {};
+      (place.addressComponents || []).forEach(function (a) {
+        (a.types || []).forEach(function (t) { if (!c[t]) c[t] = a; });
+      });
+      function long(t) { return c[t] ? c[t].longText : ""; }
+      function short(t) { return c[t] ? c[t].shortText : ""; }
+      return {
+        street: [long("street_number"), long("route")].filter(Boolean).join(" "),
+        unit: long("subpremise"),
+        city: long("locality") || long("postal_town") || long("sublocality") || long("administrative_area_level_2"),
+        state: short("administrative_area_level_1"),
+        zip: long("postal_code"),
+        country: long("country"),
+      };
+    });
+  }
+
+  function photonSuggest(q) {
+    // Cincinnati as a soft location bias; results are still global.
+    var url = "https://photon.komoot.io/api/?limit=6&lang=en&lat=39.10&lon=-84.51&q=" + encodeURIComponent(q);
+    var typedNumber = (q.match(/^\s*(\d+[a-z]?)\b/i) || [])[1] || "";
+    return fetch(url).then(function (r) { return r.json(); }).then(function (json) {
+      var seen = {}, out = [];
+      (json.features || []).forEach(function (ft) {
+        var p = ft.properties;
+        if (!p || !(p.housenumber || p.street || (p.type === "street" && p.name))) return;
+        var street = p.street || p.name;
+        // Photon readily returns nearby but different streets: keep only streets whose
+        // name the guest actually typed
+        var word = (street.toLowerCase().match(/[a-z0-9]{3,}/) || [""])[0];
+        if (!word || q.toLowerCase().indexOf(word) === -1) return;
+        var number = p.housenumber || typedNumber;   // OSM often lacks the house number; keep the guest's
+        var fields = {
+          street: [number, street].filter(Boolean).join(" "),
+          unit: "",
+          city: p.city || p.town || p.village || p.county || "",
+          state: p.state || "",
+          zip: p.postcode || "",
+          country: p.country || "",
+        };
+        var line2 = [fields.city, fields.state, fields.zip, fields.country].filter(Boolean).join(", ");
+        var key = fields.street + "|" + line2;
+        if (seen[key] || out.length >= 5) return;
+        seen[key] = true;
+        out.push({ line1: fields.street, line2: line2, resolve: function () { return Promise.resolve(fields); } });
+      });
+      return out;
+    });
+  }
+
+  function render(suggestions) {
     list.innerHTML = "";
-    items = features;
+    items = suggestions;
     activeIdx = -1;
-    features.forEach(function (ft, i) {
-      var p = ft.properties, l = label(p);
+    suggestions.forEach(function (sug, i) {
       var li = document.createElement("li");
       li.setAttribute("role", "option");
       li.id = "addr-opt-" + i;
       li.innerHTML = "<span></span><small></small>";
-      li.firstChild.textContent = l.line1;
-      li.lastChild.textContent = l.line2;
+      li.firstChild.textContent = sug.line1;
+      li.lastChild.textContent = sug.line2;
       li.addEventListener("mousedown", function (e) { e.preventDefault(); choose(i); });
       list.appendChild(li);
     });
-    if (!features.length) {
+    if (!suggestions.length) {
       var li = document.createElement("li");
       li.className = "suggest-note";
       li.textContent = "No matches — add your address manually below.";
@@ -129,34 +223,30 @@
   }
 
   function choose(i) {
-    var p = items[i].properties, l = label(p);
-    f.street.value = l.line1;
-    f.city.value = p.city || p.town || p.village || "";
-    f.state.value = p.state || "";
-    f.zip.value = p.postcode || "";
-    f.country.value = p.country || f.country.value;
-    search.value = [l.line1, l.line2].filter(Boolean).join(", ");
+    var sug = items[i];
+    search.value = [sug.line1, sug.line2].filter(Boolean).join(", ");
     closeList();
     showFields();
-    f.unit.focus();
+    sug.resolve().then(function (a) {
+      f.street.value = a.street || sug.line1;
+      if (a.unit) f.unit.value = a.unit;
+      f.city.value = a.city;
+      f.state.value = a.state;
+      f.zip.value = a.zip;
+      f.country.value = a.country || f.country.value;
+    }).catch(function () {
+      f.street.value = sug.line1;   // details failed: keep what we have, the fields are editable
+    }).then(function () { f.unit.focus(); });
   }
 
   function lookup(q) {
     var mySeq = ++seq;
-    // Cincinnati as a soft location bias; results are still global.
-    var url = "https://photon.komoot.io/api/?limit=5&lang=en&lat=39.10&lon=-84.51&q=" + encodeURIComponent(q);
-    fetch(url).then(function (r) { return r.json(); }).then(function (json) {
+    var suggest = CONFIG.placesKey ? googleSuggest : photonSuggest;
+    suggest(q).catch(function () {
+      return CONFIG.placesKey ? photonSuggest(q) : Promise.reject();   // Google down or key refused: fall back
+    }).then(function (suggestions) {
       if (mySeq !== seq) return;
-      var seen = {};
-      var feats = (json.features || []).filter(function (ft) {
-        var p = ft.properties;
-        if (!p || !(p.housenumber || p.street || p.name)) return false;
-        var l = label(p), key = l.line1 + "|" + l.line2;
-        if (seen[key]) return false;
-        seen[key] = true;
-        return true;
-      });
-      render(feats);
+      render(suggestions);
     }).catch(function () {
       if (mySeq !== seq) return;
       closeList();

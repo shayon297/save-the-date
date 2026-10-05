@@ -78,11 +78,11 @@ body{
   position: relative;
   z-index: 1;
   margin: calc(var(--inset) + 6px);
-  padding: 44px 22px 30px;
+  padding: 118px 22px 30px;   /* top clears the swag and its tail */
   text-align: center;
 }
 @media (min-width: 700px){
-  .card-inner{ padding: 64px 56px 44px; }
+  .card-inner{ padding: 118px 56px 44px; }   /* top clears the swag and its tail */
 }
 
 /* ---------- hero ---------- */
@@ -102,7 +102,19 @@ body{
   text-transform: uppercase;
   margin: 0 0 10px;
 }
-.names-caps .amp{ letter-spacing: 0; margin: 0 0.35em 0 0.05em; }
+/* full names stacked, museo-style, with a small italic ampersand between */
+.names-caps .name{ display: block; line-height: 1.5; }
+.names-caps .amp{
+  display: block;
+  font-weight: 400;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 1.15em;
+  line-height: 1.3;
+  margin-left: -0.3em;      /* undo the tracked caps' optical offset for the single glyph */
+  color: var(--ink-soft);
+}
 .date-line{
   font-style: italic;
   font-size: clamp(15px, 2.6vw, 19px);
@@ -116,15 +128,7 @@ body{
 }
 .hebrew-verse{
   font-size: clamp(18px, 3vw, 22px);
-  margin: 0 0 2px;
-}
-.verse-en{                  /* small translation under the Hebrew verse */
-  font-style: italic;
-  font-size: clamp(12px, 2vw, 13.5px);
-  letter-spacing: 0.04em;
-  color: var(--ink-soft);
-  margin: 0 0 10px;
-  text-wrap: balance;
+  margin: 0 0 6px;
 }
 .hero-note{
   font-style: italic;
@@ -151,11 +155,23 @@ body{
   position: absolute;
   top: var(--hang); left: var(--hang); right: var(--hang);
   width: calc(100% - 2 * var(--hang));
-  height: 44px;
+  height: 104px;            /* the scallops dip to ~0.92 of this */
   z-index: 0;
   pointer-events: none;
 }
-@media (max-width: 480px){ .swag{ height: 26px; } }
+.swag-tail{                 /* tail where the swags meet; its own image so it keeps its shape */
+  position: absolute;
+  top: calc(var(--hang) - 4px);
+  left: 50%;
+  width: 60px; height: 122px;
+  transform: translateX(-50%);
+  z-index: 0;
+  pointer-events: none;
+}
+@media (max-width: 480px){
+  .swag{ height: 58px; }
+  .swag-tail{ width: 36px; height: 73px; }
+}
 .drape-left{ left: var(--hang); }
 .drape-right{ right: var(--hang); transform: scaleX(-1); }
 .drape-side img{ display: block; height: 100%; width: auto; }
@@ -163,7 +179,7 @@ body{
   .card-inner{ padding-left: 40px; padding-right: 40px; }   /* keep text inside the curtains */
 }
 @media (max-width: 480px){
-  .card-inner{ padding-left: 44px; padding-right: 44px; }
+  .card-inner{ padding-left: 44px; padding-right: 44px; padding-top: 78px; }
   .card-inner .closing-caps{ font-size: 12px; letter-spacing: 0.22em; padding-left: 0.22em; }
   .script-title{ font-size: 40px; white-space: nowrap; }
   .names-caps{ letter-spacing: 0.22em; padding-left: 0.22em; }
@@ -412,12 +428,13 @@ body{
 .preview-og .page{ min-height: 100vh; padding: 0; align-items: center; }
 .preview-og .card{ max-width: 980px; box-shadow: 0 24px 50px -24px rgba(0,0,0,0.6); }
 .preview-og .card-inner > :not(.hero){ display: none; }
-.preview-og .card-inner{ padding: 58px 150px 64px; }
+.preview-og .card-inner{ padding: 112px 150px 56px; }
 .preview-og .script-title{ font-size: 104px; margin-bottom: 18px; }
-.preview-og .names-caps{ font-size: 21px; margin-bottom: 16px; }
+.preview-og .names-caps{ font-size: 19px; margin-bottom: 14px; }
+.preview-og .names-caps .name{ display: inline; }
+.preview-og .names-caps .amp{ display: inline; margin: 0 0.6em 0 0.3em; }
 .preview-og .date-line{ font-size: 25px; }
 .preview-og .hebrew-verse{ font-size: 26px; }
-.preview-og .verse-en{ font-size: 16px; margin-bottom: 12px; }
 .preview-og .drape-side{ overflow: hidden; -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
 .preview-og .drape-side img{ height: 1300px; }
 

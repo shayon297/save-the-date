@@ -531,26 +531,50 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     return svg_doc(F, W, H)
 
 
-def swag(W=1000, H=60):
-    """A shallow fabric swag across the top of the card, joining the two drapes:
-    two scallops of nested folds meeting at a gathered knot in the centre. Drawn to
-    be stretched to the card's width (preserveAspectRatio none; strokes don't scale)."""
+def swag(W=1000, H=100):
+    """Fabric swag across the top of the card, joining the two drapes: two deep
+    scallops of nested folds meeting in the centre (where swag_tail() hangs).
+    Stretched to the card's width (preserveAspectRatio none; strokes don't scale)."""
     F = Flora(11)
     cx = W / 2
-    out = ['<path class="fab" d="']
     for x0, x1 in ((0, cx), (cx, W)):
         m = (x0 + x1) / 2
-        lo = f"M{f(x0)} 0L{f(x1)} 0Q{f(m)} {f(H * 1.55)} {f(x0)} 0Z"
-        F.path(lo, "fab")
-        for j, depth in enumerate((0.28, 0.5, 0.7, 0.86)):
-            F.path(f"M{f(x0)} 0Q{f(m)} {f(H * depth * 1.8)} {f(x1)} 0", "d" if j == 3 else "d2")
-        F.path(f"M{f(x0)} 0Q{f(m)} {f(H * 0.42 * 1.8)} {f(x1)} 0L{f(x1)} 0Q{f(m)} {f(H * 0.62 * 1.8)} {f(x0)} 0Z", "fabd")
-    # gathered knot where the swags meet
-    F.path(f"M{f(cx-9)} 0L{f(cx+9)} 0L{f(cx+6)} {f(H*0.5)}Q{f(cx)} {f(H*0.62)} {f(cx-6)} {f(H*0.5)}Z", "p")
-    for dx in (-3, 0, 3):
-        F.path(f"M{f(cx+dx)} 2L{f(cx+dx*0.8)} {f(H*0.48)}", "v")
+        # a quadratic's lowest point is half its control depth: the hem dips to ~0.92 H
+        F.path(f"M{f(x0)} 0L{f(x1)} 0Q{f(m)} {f(H * 1.84)} {f(x0)} 0Z", "fab")
+        F.path(f"M{f(x0)} 0Q{f(m)} {f(H * 0.7)} {f(x1)} 0L{f(x1)} 0Q{f(m)} {f(H * 1.1)} {f(x0)} 0Z", "fabd")
+        F.path(f"M{f(x0)} 0Q{f(m)} {f(H * 1.4)} {f(x1)} 0L{f(x1)} 0Q{f(m)} {f(H * 1.62)} {f(x0)} 0Z", "fabd")
+        for depth in (0.35, 0.7, 1.1, 1.4, 1.62):
+            F.path(f"M{f(x0)} 0Q{f(m)} {f(H * depth)} {f(x1)} 0", "d2")
+        F.path(f"M{f(x0)} 0Q{f(m)} {f(H * 1.84)} {f(x1)} 0", "d")
     doc = svg_doc(F, W, H).replace('<svg ', '<svg preserveAspectRatio="none" ', 1)
     return doc.replace("<style>", "<style>path{vector-effect:non-scaling-stroke}", 1)
+
+
+def swag_tail(W=64, H=130):
+    """The tail hanging where the two swags meet: a gathered knot, then fabric that
+    widens as it falls and ends in a cascade of points, with folds running down it."""
+    F = Flora(12)
+    cx, ky = W / 2, 14                    # knot centre
+    top_l, top_r = (cx - 7, ky + 4), (cx + 7, ky + 4)
+    hem = [(3, H - 22), (16, H - 6), (cx, H - 1), (W - 16, H - 9), (W - 3, H - 26)]   # cascade points
+    valleys = [(10, H - 30), (24, H - 20), (W - 24, H - 22), (W - 10, H - 34)]
+    out = f"M{f(top_l[0])} {f(top_l[1])}Q{f(cx - 16)} {f(H * 0.45)} {f(hem[0][0])} {f(hem[0][1])}"
+    for p, v in zip(hem[1:], valleys):
+        out += f"L{f(v[0])} {f(v[1])}L{f(p[0])} {f(p[1])}"
+    out += f"Q{f(cx + 16)} {f(H * 0.45)} {f(top_r[0])} {f(top_r[1])}Z"
+    F.path(out, "fab")
+    # shaded folds: panels from the knot down to alternate cascade points
+    for (a, b) in ((hem[0], valleys[0]), (valleys[1], hem[2]), (valleys[2], hem[3])):
+        F.path(f"M{f(cx)} {f(ky + 4)}L{f(a[0])} {f(a[1])}L{f(b[0])} {f(b[1])}Z", "fabd")
+    F.path(out, "d")
+    for p in hem[1:-1] + valleys:          # fold lines from the knot to each point and valley
+        F.path(f"M{f(cx + (p[0] - cx) * 0.08)} {f(ky + 6)}Q{f(cx + (p[0] - cx) * 0.35)} {f(H * 0.5)} {f(p[0])} {f(p[1])}", "d2")
+    # gathered knot
+    F.path(f"M{f(cx - 11)} {f(ky)}Q{f(cx - 11)} {f(ky - 9)} {f(cx)} {f(ky - 9)}Q{f(cx + 11)} {f(ky - 9)} {f(cx + 11)} {f(ky)}"
+           f"Q{f(cx + 11)} {f(ky + 8)} {f(cx)} {f(ky + 8)}Q{f(cx - 11)} {f(ky + 8)} {f(cx - 11)} {f(ky)}Z", "p")
+    for dx in (-5, 0, 5):
+        F.path(f"M{f(cx + dx)} {f(ky - 7)}Q{f(cx + dx * 1.3)} {f(ky)} {f(cx + dx)} {f(ky + 6)}", "v")
+    return svg_doc(F, W, H)
 
 
 if __name__ == "__main__":
@@ -560,4 +584,5 @@ if __name__ == "__main__":
         open(f"{out}/{name}.svg", "w").write(svg)
         print(name, len(svg) // 1024, "KB")
     open(f"{out}/swag.svg", "w").write(swag())
-    print("swag")
+    open(f"{out}/swag-tail.svg", "w").write(swag_tail())
+    print("swag, swag-tail")

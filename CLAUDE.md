@@ -16,7 +16,7 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 | `assets/welcome-party.ics`, `assets/wedding.ics` | Calendar files for Apple / Outlook. Keep in sync with `EVENTS` in `script.js` |
 | `tools-flora.py` | Draws the drapes and flowers. Run `python3 tools-flora.py assets` to regenerate them |
 | `assets/drape-wide.svg`, `assets/drape-narrow.svg` | Generated drapes (desktop / phone and tablet). Don't hand-edit; change `tools-flora.py` |
-| `assets/swag.svg` | Generated fabric swag across the top joining the drapes (stretches to the card width) |
+| `assets/swag.svg`, `assets/swag-tail.svg` | Generated swag across the top joining the drapes (stretches to the card width) and the folded tail at its centre |
 | `assets/engagement.jpg` | Engagement photo in the arched frame under the header (the figure hides itself if the file is missing) |
 | `assets/og.jpg` | Link preview (1200×630), rendered from the page with `?preview=og` |
 | `assets/card-email.jpg` | Image used in `email.html`, rendered with `?preview=email` |
@@ -60,8 +60,10 @@ and a phone width (375px) before calling a change done.
 - Email is required. A hidden `website` field is a honeypot: if it's filled,
   the form shows the thank-you and sends nothing.
 - By design there is no email/mailto fallback. Submissions go to the sheet only.
-- Address suggestions come from Photon (OpenStreetMap). Switching to Google
-  Places needs an API key from Shayon.
+- Address suggestions: Google Places (New) when `CONFIG.placesKey` is set in
+  `script.js` (key restricted to this site's referrers, Places API (New) enabled);
+  otherwise Photon (OpenStreetMap), keeping the house number the guest typed
+  because OSM often lacks US house numbers. Google failures fall back to Photon.
 
 ## Design decisions so far (keep unless asked to change)
 
@@ -72,8 +74,8 @@ and a phone width (375px) before calling a change done.
 - Direction: classical Greek / Roman in spirit (restraint, symmetry, proportion),
   not literal. Script is used only for "Save the Date", the closing line and the
   monogram; section titles are Baskervville spaced capitals.
-- Hebrew: only the verse אֲנִי לְדוֹדִי וְדוֹדִי לִי at the top, with a small English
-  translation under it. No Hebrew date (that belongs on the formal invitation).
+- Hebrew: only the verse אֲנִי לְדוֹדִי וְדוֹדִי לִי at the top, no translation.
+  No Hebrew date (that belongs on the formal invitation).
 - The engagement photo sits in an arch-topped frame under the header.
 - No ornamental dividers, as on museo: sections are separated by space and
   the change of type (script, spaced capitals, lowercase italics).
