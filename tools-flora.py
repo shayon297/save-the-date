@@ -423,7 +423,7 @@ def drape(F, x0, y0, w, tie_y, hem_y, side=1):
         c2 = (tx + (sx - tx) * 0.35 + r.uniform(-3, 3) * t, y0 + (tie_y - y0) * 0.8)
         d = f"M{f(sx)} {f(y0)}C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(tx)} {f(tie_y)}"
         hx = x0 + t * 0.92 * w + r.uniform(-3, 3) * t
-        hy = hem_y + r.uniform(-14, 6) * t - 10 * math.sin(math.pi * t)
+        hy = min(hem_y + 3, hem_y + r.uniform(-8, 6) * t - 6 * math.sin(math.pi * t))   # reaches the floor
         c3 = (tx + (hx - tx) * 0.12, tie_y + (hy - tie_y) * 0.35)
         c4 = (tx + (hx - tx) * 0.75 + r.uniform(-4, 4) * t, tie_y + (hy - tie_y) * 0.78)
         d += f"C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(hx)} {f(hy)}"
@@ -449,7 +449,7 @@ def drape(F, x0, y0, w, tie_y, hem_y, side=1):
         ln = (hem_y - tie_y) * r.uniform(0.35, 0.7)
         F.path(f"M{f(px)} {f(tie_y+10)}q{f(r.uniform(2, 10))} {f(ln*0.5)} {f(r.uniform(4, 14))} {f(ln)}", "d")
     # tie-back: a fabric band wrapped round the gathered folds
-    tx0 = max(0.5, x0 - 2); tx1 = x0 + bundle + 6
+    tx0 = max(0.5, x0 - 2); tx1 = x0 + bundle + 16   # reaches past the roses, so it shows
     mx = (tx0 + tx1) / 2
     F.path(f"M{f(tx0)} {f(tie_y-6)}Q{f(mx)} {f(tie_y-2)} {f(tx1)} {f(tie_y-6)}L{f(tx1)} {f(tie_y+5)}"
            f"Q{f(mx)} {f(tie_y+9)} {f(tx0)} {f(tie_y+5)}Z", "p")
@@ -500,7 +500,7 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     plan = [  # (t, kind, size) — a full cluster at the rod, roses at the tie, open roses spaced to the hem
         (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.074, "rose_side", 18),
         (0.17, "rose", 19), (0.26, "rose", 16),
-        (tf - 0.02, "peony", 21), (tf + 0.01, "rose", 22),
+        (tf - 0.055, "peony", 21), (tf + 0.05, "rose", 22),   # above and below the tie band, not over it
         (tf + 0.13, "rose", 18), (tf + 0.24, "rose", 16), (tf + 0.34, "rose", 17),
         (tf + 0.45, "peony", 15), (tf + 0.55, "rose", 14),
     ]
@@ -539,8 +539,8 @@ def swag(W=1000, H=60):
 
 if __name__ == "__main__":
     out = sys.argv[1]
-    for name, svg in (("drape-wide", tall_drape(150, 1720, 92, 0.37, 30, 1.0, 4)),
-                      ("drape-narrow", tall_drape(78, 2020, 48, 0.37, 30, 0.55, 4))):
+    for name, svg in (("drape-wide", tall_drape(150, 1720, 92, 0.37, 6, 1.0, 4)),
+                      ("drape-narrow", tall_drape(78, 2020, 48, 0.37, 6, 0.55, 4))):
         open(f"{out}/{name}.svg", "w").write(svg)
         print(name, len(svg) // 1024, "KB")
     open(f"{out}/swag.svg", "w").write(swag())
