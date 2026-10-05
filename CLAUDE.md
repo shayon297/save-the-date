@@ -62,8 +62,9 @@ and a phone width (375px) before calling a change done.
 - By design there is no email/mailto fallback. Submissions go to the sheet only.
 - Address suggestions: Google Places (New) when `CONFIG.placesKey` is set in
   `script.js` (key restricted to this site's referrers, Places API (New) enabled);
-  otherwise Photon (OpenStreetMap), keeping the house number the guest typed
-  because OSM often lacks US house numbers. Google failures fall back to Photon.
+  otherwise Photon (OpenStreetMap), which only offers exact matches (the typed
+  street and house number), because OSM often lacks US house numbers and would
+  otherwise suggest wrong addresses. Google failures fall back to Photon.
 
 ## Design decisions so far (keep unless asked to change)
 

@@ -102,8 +102,8 @@
 
   // ---- address lookup ----
   // Google Places (New) when CONFIG.placesKey is set: accurate US house-level addresses.
-  // Otherwise Photon (OpenStreetMap, no key), which often lacks US house numbers; for
-  // that case we keep the number the guest typed. Each suggestion is
+  // Otherwise Photon (OpenStreetMap, no key), which often lacks US house numbers, so it
+  // only offers exact matches. Each suggestion is
   // { line1, line2, resolve() -> Promise<{street, city, state, zip, country}> }.
   var sessionToken = null;   // groups one guest's keystrokes + pick into one Google billing session
 
@@ -175,11 +175,14 @@
         var p = ft.properties;
         if (!p || !(p.housenumber || p.street || (p.type === "street" && p.name))) return;
         var street = p.street || p.name;
-        // Photon readily returns nearby but different streets: keep only streets whose
-        // name the guest actually typed
+        // Photon readily returns similar streets elsewhere, and often lacks US house
+        // numbers. Only offer real addresses: the street the guest typed, and, if they
+        // typed a number, that exact house number. Otherwise nothing is suggested and
+        // what they typed is kept as the street line.
         var word = (street.toLowerCase().match(/[a-z0-9]{3,}/) || [""])[0];
         if (!word || q.toLowerCase().indexOf(word) === -1) return;
-        var number = p.housenumber || typedNumber;   // OSM often lacks the house number; keep the guest's
+        if (typedNumber && String(p.housenumber || "").toLowerCase() !== typedNumber.toLowerCase()) return;
+        var number = p.housenumber || "";
         var fields = {
           street: [number, street].filter(Boolean).join(" "),
           unit: "",
