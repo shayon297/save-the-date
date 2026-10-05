@@ -16,6 +16,7 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 | `assets/welcome-party.ics`, `assets/wedding.ics` | Calendar files for Apple / Outlook. Keep in sync with `EVENTS` in `script.js` |
 | `tools-flora.py` | Draws the drapes and flowers. Run `python3 tools-flora.py assets` to regenerate them |
 | `assets/drape-wide.svg`, `assets/drape-narrow.svg` | Generated drapes (desktop / phone and tablet). Don't hand-edit; change `tools-flora.py` |
+| `assets/swag.svg` | Generated fabric swag across the top joining the drapes (stretches to the card width) |
 | `assets/engagement.jpg` | Engagement photo in the arched frame under the header (the figure hides itself if the file is missing) |
 | `assets/og.jpg` | Link preview (1200×630), rendered from the page with `?preview=og` |
 | `assets/card-email.jpg` | Image used in `email.html`, rendered with `?preview=email` |
@@ -77,10 +78,14 @@ and a phone width (375px) before calling a change done.
 - Countdown is a quiet line in the closing ("224 days to go"); "formal invitation
   to follow" sits under the date line in lowercase italics.
 - Calendar buttons are outlined (ghost); only Send is solid.
-- Florals: a symmetric pair of full-height, tied-back drapes inside the frame,
-  with a pale fabric fill, a visible tie-back band, and a garland along each
-  curtain's inner edge; the fullest cluster is at the top corner, with open roses
-  spaced to the hem (no tiny buds; they read as specks). Flowers stay at the
+- Drapes (after the satin-drapery-before-columns reference): a swag across the
+  top joins a symmetric pair of curtains that hang inside the frame, sweep in a
+  curve to a tie low on the outer side (about 3/4 down), and pool at the hem.
+  Fewer, deeper folds with uneven shading; edges drawn firmly, inner folds lightly.
+- Florals: a garland along each curtain's inner edge, placed by height: the
+  fullest cluster at the top corner, open roses down the sweep, a cluster at the
+  tie. No flowers between 40% and 62% of the height, where the event titles sit;
+  no tiny buds (they read as specks). Flowers stay at the
   borders and never sit under the text. Classical palette from the floral brief:
   roses as the lead, peony, laurel, olive.
 - Phones should look like a scaled-down desktop, not a different design, and

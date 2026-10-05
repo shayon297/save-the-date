@@ -142,6 +142,16 @@ body{
   display: block;
   pointer-events: none;
 }
+/* swag across the top joining the two drapes (assets/swag.svg stretches to the card width) */
+.swag{
+  position: absolute;
+  top: var(--hang); left: var(--hang); right: var(--hang);
+  width: calc(100% - 2 * var(--hang));
+  height: 44px;
+  z-index: 0;
+  pointer-events: none;
+}
+@media (max-width: 480px){ .swag{ height: 26px; } }
 .drape-left{ left: var(--hang); }
 .drape-right{ right: var(--hang); transform: scaleX(-1); }
 .drape-side img{ display: block; height: 100%; width: auto; }
@@ -215,7 +225,7 @@ body{
      even when one event name wraps */
   .events{ grid-template-columns: 1fr 1fr; grid-template-rows: repeat(6, auto); gap: 0; }
   .event{ display: grid; grid-row: span 6; grid-template-rows: subgrid; padding: 0 12px; }
-  .event-name{ white-space: nowrap; font-size: 20px; }
+  .events .event-name{ white-space: nowrap; font-size: 19px; }   /* .events: outranks the base rule below */
   .event + .event{ border-left: 1px solid var(--line); }
   .event-name{ align-self: end; }
 }
