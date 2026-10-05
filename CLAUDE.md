@@ -1,0 +1,82 @@
+# Save the Date — Shayon & Amanda
+
+A static save-the-date site (plain HTML/CSS/JS, no build step) for the wedding on
+Sunday, May 16, 2027 at the Cincinnati Art Museum.
+
+- Live: https://shayon297.github.io/save-the-date/
+- Deploy: push to `main`. GitHub Pages serves the repo root and updates in about a minute.
+
+## Files
+
+| File | What it is |
+|---|---|
+| `index.html` | The card: header, countdown, The Weekend, address form, closing |
+| `styles.css` | All styling. Palette and fonts are CSS variables at the top |
+| `script.js` | Countdown, "Add to calendar" `.ics` downloads, address form |
+| `tools-flora.py` | Draws the drapes and flowers. Run `python3 tools-flora.py assets` to regenerate them |
+| `assets/drape-wide.svg`, `assets/drape-narrow.svg` | Generated drapes (desktop / phone and tablet). Don't hand-edit; change `tools-flora.py` |
+| `assets/og.jpg` | Link preview (1200×630), rendered from the page with `?preview=og` |
+| `assets/card-email.jpg` | Image used in `email.html`, rendered with `?preview=email` |
+| `email.html` | Email version (replace `GUEST_NAME` per send) |
+| `sms.txt` | Text-message version |
+| `google-apps-script.gs` | The Apps Script that runs inside the address spreadsheet |
+
+## Run it locally
+
+```bash
+python3 -m http.server 8792
+```
+
+Open http://localhost:8792 and check both a desktop width (about 760px or wider)
+and a phone width (375px) before calling a change done.
+
+## Conventions
+
+- **Cache-busting:** after editing `styles.css`, `script.js`, or an asset, bump its
+  `?v=` number in `index.html`, or browsers keep showing the old file.
+- **Share images:** after visual changes to the top of the card, re-render the
+  previews with headless Chrome, then save them as JPGs in `assets/`:
+
+  ```bash
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars \
+    --window-size=1200,630 --force-device-scale-factor=2 --virtual-time-budget=10000 \
+    --screenshot=og.png "http://localhost:8792/?preview=og"
+  ```
+  (Use `--window-size=760,1440` and `?preview=email` for the email image. Headless
+  Chrome sometimes doesn't exit on its own; stop it once the PNG is written.)
+- **Event times** (Eastern): Welcome Party Sat May 15, 6:30–9:30 PM at Via Vite;
+  Wedding Ceremony & Reception Sun May 16, 5:30–11:00 PM. The `.ics` times in
+  `script.js` are stored in UTC (EDT is UTC−4).
+
+## Address form
+
+- Posts JSON to the Apps Script web app in `CONFIG.sheetEndpoint` (`script.js`).
+  Each submission becomes a row in a Google Sheet that Shayon owns; ask him for
+  access. If the script in `google-apps-script.gs` changes, it has to be pasted
+  into the sheet and redeployed (Deploy → Manage deployments → New version).
+- Email is required. A hidden `website` field is a honeypot: if it's filled,
+  the form shows the thank-you and sends nothing.
+- By design there is no email/mailto fallback. Submissions go to the sheet only.
+- Address suggestions come from Photon (OpenStreetMap). Switching to Google
+  Places needs an API key from Shayon.
+
+## Design decisions so far (keep unless asked to change)
+
+- Styled after Minted's "museo" save the date: "Save the Date" in copperplate
+  script, names in spaced capitals, a lowercase italic date line, an olive
+  double-rule frame, one olive ink throughout. Fonts are Pinyon Script and
+  Baskervville, free stand-ins for museo's licensed Monalisa Script and Mrs Eaves.
+- Florals: a symmetric pair of full-height, tied-back drapes inside the frame,
+  with a garland running along each curtain's inner edge. Flowers stay at the
+  borders and never sit under the text. Classical palette from the floral brief:
+  roses as the lead, peony, laurel, olive.
+- Phones should look like a scaled-down desktop, not a different design, and
+  text must not touch the drapes.
+- Tried and rejected: pinstripe borders, all-over flower patterns, extra frames
+  competing with the drapes, flowers bunched at the drape ties.
+- The page has `noindex` so it stays out of search results.
+
+## Working on this site
+
+- Say explicitly when you remove any content; don't let removals pass silently.
+- Verify changes visually at desktop and phone widths before reporting them done.
