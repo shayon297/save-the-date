@@ -1,7 +1,6 @@
 """Botanical line art for the save-the-date, restricted to the floral brief's
 florist's selection: cream garden roses and spray roses, peony, olive / bay laurel foliage.
-Writes assets/flora.svg, a sprite of flowers and leaves that script.js places along the
-curtains (the curtains themselves are drawn in script.js, to the card's exact size)."""
+Full-height drapes echo the chuppah; a shallow swag across the top joins them at the centre."""
 import math, random, sys
 
 PREC = 1
@@ -405,6 +404,60 @@ class Flora:
         return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0} {y0} {w} {h}">' + "".join(self.out) + "</svg>"
 
 
+def drape(F, x0, y0, w, tie_y, hem_y, side):
+    """Tied-back fabric hanging from the top edge (the draped chuppah)."""
+    r = F.r
+    k = 7
+    tie_x = x0 + (w * 0.55 if side > 0 else w * 0.45)
+    hem_pts = []
+    strands = []
+    fill_at = len(F.out)                  # the fabric fill goes under the fold lines
+    for i in range(k):
+        t = i / (k - 1)
+        sx = x0 + t * w
+        c1 = (sx + side * r.uniform(-4, 6), y0 + (tie_y - y0) * 0.35)
+        c2 = (tie_x + (sx - tie_x) * 0.35 + side * r.uniform(-3, 3), y0 + (tie_y - y0) * 0.8)
+        tx = tie_x + (sx - tie_x) * 0.12
+        d = f"M{f(sx)} {f(y0)}C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(tx)} {f(tie_y)}"
+        hx = tie_x + (t - 0.5) * w * 0.8 + side * 6 + r.uniform(-5, 5)
+        hy = hem_y + r.uniform(-30, 12) - abs(t - 0.5) * 30
+        c3 = (tx + (hx - tx) * 0.1 + r.uniform(-4, 4), tie_y + (hy - tie_y) * 0.4)
+        c4 = (hx + r.uniform(-8, 8), tie_y + (hy - tie_y) * 0.82)
+        d += f"C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(hx)} {f(hy)}"
+        F.path(d, "d")
+        hem_pts.append((hx, hy))
+        strands.append(((sx, y0), c1, c2, (tx, tie_y), c3, c4, (hx, hy)))
+    hp = hem_pts if side > 0 else hem_pts[::-1]
+    d = f"M{f(hp[0][0])} {f(hp[0][1])}"
+    for (ax, ay), (bx, by) in zip(hp, hp[1:]):
+        d += f"Q{f((ax+bx)/2 + r.uniform(-3,3))} {f(max(ay,by)+4)} {f(bx)} {f(by)}"
+    F.path(d, "d")
+    # fabric: closed outline from the outer strand, across the hem, up the inner strand
+    a, b = strands[0], strands[-1]
+    fab = f"M{f(a[0][0])} {f(a[0][1])}L{f(b[0][0])} {f(b[0][1])}"
+    fab += f"C{f(b[1][0])} {f(b[1][1])} {f(b[2][0])} {f(b[2][1])} {f(b[3][0])} {f(b[3][1])}"
+    fab += f"C{f(b[4][0])} {f(b[4][1])} {f(b[5][0])} {f(b[5][1])} {f(b[6][0])} {f(b[6][1])}"
+    for (hx, hy) in reversed(hem_pts[:-1]):
+        fab += f"L{f(hx)} {f(hy + 2)}"
+    fab += f"C{f(a[5][0])} {f(a[5][1])} {f(a[4][0])} {f(a[4][1])} {f(a[3][0])} {f(a[3][1])}"
+    fab += f"C{f(a[2][0])} {f(a[2][1])} {f(a[1][0])} {f(a[1][1])} {f(a[0][0])} {f(a[0][1])}Z"
+    F.out.insert(fill_at, f'<path class="fab" d="{fab}"/>')
+    for i in range(3):
+        px = tie_x + side * r.uniform(-12, 14)
+        ln = (hem_y - tie_y) * r.uniform(0.35, 0.7)
+        F.path(f"M{f(px)} {f(tie_y+10)}q{f(r.uniform(-8,8))} {f(ln*0.5)} {f(r.uniform(-6,6))} {f(ln)}", "d")
+    # tie-back: a fabric band wrapped round the gathered folds
+    tx0 = min(s[3][0] for s in strands) - 6; tx1 = max(s[3][0] for s in strands) + 6
+    mx = (tx0 + tx1) / 2
+    F.path(f"M{f(tx0)} {f(tie_y-6)}Q{f(mx)} {f(tie_y-2)} {f(tx1)} {f(tie_y-6)}L{f(tx1)} {f(tie_y+5)}"
+           f"Q{f(mx)} {f(tie_y+9)} {f(tx0)} {f(tie_y+5)}Z", "p")
+    F.path(f"M{f(tx0+2)} {f(tie_y-0.5)}Q{f(mx)} {f(tie_y+3.5)} {f(tx1-2)} {f(tie_y-0.5)}", "v")
+    for i in range(3):
+        gx = x0 + w * r.uniform(0.15, 0.85)
+        F.path(f"M{f(gx)} {f(y0)}q{f(side*3)} 18 {f(side*1)} 40", "d")
+    return (tie_x, tie_y)
+
+
 STYLE = ("<style>"
          ".p{fill:#fbf8f0;stroke:#7f8a4e;stroke-width:1;stroke-linejoin:round}"
          ".l,.s,.s2{fill:none;stroke:#7f8a4e;stroke-width:1;stroke-linecap:round}"
@@ -413,8 +466,8 @@ STYLE = ("<style>"
          ".k{fill:#5f6a3a}.kd{fill:#7f8a4e}"
          ".v{fill:none;stroke:#7f8a4e;stroke-width:.7;stroke-linecap:round;opacity:.7}"
          ".d{fill:none;stroke:#7f8a4e;stroke-width:1.05;stroke-linecap:round}"
-         ".fab{fill:#eeeede}"   # opaque, so the swag tucks cleanly behind the drapes
-         ".fabd{fill:#7f8a4e;opacity:.1}"
+         ".fab{fill:#eeeedf}"   # opaque, so the swag tucks cleanly behind the drapes
+         ".fabd{fill:#7f8a4e;opacity:.09}"
          ".d2{fill:none;stroke:#7f8a4e;stroke-width:.75;stroke-linecap:round;opacity:.5}"
          ".ol{fill:#d9dcc2;stroke:#7f8a4e;stroke-width:.8}"
          "</style>")
@@ -424,51 +477,81 @@ def svg_doc(F, W, H):
             + STYLE + "".join(F.out) + "</svg>")
 
 
-# presentation attributes for each class, so the symbols render the same when
-# referenced from another document with <use> (a referenced file's <style> may not apply)
-ATTRS = {
-    "p": 'fill="#fbf8f0" stroke="#7f8a4e" stroke-width="1" stroke-linejoin="round"',
-    "l": 'fill="none" stroke="#7f8a4e" stroke-width="1" stroke-linecap="round"',
-    "s2": 'fill="none" stroke="#7f8a4e" stroke-width="1" stroke-linecap="round"',
-    "s": 'fill="none" stroke="#7f8a4e" stroke-width="1.3" stroke-linecap="round"',
-    "g": 'fill="none" stroke="#b0975a" stroke-width=".8"',
-    "gd": 'fill="#b0975a"',
-    "k": 'fill="#5f6a3a"',
-    "kd": 'fill="#7f8a4e"',
-    "v": 'fill="none" stroke="#7f8a4e" stroke-width=".7" stroke-linecap="round" opacity=".7"',
-    "ol": 'fill="#d9dcc2" stroke="#7f8a4e" stroke-width=".8"',
-}
+def drape_edge(x0, w, tie_y, hem_y, side):
+    """Points down the drape's inner (card-facing) edge: from the rod, in to the tie, out to the hem."""
+    tx = x0 + (w * 0.55 if side > 0 else w * 0.45)
+    if side > 0:
+        e = x0 + w
+        return [(e - 2, 4), (x0 + w * 0.92, tie_y * 0.45), (tx + (e - tx) * 0.12 + 3, tie_y),
+                (tx + 0.2 * w, tie_y + (hem_y - tie_y) * 0.5), (tx + 0.4 * w + 6, hem_y - 12)]
+    e = x0
+    return [(e + 2, 4), (x0 + w * 0.08, tie_y * 0.45), (tx - (tx - e) * 0.12 - 3, tie_y),
+            (tx - 0.2 * w, tie_y + (hem_y - tie_y) * 0.5), (tx - 0.4 * w - 6, hem_y - 12)]
 
 
-def symbol(name, F, vb):
-    body = "".join(F.out)
-    for cls, attrs in ATTRS.items():
-        body = body.replace(f'class="{cls}"', attrs)
-    x, y, w, h = vb
-    return f'<symbol id="{name}" viewBox="{x} {y} {w} {h}" overflow="visible">{body}</symbol>'
+def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
+    """One full-height curtain (left side; the right is the same image mirrored),
+    tied back about a third of the way down, with a pale fabric fill and a garland
+    laid along its inner edge: the fullest cluster where the fabric gathers at the
+    rod, a few larger blooms spaced below, and buds toward the hem. Blooms sit on the
+    fabric (nudged outward from the edge) so nothing spills toward the text.
+    k scales flower size for the slimmer phone version."""
+    F = Flora(seed)
+    x0 = 0.5                                # flush with the image edge, so the fabric meets the frame
+    tie_y, hem_y = H * tie_frac, H - hem_pad
+    drape(F, x0, 0, w, tie_y, hem_y, +1)
+    edge = drape_edge(x0, w, tie_y, hem_y, +1)
+    segs = F.stem(edge, cls="s2")
+    F.rose_stem_foliage(segs, [0.02 + 0.045 * i for i in range(22)], 21 * k, side0=-1)
+    tf = tie_y / hem_y                      # roughly where the tie falls along the edge
+    plan = [  # (t, kind, size) — a full cluster at the rod, roses at the tie, open roses spaced to the hem
+        (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.074, "rose_side", 18),
+        (0.17, "rose", 19), (0.26, "rose_side", 15),
+        (tf - 0.02, "peony", 21), (tf + 0.01, "rose", 22),
+        (tf + 0.13, "rose", 18), (tf + 0.24, "rose_side", 16), (tf + 0.34, "rose", 17),
+        (tf + 0.45, "peony", 15), (tf + 0.55, "rose", 14),
+    ]
+    for t, kind, R in plan:
+        t = min(max(t, 0.005), 0.995)
+        x, y, a = F.at(segs, t)
+        R *= k
+        off = R * 0.55                       # toward the card edge, onto the fabric
+        x, y = x + off * math.cos(a + math.pi / 2), y + off * math.sin(a + math.pi / 2)
+        F.bloom(kind, x, y, a + F.r.uniform(-0.4, 0.4), R)
+    for t in (0.06, 0.12, 0.30, tf + 0.20, tf + 0.46):
+        x, y, a = F.at(segs, t)
+        L = 30 * k
+        F.laurel_sprig([(x, y), (x - 0.5 * L * math.cos(a - 0.6), y + 0.5 * L), (x - L * math.cos(a - 0.5), y + L)],
+                       L=12 * k, pairs=3)
+    return svg_doc(F, W, H)
 
 
-def sprite():
-    """The flowers and leaves script.js places along the curtains' edges, as <symbol>s
-    drawn around their origin: blooms centred on it, leaves and sprigs growing along +x."""
-    out = []
-    for i, seed in enumerate((3, 8, 21)):
-        F = Flora(seed); F.rose(0, 0, 20)
-        out.append(symbol(f"rose{i + 1}", F, (-26, -26, 52, 52)))
-    F = Flora(5); F.peony(0, 0, 20)
-    out.append(symbol("peony", F, (-26, -26, 52, 52)))
-    F = Flora(9); F.rose_side(0, 0, -math.pi / 2, 14)
-    out.append(symbol("roseside", F, (-26, -26, 52, 52)))
-    F = Flora(13); F.rosebud(0, 0, 0, 16)
-    out.append(symbol("bud", F, (-4, -14, 30, 28)))
-    F = Flora(17); F.rose_leaflets(0, 0, 0, 30)
-    out.append(symbol("leaves", F, (-4, -16, 40, 32)))
-    F = Flora(19); F.laurel_sprig([(0, 0), (16, -2), (32, 0)], L=10, pairs=3)
-    out.append(symbol("sprig", F, (-4, -14, 44, 28)))
-    return '<svg xmlns="http://www.w3.org/2000/svg">' + "".join(out) + "</svg>"
+def swag(W=1000, H=60):
+    """A shallow fabric swag across the top of the card, joining the two drapes:
+    two scallops of nested folds meeting at a gathered knot in the centre. Drawn to
+    be stretched to the card's width (preserveAspectRatio none; strokes don't scale)."""
+    F = Flora(11)
+    cx = W / 2
+    for x0, x1 in ((0, cx), (cx, W)):
+        m = (x0 + x1) / 2
+        lo = f"M{f(x0)} 0L{f(x1)} 0Q{f(m)} {f(H * 1.55)} {f(x0)} 0Z"
+        F.path(lo, "fab")
+        for j, depth in enumerate((0.28, 0.5, 0.7, 0.86)):
+            F.path(f"M{f(x0)} 0Q{f(m)} {f(H * depth * 1.8)} {f(x1)} 0", "d" if j == 3 else "d2")
+        F.path(f"M{f(x0)} 0Q{f(m)} {f(H * 0.42 * 1.8)} {f(x1)} 0L{f(x1)} 0Q{f(m)} {f(H * 0.62 * 1.8)} {f(x0)} 0Z", "fabd")
+    # gathered knot where the swags meet
+    F.path(f"M{f(cx-9)} 0L{f(cx+9)} 0L{f(cx+6)} {f(H*0.5)}Q{f(cx)} {f(H*0.62)} {f(cx-6)} {f(H*0.5)}Z", "p")
+    for dx in (-3, 0, 3):
+        F.path(f"M{f(cx+dx)} 2L{f(cx+dx*0.8)} {f(H*0.48)}", "v")
+    doc = svg_doc(F, W, H).replace('<svg ', '<svg preserveAspectRatio="none" ', 1)
+    return doc.replace("<style>", "<style>path{vector-effect:non-scaling-stroke}", 1)
 
 
 if __name__ == "__main__":
     out = sys.argv[1]
-    open(f"{out}/flora.svg", "w").write(sprite())
-    print("flora.svg")
+    for name, svg in (("drape-wide", tall_drape(150, 1720, 92, 0.37, 30, 1.0, 4)),
+                      ("drape-narrow", tall_drape(78, 2020, 48, 0.37, 30, 0.55, 4))):
+        open(f"{out}/{name}.svg", "w").write(svg)
+        print(name, len(svg) // 1024, "KB")
+    open(f"{out}/swag.svg", "w").write(swag())
+    print("swag")

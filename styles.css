@@ -78,11 +78,11 @@ body{
   position: relative;
   z-index: 1;
   margin: calc(var(--inset) + 6px);
-  padding: 84px 22px 30px;   /* top: room under the curtains' meeting point */
+  padding: 52px 22px 30px;   /* top clears the swag */
   text-align: center;
 }
 @media (min-width: 700px){
-  .card-inner{ padding: 84px 56px 44px; }   /* top: room under the curtains' meeting point */
+  .card-inner{ padding: 72px 56px 44px; }   /* top clears the swag */
 }
 
 /* ---------- hero ---------- */
@@ -138,20 +138,36 @@ body{
   margin: 14px 0 0;
 }
 
-/* ---------- curtains: drawn by script.js as one SVG filling the frame ---------- */
-.curtains{
+/* ---------- florals: a pair of full-height drapes, flowers along the fabric ----------
+   One drawing (tools-flora.py), mirrored for the right side, hanging just inside
+   the frame. The image keeps its proportions, so its width follows the card
+   height. Phones get a proportionally scaled version. */
+.drape-side{
   position: absolute;
-  top: var(--hang); left: var(--hang); right: var(--hang); bottom: var(--hang);
-  width: calc(100% - 2 * var(--hang)); height: calc(100% - 2 * var(--hang));
+  top: var(--hang);
+  bottom: var(--hang);
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+}
+/* swag across the top joining the two drapes at the centre (assets/swag.svg stretches to the card width) */
+.swag{
+  position: absolute;
+  top: var(--hang); left: var(--hang);
+  width: calc(100% - 2 * var(--hang));
+  height: 44px;
   z-index: 0;
   pointer-events: none;
-  overflow: visible;
 }
+@media (max-width: 480px){ .swag{ height: 26px; } }
+.drape-left{ left: var(--hang); }
+.drape-right{ right: var(--hang); transform: scaleX(-1); }
+.drape-side img{ display: block; height: 100%; width: auto; }
 @media (max-width: 699px){
   .card-inner{ padding-left: 40px; padding-right: 40px; }   /* keep text inside the curtains */
 }
 @media (max-width: 480px){
-  .card-inner{ padding-left: 44px; padding-right: 44px; padding-top: 58px; }
+  .card-inner{ padding-left: 44px; padding-right: 44px; }
   .card-inner .closing-caps{ font-size: 12px; letter-spacing: 0.22em; padding-left: 0.22em; }
   .script-title{ font-size: 40px; white-space: nowrap; }
   .names-caps{ letter-spacing: 0.22em; padding-left: 0.22em; }
@@ -400,7 +416,9 @@ body{
 .preview-og .page{ min-height: 100vh; padding: 0; align-items: center; }
 .preview-og .card{ max-width: 980px; box-shadow: 0 24px 50px -24px rgba(0,0,0,0.6); }
 .preview-og .card-inner > :not(.hero){ display: none; }
-.preview-og .card-inner{ padding: 84px 150px 56px; }
+.preview-og .card-inner{ padding: 70px 150px 56px; }
+.preview-og .drape-side{ overflow: hidden; -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
+.preview-og .drape-side img{ height: 1300px; }
 .preview-og .script-title{ font-size: 104px; margin-bottom: 18px; }
 .preview-og .names-caps{ font-size: 19px; margin-bottom: 14px; }
 .preview-og .names-caps .name{ display: inline; }
