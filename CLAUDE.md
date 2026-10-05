@@ -90,6 +90,7 @@ and a phone width (375px) before calling a change done.
   open roses spaced to the hem). A shallow scalloped swag runs across the top from
   each drape and the two halves meet at the centre (no knot, tail or centre tie);
   it sits behind the drapes.
+- The A & S monogram is set in Great Vibes (Pinyon Script's S read as an L).
 - Names are bride first everywhere (card, titles, monogram A & S, calendar events,
   email, text message), the usual order on wedding stationery.
 - Phones should look like a scaled-down desktop, not a different design, and

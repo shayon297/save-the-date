@@ -96,7 +96,7 @@ body{
 }
 .names-caps{
   font-weight: 600;
-  font-size: clamp(13px, 2.3vw, 16px);
+  font-size: clamp(15px, 3.1vw, 21px);
   letter-spacing: 0.3em;
   padding-left: 0.3em;      /* optically centre tracked caps */
   text-transform: uppercase;
@@ -424,7 +424,7 @@ body{
 .preview-og .drape-side{ overflow: hidden; -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
 .preview-og .drape-side img{ height: 1300px; }
 .preview-og .script-title{ font-size: 104px; margin-bottom: 18px; }
-.preview-og .names-caps{ font-size: 19px; margin-bottom: 14px; }
+.preview-og .names-caps{ font-size: 20px; margin-bottom: 14px; white-space: nowrap; }
 .preview-og .names-caps .name{ display: inline; }
 .preview-og .names-caps .amp{ display: inline; margin: 0 0.6em 0 0.3em; }
 .preview-og .date-line{ font-size: 25px; }
@@ -466,8 +466,8 @@ body{
   align-items: center;
 }
 .footer-mark{
-  font-family: var(--script);
-  font-size: 30px;
+  font-family: "Great Vibes", var(--script);   /* Pinyon's capital S reads as an L at this size */
+  font-size: 40px;
   line-height: 1;
   color: var(--ink);
 }
