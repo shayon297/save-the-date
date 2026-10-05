@@ -1,7 +1,8 @@
 /* ---------------------------------------------------
    Shayon & Amanda — Save the Date
    After Minted's "museo" suite: ivory card, double-rule frame, copperplate
-   script, spaced Baskerville capitals, lowercase italics, one olive ink.
+   script for the title and closing only, spaced Baskerville capitals,
+   lowercase italics, one olive ink.
    (Pinyon Script and Baskervville stand in for museo's licensed fonts.)
 --------------------------------------------------- */
 
@@ -20,7 +21,8 @@
   --script: "Pinyon Script", "Snell Roundhand", cursive;
 
   --frame: 14px;            /* outer rule's distance from the card edge */
-  --inset: 26px;            /* inside the inner rule: where the drapes hang */
+  --inset: 26px;            /* inside the inner rule: sets the text margin */
+  --hang: calc(var(--frame) + 6px);   /* just inside the inner rule: the drapes hang from the frame */
 }
 @media (max-width: 480px){
   :root{ --frame: 9px; --inset: 18px; }
@@ -127,82 +129,84 @@ body{
    height. Phones get a proportionally scaled version. */
 .drape-side{
   position: absolute;
-  top: var(--inset);
-  bottom: var(--inset);
+  top: var(--hang);
+  bottom: var(--hang);
   z-index: 0;
   display: block;
   pointer-events: none;
-  opacity: 0.8;
 }
-.drape-left{ left: var(--inset); }
-.drape-right{ right: var(--inset); transform: scaleX(-1); }
+.drape-left{ left: var(--hang); }
+.drape-right{ right: var(--hang); transform: scaleX(-1); }
 .drape-side img{ display: block; height: 100%; width: auto; }
 @media (max-width: 699px){
   .card-inner{ padding-left: 40px; padding-right: 40px; }   /* keep text inside the curtains */
 }
 @media (max-width: 480px){
   .card-inner{ padding-left: 44px; padding-right: 44px; }
-  .closing-caps{ text-wrap: balance; }
+  .card-inner .closing-caps{ font-size: 12px; letter-spacing: 0.22em; padding-left: 0.22em; }
   .script-title{ font-size: 40px; white-space: nowrap; }
   .names-caps{ letter-spacing: 0.22em; padding-left: 0.22em; }
   .date-line .bar{ display: none; }
   .date-line .d, .date-line .c{ display: block; }
-  .card-inner .countdown{ gap: 6px; }
-  .card-inner .count{ min-width: 0; padding: 0 6px; }
-  .card-inner .count-num{ font-size: 26px; }
-  .card-inner .count-label{ font-size: 9px; letter-spacing: 0.14em; padding-left: 0.14em; }
+  .card-inner .section-title{ letter-spacing: 0.22em; padding-left: 0.22em; }
 }
 
-.rule span{
-  width: 8px; height: 8px; margin: 0 12px;
-  border: 1px solid var(--olive);
-  transform: rotate(45deg);
-  background: var(--olive-pale);
+/* ---------- engagement photo: a Roman arch, ruled like the card's frame ---------- */
+.portrait{ margin: 34px auto 0; width: min(290px, 86%); }
+.portrait-frame{
+  display: block;
+  padding: 5px;
+  border: 1px solid var(--ink);
+  border-radius: 400px 400px 0 0;   /* larger than half the width: browsers clamp it to a semicircle */
+}
+.portrait-frame img{
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  object-position: 50% 50%;
+  border-radius: 400px 400px 0 0;
 }
 
 /* ---------- countdown ---------- */
 .countdown{
   display: flex;
   justify-content: center;
-  align-items: stretch;
-  gap: 18px;
-  margin: 30px auto 0;
+  align-items: baseline;
+  gap: 0.45em;
+  margin: 28px auto 0;
 }
-.count{ display: flex; flex-direction: column; align-items: center; min-width: 64px; }
 .count-num{
-  font-size: clamp(26px, 5vw, 34px);
+  font-size: clamp(26px, 5vw, 32px);
   font-weight: 400;
   line-height: 1;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
 .count-label{
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
+  font-style: italic;
+  font-size: clamp(15px, 2.6vw, 18px);
+  letter-spacing: 0.04em;
   color: var(--ink-soft);
-  margin-top: 6px;
-  padding-left: 0.3em;
 }
-.count-sep{ width: 1px; background: var(--line); align-self: center; height: 34px; }
 
-/* ---------- rules ---------- */
-.rule{
-  display: flex; align-items: center; justify-content: center;
-  margin: 36px 0;
-  position: relative;
-}
-.rule::before, .rule::after{
-  content: ""; flex: 1; height: 1px; background: var(--line);
+/* ---------- sections: as on museo, no ornamental dividers, just generous space ---------- */
+.weekend, .address, .closing{ margin-top: 64px; }
+@media (max-width: 480px){
+  .weekend, .address, .closing{ margin-top: 52px; }
 }
 
 /* ---------- weekend ---------- */
 .section-title{
-  font-family: var(--script);
-  font-weight: 400;
-  font-size: clamp(40px, 8vw, 50px);
-  line-height: 1;
-  margin: 0 0 26px;
+  font-weight: 600;
+  font-size: clamp(13px, 2.3vw, 15px);
+  letter-spacing: 0.3em;
+  padding-left: 0.3em;      /* optically centre tracked caps */
+  text-transform: uppercase;
+  line-height: 1.6;
+  text-wrap: balance;
+  margin: 0 0 28px;
   color: var(--ink);
 }
 .events{
@@ -211,15 +215,18 @@ body{
   gap: 30px;
 }
 @media (min-width: 560px){
-  .events{ grid-template-columns: 1fr 1fr; gap: 0; }
+  /* subgrid: day, name, time, venue, address and button line up across both columns
+     even when one event name wraps */
+  .events{ grid-template-columns: 1fr 1fr; grid-template-rows: repeat(6, auto); gap: 0; }
+  .event{ display: grid; grid-row: span 6; grid-template-rows: subgrid; padding: 0 22px; }
   .event + .event{ border-left: 1px solid var(--line); }
-  .event{ padding: 0 22px; }
+  .event-name{ align-self: end; }
 }
 .event-day{
   font-size: 12px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--olive);
+  color: var(--ink-soft);
   margin: 0 0 6px;
 }
 .event-name{
@@ -227,6 +234,7 @@ body{
   font-size: clamp(19px, 3.4vw, 22px);
   margin: 0 0 4px;
   color: var(--ink);
+  text-wrap: balance;
 }
 .event-time{
   font-size: 13px;
@@ -264,20 +272,21 @@ body{
 }
 .btn-solid{ background: var(--ink); color: var(--ivory); }
 .btn-solid:hover{ background: var(--page-deep); border-color: var(--page-deep); }
-.btn-ghost{ background: transparent; color: var(--ink); }
+.btn-ghost{ background: transparent; color: var(--ink); border-color: var(--line); }
 .btn-ghost:hover{ background: var(--ink); color: var(--ivory); }
 
 /* ---------- mailing address form ---------- */
 .address{ text-align: center; }
-.address .section-title{ margin-bottom: 4px; }
+.address .section-title{ margin-bottom: 6px; }
 .address-sub{
   font-style: italic;
   font-size: 16px;
   color: var(--ink-soft);
   margin: 0 0 26px;
+  text-wrap: balance;
 }
 .addr-form{
-  max-width: 440px;
+  max-width: 400px;
   margin: 0 auto;
   text-align: left;
 }
@@ -303,7 +312,7 @@ body{
   border-radius: 0;
   transition: border-color 0.2s ease;
 }
-.field input::placeholder{ color: rgba(63,74,37,0.38); font-style: italic; }
+.field input::placeholder{ color: rgba(74,85,48,0.6); font-style: italic; }
 .field input:focus{ border-bottom-color: var(--ink); }
 .field input[aria-invalid="true"]{ border-bottom-color: #9a5a3a; }
 
@@ -366,16 +375,15 @@ body{
 }
 .btn-submit{
   display: block;
-  width: 100%;
-  padding: 13px 14px;
-  font-size: 12.5px;
-  margin-top: 6px;
+  margin: 10px auto 0;
+  padding: 12px 44px;
+  font-size: 12px;
 }
 .btn-submit[disabled]{ opacity: 0.6; cursor: default; }
 .addr-thanks{ padding: 8px 0 2px; }
 
 /* ---------- preview renders (share images for email / text) ---------- */
-.preview .countdown, .preview .address, .preview .address + .rule{ display: none; }
+.preview .countdown, .preview .address, .preview .event-actions{ display: none; }
 .preview .closing{ margin-top: 0; }
 .preview-email body{ background: var(--page); }
 .preview-email .page{ min-height: 100vh; align-items: center; padding: 40px; }
@@ -391,6 +399,7 @@ body{
 .preview-og .date-line{ font-size: 25px; }
 .preview-og .hebrew-verse{ font-size: 26px; }
 .preview-og .hebrew-date{ font-size: 22px; margin-top: 10px; }
+.preview-og .drape-side{ overflow: hidden; -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
 .preview-og .drape-side img{ height: 1300px; }
 
 .hp{ position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
@@ -398,12 +407,15 @@ body{
 /* ---------- closing ---------- */
 .closing-script{
   font-family: var(--script);
-  font-size: clamp(30px, 6vw, 40px);
-  line-height: 1.05;
-  margin: 0 0 10px;
+  font-size: clamp(30px, 6vw, 38px);
+  line-height: 1.1;
+  max-width: 11em;
+  margin: 0 auto 12px;
+  text-wrap: balance;
   color: var(--ink);
 }
 .closing-caps{
+  text-wrap: balance;
   font-size: 13px;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -420,13 +432,10 @@ body{
 
 /* ---------- footer ---------- */
 .card-footer{
-  margin-top: 36px;
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
 }
 .footer-mark{
   font-family: var(--script);
@@ -435,10 +444,3 @@ body{
   color: var(--ink);
 }
 .footer-mark em{ font-style: normal; color: var(--olive); }
-.footer-caps{
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  padding-left: 0.3em;
-}

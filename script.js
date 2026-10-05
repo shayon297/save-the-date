@@ -8,24 +8,18 @@
     sheetEndpoint: "https://script.google.com/macros/s/AKfycbwte4JkUkFrMbIr9vCFheFrXyUqlp8kNnHFpgsEffheSdWF8FL3PkFY5gzFQzuQ5XNK/exec",
   };
 
-  // ---- countdown (to the ceremony start, 5:30 PM Eastern) ----
+  // ---- countdown: whole days to the ceremony start, 5:30 PM Eastern ----
   var target = new Date("2027-05-16T17:30:00-04:00").getTime();
-  var nums = {};
-  document.querySelectorAll(".count-num").forEach(function (el) {
-    nums[el.dataset.unit] = el;
-  });
+  var daysEl = document.querySelector('.count-num[data-unit="days"]');
+  var daysLabel = document.querySelector(".count-label");
 
   function tick() {
-    var diff = Math.max(0, target - Date.now());
-    var minutes = Math.floor(diff / 60000);
-    var hours = Math.floor(minutes / 60);
-    var days = Math.floor(hours / 24);
-    nums.days.textContent = days;
-    nums.hours.textContent = hours % 24;
-    nums.minutes.textContent = minutes % 60;
+    var days = Math.ceil(Math.max(0, target - Date.now()) / 86400000);
+    daysEl.textContent = days;
+    daysLabel.textContent = days === 1 ? "day to go" : "days to go";
   }
   tick();
-  setInterval(tick, 30000);
+  setInterval(tick, 60000);
 
   // ---- add-to-calendar (.ics, times given in UTC — Cincinnati is Eastern/EDT in May) ----
   var EVENTS = {

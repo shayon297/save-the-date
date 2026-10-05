@@ -10,11 +10,12 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 
 | File | What it is |
 |---|---|
-| `index.html` | The card: header, countdown, The Weekend, address form, closing |
+| `index.html` | The card: header, engagement photo, countdown, The Weekend, address form, closing |
 | `styles.css` | All styling. Palette and fonts are CSS variables at the top |
 | `script.js` | Countdown, "Add to calendar" `.ics` downloads, address form |
 | `tools-flora.py` | Draws the drapes and flowers. Run `python3 tools-flora.py assets` to regenerate them |
 | `assets/drape-wide.svg`, `assets/drape-narrow.svg` | Generated drapes (desktop / phone and tablet). Don't hand-edit; change `tools-flora.py` |
+| `assets/engagement.jpg` | Engagement photo in the arched frame under the header (the figure hides itself if the file is missing) |
 | `assets/og.jpg` | Link preview (1200×630), rendered from the page with `?preview=og` |
 | `assets/card-email.jpg` | Image used in `email.html`, rendered with `?preview=email` |
 | `email.html` | Email version (replace `GUEST_NAME` per send) |
@@ -66,13 +67,24 @@ and a phone width (375px) before calling a change done.
   script, names in spaced capitals, a lowercase italic date line, an olive
   double-rule frame, one olive ink throughout. Fonts are Pinyon Script and
   Baskervville, free stand-ins for museo's licensed Monalisa Script and Mrs Eaves.
+- Direction: classical Greek / Roman in spirit (restraint, symmetry, proportion),
+  not literal. Script is used only for "Save the Date", the closing line and the
+  monogram; section titles are Baskervville spaced capitals.
+- The engagement photo sits in an arch-topped frame under the header.
+- No ornamental dividers, as on museo: sections are separated by space and
+  the change of type (script, spaced capitals, lowercase italics).
+- Countdown shows whole days only ("224 days to go").
+- Calendar buttons are outlined (ghost); only Send is solid.
 - Florals: a symmetric pair of full-height, tied-back drapes inside the frame,
-  with a garland running along each curtain's inner edge. Flowers stay at the
+  with a pale fabric fill and a garland along each curtain's inner edge; the
+  fullest cluster is at the top corner, with fewer, larger blooms below. Flowers stay at the
   borders and never sit under the text. Classical palette from the floral brief:
   roses as the lead, peony, laurel, olive.
 - Phones should look like a scaled-down desktop, not a different design, and
   text must not touch the drapes.
-- Tried and rejected: pinstripe borders, all-over flower patterns, extra frames
+- Tried and rejected: literal classical motifs (Cinzel inscription capitals,
+  Greek-key dividers, a laurel wreath around the monogram, Roman-numeral date),
+  pinstripe borders, all-over flower patterns, extra frames
   competing with the drapes, flowers bunched at the drape ties.
 - The page has `noindex` so it stays out of search results.
 

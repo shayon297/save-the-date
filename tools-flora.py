@@ -1,6 +1,6 @@
 """Botanical line art for the save-the-date, restricted to the floral brief's
 florist's selection: cream garden roses and spray roses, peony, olive / bay laurel foliage.
-Draped fabric at the top corners echoes the chuppah."""
+Full-height drapes echo the chuppah."""
 import math, random, sys
 
 PREC = 1
@@ -410,6 +410,8 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
     k = 7
     tie_x = x0 + (w * 0.55 if side > 0 else w * 0.45)
     hem_pts = []
+    strands = []
+    fill_at = len(F.out)                  # the fabric fill goes under the fold lines
     for i in range(k):
         t = i / (k - 1)
         sx = x0 + t * w
@@ -424,11 +426,22 @@ def drape(F, x0, y0, w, tie_y, hem_y, side):
         d += f"C{f(c3[0])} {f(c3[1])} {f(c4[0])} {f(c4[1])} {f(hx)} {f(hy)}"
         F.path(d, "d")
         hem_pts.append((hx, hy))
+        strands.append(((sx, y0), c1, c2, (tx, tie_y), c3, c4, (hx, hy)))
     hp = hem_pts if side > 0 else hem_pts[::-1]
     d = f"M{f(hp[0][0])} {f(hp[0][1])}"
     for (ax, ay), (bx, by) in zip(hp, hp[1:]):
         d += f"Q{f((ax+bx)/2 + r.uniform(-3,3))} {f(max(ay,by)+4)} {f(bx)} {f(by)}"
     F.path(d, "d")
+    # fabric: closed outline from the outer strand, across the hem, up the inner strand
+    a, b = strands[0], strands[-1]
+    fab = f"M{f(a[0][0])} {f(a[0][1])}L{f(b[0][0])} {f(b[0][1])}"
+    fab += f"C{f(b[1][0])} {f(b[1][1])} {f(b[2][0])} {f(b[2][1])} {f(b[3][0])} {f(b[3][1])}"
+    fab += f"C{f(b[4][0])} {f(b[4][1])} {f(b[5][0])} {f(b[5][1])} {f(b[6][0])} {f(b[6][1])}"
+    for (hx, hy) in reversed(hem_pts[:-1]):
+        fab += f"L{f(hx)} {f(hy + 2)}"
+    fab += f"C{f(a[5][0])} {f(a[5][1])} {f(a[4][0])} {f(a[4][1])} {f(a[3][0])} {f(a[3][1])}"
+    fab += f"C{f(a[2][0])} {f(a[2][1])} {f(a[1][0])} {f(a[1][1])} {f(a[0][0])} {f(a[0][1])}Z"
+    F.out.insert(fill_at, f'<path class="fab" d="{fab}"/>')
     for i in range(3):
         px = tie_x + side * r.uniform(-12, 14)
         ln = (hem_y - tie_y) * r.uniform(0.35, 0.7)
@@ -448,7 +461,8 @@ STYLE = ("<style>"
          ".g{fill:none;stroke:#b0975a;stroke-width:.8}.gd{fill:#b0975a}"
          ".k{fill:#5f6a3a}.kd{fill:#7f8a4e}"
          ".v{fill:none;stroke:#7f8a4e;stroke-width:.7;stroke-linecap:round;opacity:.7}"
-         ".d{fill:none;stroke:#7f8a4e;stroke-width:.9;stroke-linecap:round;opacity:.85}"
+         ".d{fill:none;stroke:#7f8a4e;stroke-width:1.05;stroke-linecap:round}"
+         ".fab{fill:#e4e6d2;opacity:.55}"
          ".ol{fill:#d9dcc2;stroke:#7f8a4e;stroke-width:.8}"
          "</style>")
 
@@ -471,25 +485,25 @@ def drape_edge(x0, w, tie_y, hem_y, side):
 
 def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     """One full-height curtain (left side; the right is the same image mirrored),
-    tied back about a third of the way down, with a garland laid along its inner
-    edge: a cluster where the fabric gathers at the rod, another at the tie,
-    single blooms spaced between, and buds toward the hem. Blooms sit on the
+    tied back about a third of the way down, with a pale fabric fill and a garland
+    laid along its inner edge: the fullest cluster where the fabric gathers at the
+    rod, a few larger blooms spaced below, and buds toward the hem. Blooms sit on the
     fabric (nudged outward from the edge) so nothing spills toward the text.
     k scales flower size for the slimmer phone version."""
     F = Flora(seed)
-    x0 = 4
+    x0 = 0.5                                # flush with the image edge, so the fabric meets the frame
     tie_y, hem_y = H * tie_frac, H - hem_pad
     drape(F, x0, 0, w, tie_y, hem_y, +1)
     edge = drape_edge(x0, w, tie_y, hem_y, +1)
     segs = F.stem(edge, cls="s2")
-    F.rose_stem_foliage(segs, [0.015 + 0.03 * i for i in range(33)], 20 * k, side0=-1)
+    F.rose_stem_foliage(segs, [0.02 + 0.045 * i for i in range(22)], 21 * k, side0=-1)
     tf = tie_y / hem_y                      # roughly where the tie falls along the edge
-    plan = [  # (t, kind, size) — rod cluster, spaced blooms, tie cluster, tapering to buds
-        (0.010, "rose", 26), (0.035, "peony", 20), (0.060, "rose_side", 15), (0.085, "bud", 13),
-        (0.13, "rose", 16), (0.19, "bud", 12), (0.25, "rose", 15), (0.31, "bud", 12),
-        (tf - 0.035, "peony", 19), (tf - 0.01, "rose", 24), (tf + 0.02, "rose_side", 15), (tf + 0.045, "bud", 13),
-        (tf + 0.10, "rose", 15), (tf + 0.17, "bud", 12), (tf + 0.24, "rose", 14), (tf + 0.31, "peony", 13),
-        (tf + 0.38, "bud", 11), (tf + 0.45, "rose", 12), (tf + 0.52, "bud", 10), (0.985, "bud", 9),
+    plan = [  # (t, kind, size) — a full cluster at the rod, a few larger blooms below, buds at the hem
+        (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.074, "rose_side", 18),
+        (0.095, "bud", 14), (0.17, "rose", 19), (0.26, "bud", 13),
+        (tf - 0.02, "peony", 21), (tf + 0.01, "rose", 22), (tf + 0.04, "bud", 13),
+        (tf + 0.14, "rose", 18), (tf + 0.27, "rose_side", 15), (tf + 0.40, "rose", 15),
+        (tf + 0.52, "bud", 11), (0.985, "bud", 10),
     ]
     for t, kind, R in plan:
         t = min(max(t, 0.005), 0.995)
@@ -498,7 +512,7 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
         off = R * 0.55                       # toward the card edge, onto the fabric
         x, y = x + off * math.cos(a + math.pi / 2), y + off * math.sin(a + math.pi / 2)
         F.bloom(kind, x, y, a + F.r.uniform(-0.4, 0.4), R)
-    for t in (0.11, 0.28, tf + 0.14, tf + 0.35):
+    for t in (0.06, 0.12, 0.30, tf + 0.20, tf + 0.46):
         x, y, a = F.at(segs, t)
         L = 30 * k
         F.laurel_sprig([(x, y), (x - 0.5 * L * math.cos(a - 0.6), y + 0.5 * L), (x - L * math.cos(a - 0.5), y + L)],
