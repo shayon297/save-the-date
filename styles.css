@@ -107,6 +107,19 @@ body{
   letter-spacing: 0.08em;
   margin: 0;
 }
+.hebrew{
+  font-family: "Frank Ruhl Libre", "Times New Roman", serif;
+  color: var(--ink);
+  letter-spacing: 0;
+}
+.hebrew-verse{
+  font-size: clamp(18px, 3vw, 22px);
+  margin: 0 0 6px;
+}
+.hebrew-date{
+  font-size: clamp(15px, 2.5vw, 18px);
+  margin: 8px 0 0;
+}
 
 /* ---------- florals: a pair of full-height drapes, flowers along the fabric ----------
    One drawing (tools-flora.py), mirrored for the right side, hanging just inside
@@ -376,6 +389,8 @@ body{
 .preview-og .script-title{ font-size: 104px; margin-bottom: 18px; }
 .preview-og .names-caps{ font-size: 21px; margin-bottom: 16px; }
 .preview-og .date-line{ font-size: 25px; }
+.preview-og .hebrew-verse{ font-size: 26px; }
+.preview-og .hebrew-date{ font-size: 22px; margin-top: 10px; }
 .preview-og .drape-side img{ height: 1300px; }
 
 .hp{ position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
