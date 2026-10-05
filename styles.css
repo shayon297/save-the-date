@@ -299,7 +299,7 @@ body{
   min-width: 210px;
   background: var(--ivory);
   border: 1px solid var(--line);
-  box-shadow: 0 12px 28px -12px rgba(0,0,0,0.35);
+  box-shadow: 0 6px 16px -10px rgba(74,85,48,0.28);   /* soft, to match the fine rules */
   text-align: center;
 }
 .cal-options[hidden]{ display: none; }
@@ -360,7 +360,7 @@ body{
   font-family: var(--serif);
   font-size: 16px;
   color: var(--ink);
-  background: rgba(255,255,255,0.55);
+  background: #fdfbf5;             /* a shade lighter than the ivory card, not white */
   border: 1px solid var(--line);   /* a visible box, so the fields aren't overlooked */
   padding: 10px 12px;
   outline: none;
@@ -368,7 +368,7 @@ body{
   transition: border-color 0.2s ease;
 }
 .field input::placeholder{ color: var(--ink-soft); font-style: italic; }
-.field input:focus{ border-color: var(--ink); background: #fff; }
+.field input:focus{ border-color: var(--ink); background: #fefdf9; }
 .field input[aria-invalid="true"]{ border-color: #9a5a3a; }
 
 .addr-fields{
