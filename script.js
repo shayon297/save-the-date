@@ -8,7 +8,7 @@
     sheetEndpoint: "https://script.google.com/macros/s/AKfycbwte4JkUkFrMbIr9vCFheFrXyUqlp8kNnHFpgsEffheSdWF8FL3PkFY5gzFQzuQ5XNK/exec",
     // Google Maps Platform API key with "Places API (New)" enabled, restricted to
     // HTTP referrers shayon297.github.io/* (and localhost for testing). Empty = use Photon.
-    placesKey: "",
+    placesKey: "AIzaSyBnqjve2DVUoVrRj5Jfyils5QPLZowL0yg",
   };
 
   // ---- countdown: whole days to the ceremony start, 5:30 PM Eastern ----
