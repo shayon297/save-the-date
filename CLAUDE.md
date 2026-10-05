@@ -76,6 +76,8 @@ and a phone width (375px) before calling a change done.
 - Direction: classical Greek / Roman in spirit (restraint, symmetry, proportion),
   not literal. Script is used only for "Save the Date" and the closing line;
   section titles are Baskervville spaced capitals.
+- The date line stays lowercase italic ("may 16, 2027 | cincinnati, ohio"), museo's
+  style. Capitalizing or enlarging it was considered and declined by Amanda.
 - Hebrew: only the verse אֲנִי לְדוֹדִי וְדוֹדִי לִי at the top, no translation.
   No Hebrew date (that belongs on the formal invitation).
 - The engagement photo sits in an arch-topped frame under the header.
