@@ -474,7 +474,7 @@ body{
   justify-content: center;
   gap: 2px;
   width: 50px; height: 74px;
-  border: 1.5px solid var(--ink);
+  border: 1.25px solid var(--olive);   /* the drapes' softer olive, so the letters lead */
   border-radius: 50%;
   font-weight: 500;
   font-size: 17px;
@@ -486,6 +486,6 @@ body{
   content: "";
   position: absolute;
   inset: 3px;
-  border: 1px solid var(--ink);
+  border: 0.75px solid var(--olive);
   border-radius: 50%;
 }

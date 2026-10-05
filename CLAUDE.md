@@ -91,7 +91,7 @@ and a phone width (375px) before calling a change done.
   each drape and the two halves meet at the centre (no knot, tail or centre tie);
   it sits behind the drapes.
 - The monogram is museo's own: A over S in Baskervville capitals inside a double-ruled
-  oval (as on museo's enclosure cards and belly band). Script monograms were tried and
+  oval (rings in the lighter olive, letters in ink) (as on museo's enclosure cards and belly band). Script monograms were tried and
   rejected (Pinyon's S reads as an L).
 - Names are bride first everywhere (card, titles, monogram A & S, calendar events,
   email, text message), the usual order on wedding stationery.
