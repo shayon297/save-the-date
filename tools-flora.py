@@ -461,13 +461,14 @@ def drape(F, x0, y0, w, tie_y, hem_y, side=1):
 
 
 STYLE = ("<style>"
-         ".p{fill:#fbf8f0;stroke:#7f8a4e;stroke-width:1;stroke-linejoin:round}"
-         ".l,.s,.s2{fill:none;stroke:#7f8a4e;stroke-width:1;stroke-linecap:round}"
+         ".p{fill:#fbf8f0;stroke:#7f8a4e;stroke-width:.95;stroke-linejoin:round}"
+         ".l{fill:none;stroke:#7f8a4e;stroke-width:.6;stroke-linecap:round;opacity:.85}"   # inner petal curves, lighter
+         ".s,.s2{fill:none;stroke:#7f8a4e;stroke-width:1;stroke-linecap:round}"
          ".s{stroke-width:1.3}"
          ".vine{fill:none;stroke:#7f8a4e;stroke-width:.8;stroke-linecap:round;opacity:.4}"
          ".g{fill:none;stroke:#b0975a;stroke-width:.8}.gd{fill:#b0975a}"
          ".k{fill:#5f6a3a}.kd{fill:#7f8a4e}"
-         ".v{fill:none;stroke:#7f8a4e;stroke-width:.7;stroke-linecap:round;opacity:.7}"
+         ".v{fill:none;stroke:#7f8a4e;stroke-width:.5;stroke-linecap:round;opacity:.6}"
          ".d{fill:none;stroke:#7f8a4e;stroke-width:1.05;stroke-linecap:round}"
          ".fab{fill:#eeeedf}"   # opaque, so the swag tucks cleanly behind the drapes
          ".fabd{fill:#7f8a4e;opacity:.09}"
@@ -500,7 +501,7 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     F.rose_stem_foliage(segs, [0.03 + 0.09 * i for i in range(11)], 21 * k, side0=-1)   # sparse: museo is quiet
     tf = tie_y / hem_y                      # roughly where the tie falls along the edge
     plan = [  # (t, kind, size) — a full cluster at the rod and at the tie, only a few single roses between
-        (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.074, "rose_side", 18),
+        (0.008, "rose", 34), (0.030, "peony", 27), (0.052, "rose", 22), (0.076, "rose", 17),   # no side-view roses: at this size they read as doodles
         (0.21, "rose", 18),
         (tf - 0.055, "peony", 21), (tf + 0.05, "rose", 22),   # above and below the tie band, not over it
         (tf + 0.25, "rose", 16), (tf + 0.48, "rose", 14),
@@ -540,8 +541,8 @@ def swag(W=1000, H=60):
 
 if __name__ == "__main__":
     out = sys.argv[1]
-    for name, svg in (("drape-wide", tall_drape(150, 1720, 92, 0.37, 6, 1.0, 4)),
-                      ("drape-narrow", tall_drape(78, 2020, 48, 0.37, 6, 0.55, 4))):
+    for name, svg in (("drape-wide", tall_drape(150, 1720, 92, 0.37, 2.5, 1.0, 4)),
+                      ("drape-narrow", tall_drape(78, 2020, 48, 0.37, 2.5, 0.55, 4))):
         open(f"{out}/{name}.svg", "w").write(svg)
         print(name, len(svg) // 1024, "KB")
     open(f"{out}/swag.svg", "w").write(swag())
