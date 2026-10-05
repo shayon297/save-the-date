@@ -10,7 +10,7 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 
 | File | What it is |
 |---|---|
-| `index.html` | The card: header, engagement photo, countdown, The Weekend, address form, closing |
+| `index.html` | The card: header, engagement photo, The Weekend, Share your address form, closing, monogram |
 | `styles.css` | All styling. Palette and fonts are CSS variables at the top |
 | `script.js` | Countdown, "Add to calendar" links, address form |
 | `assets/welcome-party.ics`, `assets/wedding.ics` | Calendar files for Apple / Outlook. Keep in sync with `EVENTS` in `script.js` |

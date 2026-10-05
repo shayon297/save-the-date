@@ -464,6 +464,7 @@ STYLE = ("<style>"
          ".p{fill:#fbf8f0;stroke:#7f8a4e;stroke-width:1;stroke-linejoin:round}"
          ".l,.s,.s2{fill:none;stroke:#7f8a4e;stroke-width:1;stroke-linecap:round}"
          ".s{stroke-width:1.3}"
+         ".vine{fill:none;stroke:#7f8a4e;stroke-width:.8;stroke-linecap:round;opacity:.4}"
          ".g{fill:none;stroke:#b0975a;stroke-width:.8}.gd{fill:#b0975a}"
          ".k{fill:#5f6a3a}.kd{fill:#7f8a4e}"
          ".v{fill:none;stroke:#7f8a4e;stroke-width:.7;stroke-linecap:round;opacity:.7}"
@@ -495,7 +496,7 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
     n_up = max(3, round(18 * tie_frac)); n_lo = 18 - n_up
     edge = [Flora.bez(upper, i / n_up)[:2] for i in range(n_up)] + [Flora.bez(lower, i / n_lo)[:2] for i in range(n_lo + 1)]
     edge[0] = (edge[0][0] - 2, 4)
-    segs = F.stem(edge, cls="s2")
+    segs = F.stem(edge, cls="vine")   # light, so long bare stretches don't read as a wire
     F.rose_stem_foliage(segs, [0.03 + 0.09 * i for i in range(11)], 21 * k, side0=-1)   # sparse: museo is quiet
     tf = tie_y / hem_y                      # roughly where the tie falls along the edge
     plan = [  # (t, kind, size) — a full cluster at the rod and at the tie, only a few single roses between
