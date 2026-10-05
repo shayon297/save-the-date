@@ -150,16 +150,18 @@ body{
   display: block;
   pointer-events: none;
 }
-/* swag across the top joining the two drapes (assets/swag.svg stretches to the card width) */
+/* the curtains' tops, sweeping in to meet at the centre (assets/swag.svg). It spans exactly
+   between the side curtains' inner edges: script.js measures those into --drape-in. */
 .swag{
   position: absolute;
-  top: var(--hang); left: var(--hang); right: var(--hang);
-  width: calc(100% - 2 * var(--hang));
-  height: 120px;            /* full depth at the sides; the middle dips to ~0.3 of this */
+  top: var(--hang);
+  left: calc(var(--hang) + var(--drape-in, 90px));
+  width: calc(100% - 2 * (var(--hang) + var(--drape-in, 90px)));   /* an img ignores right: set the width */
+  height: 230px;            /* where the arch meets the side curtains */
   z-index: 0;
   pointer-events: none;
 }
-@media (max-width: 480px){ .swag{ height: 70px; } }
+@media (max-width: 480px){ .swag{ height: 74px; } }
 .drape-left{ left: var(--hang); }
 .drape-right{ right: var(--hang); transform: scaleX(-1); }
 .drape-side img{ display: block; height: 100%; width: auto; }

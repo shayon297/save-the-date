@@ -532,35 +532,43 @@ def tall_drape(W, H, w, tie_frac, hem_pad, k, seed):
 
 
 def swag(W=1000, H=100):
-    """One fabric swag across the top of the card, joining the two drapes: shallow in
-    the middle, curving down at each side into the curtains, like the top of a
-    theatre curtain. Nested folds follow the same curve. Stretched to the card's
-    width (preserveAspectRatio none; strokes don't scale)."""
+    """The top of the two curtains: from each side curtain's inner edge the fabric
+    sweeps up and across to meet the other at the top centre, so the opening between
+    them is a round arch (as in the satin-drapery reference). Folds are nested arches
+    pulled toward each corner. Spans exactly between the side curtains' inner edges
+    (script.js sets that) and stretches to fit (preserveAspectRatio none)."""
     F = Flora(11)
+    K = 0.5523                            # cubic approximation of a quarter ellipse
+    cx = W / 2
 
-    def edge(side_y, mid_y):
-        """Bottom edge from the left side down at side_y, rising to mid_y in the middle."""
-        return (f"M0 {f(side_y)}C{f(W * 0.07)} {f(mid_y + (side_y - mid_y) * 0.25)} {f(W * 0.22)} {f(mid_y)} {f(W / 2)} {f(mid_y)}"
-                f"C{f(W * 0.78)} {f(mid_y)} {f(W * 0.93)} {f(mid_y + (side_y - mid_y) * 0.25)} {f(W)} {f(side_y)}")
+    def left(k):                          # quarter arch from (k*cx, 0) down to (0, k*H)
+        a, b = k * cx, k * H
+        return f"M{f(a)} 0C{f(a * (1 - K))} 0 0 {f(b * (1 - K))} 0 {f(b)}"
 
-    hem_side, hem_mid = H, H * 0.3
-    # fabric: top edge, down the right side, then the hem traced right to left
-    F.path(f"M0 0L{f(W)} 0L{f(W)} {f(hem_side)}" + _reverse_edge(W, hem_side, hem_mid) + "Z", "fab")
-    folds = [(0.22, 0.07), (0.42, 0.13), (0.62, 0.19), (0.82, 0.25)]   # (depth at the sides, depth in the middle) / H
-    for j, (sd, md) in enumerate(folds):
-        if j % 2 == 0:                    # shade alternate bands
-            nd, nm = (folds[j + 1] if j + 1 < len(folds) else (1.0, 0.3))
-            F.path(edge(sd * H, md * H) + f"L{f(W)} {f(nd * H)}" + _reverse_edge(W, nd * H, nm * H) + "Z", "fabd")
-        F.path(edge(sd * H, md * H), "d2")
-    F.path(edge(hem_side, hem_mid), "d")
+    def right(k):                         # mirror image, from (W - k*cx, 0) down to (W, k*H)
+        a, b = k * cx, k * H
+        return f"M{f(W - a)} 0C{f(W - a * (1 - K))} 0 {f(W)} {f(b * (1 - K))} {f(W)} {f(b)}"
+
+    # fabric: everything above the arch whose apex is the top centre
+    F.path(f"M0 0L{f(W)} 0L{f(W)} {f(H)}C{f(W)} {f(H * (1 - K))} {f(cx + cx * K)} 0 {f(cx)} 0"
+           f"C{f(cx - cx * K)} 0 0 {f(H * (1 - K))} 0 {f(H)}Z", "fab")
+    ks = [0.22, 0.4, 0.58, 0.76, 0.9]
+    for i in range(0, len(ks) - 1, 2):    # shade alternate bands
+        k0, k1 = ks[i], ks[i + 1]
+        for side, fn in ((1, left), (-1, right)):
+            a0, b0, a1, b1 = k0 * cx, k0 * H, k1 * cx, k1 * H
+            if side == 1:
+                d = (f"M{f(a0)} 0C{f(a0 * (1 - K))} 0 0 {f(b0 * (1 - K))} 0 {f(b0)}L0 {f(b1)}"
+                     f"C0 {f(b1 * (1 - K))} {f(a1 * (1 - K))} 0 {f(a1)} 0Z")
+            else:
+                d = (f"M{f(W - a0)} 0C{f(W - a0 * (1 - K))} 0 {f(W)} {f(b0 * (1 - K))} {f(W)} {f(b0)}L{f(W)} {f(b1)}"
+                     f"C{f(W)} {f(b1 * (1 - K))} {f(W - a1 * (1 - K))} 0 {f(W - a1)} 0Z")
+            F.path(d, "fabd")
+    for k in ks:
+        F.path(left(k), "d2"); F.path(right(k), "d2")
+    F.path(left(1.0), "d"); F.path(right(1.0), "d")   # the arch's edge
     doc = svg_doc(F, W, H).replace('<svg ', '<svg preserveAspectRatio="none" ', 1)
     return doc.replace("<style>", "<style>path{vector-effect:non-scaling-stroke}", 1)
-
-
-def _reverse_edge(W, side_y, mid_y):
-    """swag()'s bottom edge traced right to left (continuing a path from its right end)."""
-    return (f"C{f(W * 0.93)} {f(mid_y + (side_y - mid_y) * 0.25)} {f(W * 0.78)} {f(mid_y)} {f(W / 2)} {f(mid_y)}"
-            f"C{f(W * 0.22)} {f(mid_y)} {f(W * 0.07)} {f(mid_y + (side_y - mid_y) * 0.25)} 0 {f(side_y)}")
 
 
 if __name__ == "__main__":

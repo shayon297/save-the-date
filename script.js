@@ -24,6 +24,21 @@
   tick();
   setInterval(tick, 60000);
 
+  // ---- curtain tops: span the swag between the side curtains' inner edges ----
+  // The drapes keep their proportions, so their width follows the card's height.
+  // Their fabric's inner edge sits at a fixed fraction of the image width (see tools-flora.py).
+  var drapeImg = document.querySelector(".drape-left img");
+  var card = document.querySelector(".card");
+  function fitSwag() {
+    if (!drapeImg || !card) return;
+    var narrow = (drapeImg.currentSrc || drapeImg.src).indexOf("narrow") !== -1;
+    var edge = narrow ? 46.5 / 84 : 86.5 / 160;
+    card.style.setProperty("--drape-in", (drapeImg.getBoundingClientRect().width * edge) + "px");
+  }
+  if (drapeImg) drapeImg.addEventListener("load", fitSwag);
+  window.addEventListener("resize", fitSwag);
+  fitSwag();
+
   // ---- add-to-calendar ----
   // Each button reveals two links: a static .ics file (assets/*.ics; iPhone and Mac open it
   // straight into Calendar, Outlook imports it) and a Google Calendar link (Android, Gmail).
