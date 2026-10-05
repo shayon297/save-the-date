@@ -18,6 +18,7 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 | `assets/drape-wide.svg`, `assets/drape-narrow.svg` | Generated drapes (desktop / phone and tablet). Don't hand-edit; change `tools-flora.py` |
 | `assets/swag.svg` | Generated shallow swag across the top joining the drapes at the centre (stretches to the card width) |
 | `assets/engagement.jpg` | Engagement photo in the arched frame under the header (the figure hides itself if the file is missing) |
+| `assets/favicon-32.png`, `assets/favicon-64.png`, `assets/apple-touch-icon.png` | Browser tab and home-screen icons: the A S oval monogram. Rendered from `.ba/icon.html`-style markup (not in the repo); re-render if the monogram changes |
 | `assets/og.jpg` | Link preview (1200×630), rendered from the page with `?preview=og` |
 | `assets/card-email.jpg` | Image used in `email.html`, rendered with `?preview=email` |
 | `email.html` | Email version (replace `GUEST_NAME` per send) |
