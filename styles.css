@@ -135,7 +135,7 @@ body{
 .hero-note{
   font-style: italic;
   font-size: clamp(14px, 2.3vw, 16px);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.14em;
   color: var(--ink-soft);
   margin: 14px 0 0;
 }
@@ -201,7 +201,7 @@ body{
 .countdown{
   font-style: italic;
   font-size: 15px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.14em;
   color: var(--ink-soft);
   margin: 0;
 }
@@ -215,8 +215,8 @@ body{
 
 /* ---------- weekend ---------- */
 .section-title{
-  font-weight: 600;
-  font-size: clamp(13px, 2.3vw, 15px);
+  font-weight: 700;
+  font-size: clamp(15px, 2.6vw, 18px);
   letter-spacing: 0.3em;
   padding-left: 0.3em;      /* optically centre tracked caps */
   text-transform: uppercase;
@@ -224,6 +224,17 @@ body{
   text-wrap: balance;
   margin: 0 0 28px;
   color: var(--ink);
+}
+/* museo's double rule under each section heading: a thick bar over a thin one */
+.section-title::after{
+  content: "";
+  display: block;
+  width: 96px;
+  height: 3px;
+  margin: 14px auto 0;
+  border-top: 3px solid var(--olive);
+  border-bottom: 1.5px solid var(--olive);
+  transform: translateX(-0.15em);   /* undo the tracked caps' optical offset */
 }
 .events{
   display: grid;
@@ -305,10 +316,11 @@ body{
 
 /* ---------- mailing address form ---------- */
 .address{ text-align: center; }
-.address .section-title{ margin-bottom: 6px; }
+.address .section-title{ margin-bottom: 18px; }
 .address-sub{
   font-style: italic;
   font-size: 16px;
+  letter-spacing: 0.12em;
   color: var(--ink-soft);
   margin: 0 0 26px;
   text-wrap: balance;

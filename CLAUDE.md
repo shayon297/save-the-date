@@ -78,8 +78,10 @@ and a phone width (375px) before calling a change done.
 - Hebrew: only the verse אֲנִי לְדוֹדִי וְדוֹדִי לִי at the top, no translation.
   No Hebrew date (that belongs on the formal invitation).
 - The engagement photo sits in an arch-topped frame under the header.
-- No ornamental dividers, as on museo: sections are separated by space and
-  the change of type (script, spaced capitals, lowercase italics).
+- Section headings are bold spaced capitals with museo's website double rule under
+  them (a short thick-over-thin olive bar). No other dividers.
+- Soft lowercase italic lines (formal invitation to follow, address subtitle, days to go)
+  are widely letter-spaced, as on the museo website.
 - Countdown is a quiet line in the closing ("224 days to go"); "formal invitation
   to follow" sits under the date line in lowercase italics.
 - Calendar buttons are outlined (ghost); only Send is solid.
