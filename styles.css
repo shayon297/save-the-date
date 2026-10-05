@@ -465,11 +465,27 @@ body{
   flex-direction: column;
   align-items: center;
 }
+/* museo's monogram: initials stacked in serif capitals inside a double-ruled oval */
 .footer-mark{
-  font-family: var(--script);
-  font-size: 30px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 50px; height: 74px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  font-weight: 500;
+  font-size: 17px;
   line-height: 1;
+  letter-spacing: 0;
   color: var(--ink);
 }
-.footer-mark em{ font-style: normal; color: var(--olive); }
-.footer-mark .s{ font-family: "Alex Brush", var(--script); font-size: 1.03em; }   /* Pinyon's capital S reads as an L */
+.footer-mark::after{          /* inner rule */
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+}

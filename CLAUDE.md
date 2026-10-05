@@ -90,8 +90,9 @@ and a phone width (375px) before calling a change done.
   open roses spaced to the hem). A shallow scalloped swag runs across the top from
   each drape and the two halves meet at the centre (no knot, tail or centre tie);
   it sits behind the drapes.
-- The A & S monogram is Pinyon Script, except the S, which is Alex Brush (Pinyon's
-  S read as an L). Amanda preferred this over setting the whole monogram in Great Vibes.
+- The monogram is museo's own: A over S in Baskervville capitals inside a double-ruled
+  oval (as on museo's enclosure cards and belly band). Script monograms were tried and
+  rejected (Pinyon's S reads as an L).
 - Names are bride first everywhere (card, titles, monogram A & S, calendar events,
   email, text message), the usual order on wedding stationery.
 - Phones should look like a scaled-down desktop, not a different design, and
