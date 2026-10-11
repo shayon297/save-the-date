@@ -89,6 +89,9 @@ and a phone width (375px) before calling a change done.
   are widely letter-spaced, as on the museo website.
 - Countdown is a quiet line in the closing ("224 days to go"); "formal invitation
   to follow" sits under the date line in lowercase italics.
+- Event addresses link to Google Maps (dotted underline; plain in the share images).
+- Tap targets are at least 44px tall (calendar buttons, "Add address manually").
+- Under 360px wide: card padding 22px and the script title 34px.
 - Calendar buttons are outlined (ghost) and open a small pop-over with the two
   choices (nothing below moves); filled states always use ivory text.
 - Practical text (times, addresses, labels, placeholders, buttons) is 13–16px in full
