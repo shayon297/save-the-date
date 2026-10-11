@@ -58,9 +58,23 @@ if cents:
     mult = np.stack([tints[choice[i]] for i in range(len(cents))])[near]
     depth = (1 - t)[..., None] * 0.7 + 0.3          # stronger in the shadows, gentle in highlights
     ivory = ivory * (1 - depth + depth * mult)
+    # even out the roses: deepen the shading of any rose much paler than the rest,
+    # so none of them fades into the ivory card
+    darkness = []
+    for i in range(len(cents)):
+        m = (near == i) & (pink > 0.35)
+        darkness.append(float((1 - ivory[m].mean(-1)).mean()) if m.any() else 0)
+    target = float(np.median(darkness)) * 0.95
+    for i, dk in enumerate(darkness):
+        if 0 < dk < target:
+            m = (near == i)[..., None]
+            ivory = np.where(m, 1 - (1 - ivory) * min(target / dk, 1.8), ivory)
 print(len(cents), "roses")
 out = rgb * (1 - pink[..., None]) + ivory * pink[..., None]
+# warm the leaves toward the card's olive ink, keeping their light and dark
 leaf = 1 - pink
-grey = out.mean(-1, keepdims=True)
-out = out * (1 - 0.25 * leaf[..., None]) + grey * (0.25 * leaf[..., None])
+L = (0.3 * out[..., 0] + 0.59 * out[..., 1] + 0.11 * out[..., 2])[..., None]
+od, ol = np.array([63, 74, 37.0]) / 255, np.array([214, 216, 186.0]) / 255
+olive = od[None, None] + (ol - od)[None, None] * np.clip((L - 0.15) / 0.75, 0, 1)
+out = out * (1 - 0.5 * leaf[..., None]) + olive * (0.5 * leaf[..., None])
 Image.fromarray(np.dstack([(out.clip(0, 1) * 255), a]).astype("uint8"), "RGBA").save(sys.argv[1], optimize=True)
