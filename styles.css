@@ -56,6 +56,7 @@ body{
 /* ---------- card + museo double-rule frame ---------- */
 .card{
   position: relative;
+  container-type: inline-size;   /* lets the footer roses size from the card's width */
   width: 100%;
   max-width: 680px;
   background: var(--ivory);
@@ -499,7 +500,9 @@ body{
   color: var(--ink);
 }
 /* a small cluster of the same ivory roses above the monogram, to balance the arch */
-.footer-roses{ display: block; width: 170px; max-width: 50%; height: auto; margin: 0 auto 6px; }
+/* same scale as the arch's roses: the cluster is 475px wide at the arch artwork's scale (1400px wide),
+   and the arch is drawn at (card width - 2 x hang - 40px) */
+.footer-roses{ display: block; width: calc((100cqw - 2 * var(--hang) - 40px) * 475 / 1400); height: auto; margin: 0 auto 6px; }
 .footer-mark::after{          /* inner rule */
   content: "";
   position: absolute;

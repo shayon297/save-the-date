@@ -98,7 +98,9 @@ and a phone width (375px) before calling a change done.
   header (assets/rose-arch.webp), each rose a slightly different cream. It replaced the
   full-length line-art drapes, which reviewers found busy and too much like curtains.
   It sits inset from the frame so no rose or vine touches the rules. A small cluster
-  of the same roses (assets/rose-sprig.webp) sits above the monogram to balance it.
+  of the same roses (assets/rose-sprig.webp: three whole roses, with one complete vine
+  from the arch tucked behind each side so every leaf ends naturally) sits above the
+  monogram, sized in CSS to the arch's exact scale.
 - The monogram is museo's own: A over S in Baskervville capitals inside a double-ruled
   oval (rings in the lighter olive, letters in ink) (as on museo's enclosure cards and belly band). Script monograms were tried and
   rejected (Pinyon's S reads as an L).
