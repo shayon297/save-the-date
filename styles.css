@@ -280,7 +280,7 @@ body{
   margin: -4px -6px;
   color: inherit;
   text-decoration: underline dotted;
-  text-decoration-color: var(--line);
+  text-decoration-color: rgba(74,85,48,0.28);   /* discoverable but quiet */
   text-underline-offset: 4px;
 }
 .map-link:hover{ text-decoration-style: solid; text-decoration-color: var(--ink); }
@@ -401,6 +401,7 @@ body{
   text-decoration-color: var(--line);
 }
 .link-btn:hover{ color: var(--ink); }
+.field-search{ margin-bottom: 6px; }   /* the link's tap area already adds the space below */
 
 .suggest{
   position: absolute;
