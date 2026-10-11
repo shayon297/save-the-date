@@ -16,6 +16,7 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 | `assets/welcome-party.ics`, `assets/wedding.ics` | Calendar files for Apple / Outlook. Keep in sync with `EVENTS` in `script.js` |
 | `tools-rose-arch.py` | Recolours the stock watercolour rose arch (pink → varied ivory) into `assets/rose-arch.webp` |
 | `tools-flora.py` | Old line-art drape generator; no longer used on the page (kept for reference) |
+| `assets/rose-sprig.webp` | Small rose cluster cut from the arch, above the monogram |
 | `assets/rose-arch.webp` | The draping arch of ivory roses over the header (the chuppah). Stock watercolour art Amanda supplied, recoloured; confirm its licence covers this use |
 | `assets/engagement.jpg` | Engagement photo in the arched frame under the header (the figure hides itself if the file is missing) |
 | `assets/favicon-32.png`, `assets/favicon-64.png`, `assets/apple-touch-icon.png` | Browser tab and home-screen icons: the A S oval monogram. Rendered from `.ba/icon.html`-style markup (not in the repo); re-render if the monogram changes |
@@ -96,7 +97,8 @@ and a phone width (375px) before calling a change done.
 - Chuppah: a draping watercolour arch of ivory roses with trailing vines over the
   header (assets/rose-arch.webp), each rose a slightly different cream. It replaced the
   full-length line-art drapes, which reviewers found busy and too much like curtains.
-  The rest of the card is plain inside the double-rule frame.
+  It sits inset from the frame so no rose or vine touches the rules. A small cluster
+  of the same roses (assets/rose-sprig.webp) sits above the monogram to balance it.
 - The monogram is museo's own: A over S in Baskervville capitals inside a double-ruled
   oval (rings in the lighter olive, letters in ink) (as on museo's enclosure cards and belly band). Script monograms were tried and
   rejected (Pinyon's S reads as an L).

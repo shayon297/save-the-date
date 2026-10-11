@@ -145,10 +145,10 @@ body{
    ivory to suit the olive palette. It scales with the card's width. */
 .rose-arch{
   position: absolute;
-  top: calc(var(--hang) - 2px);
+  top: calc(var(--hang) + 14px);          /* clear of the inner rule */
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 2 * var(--hang) - 8px);
+  width: calc(100% - 2 * var(--hang) - 40px);   /* vine tips stay inside the frame */
   height: auto;
   z-index: 0;
   pointer-events: none;
@@ -437,8 +437,8 @@ body{
 .preview-og .page{ min-height: 100vh; padding: 0; align-items: center; }
 .preview-og .card{ max-width: 980px; box-shadow: 0 24px 50px -24px rgba(0,0,0,0.6); }
 .preview-og .card-inner > :not(.hero){ display: none; }
-.preview-og .card-inner{ padding: 70px 150px 56px; }
-.preview-og .rose-arch{ width: 900px; -webkit-mask-image: linear-gradient(#000 44%, transparent 57%); mask-image: linear-gradient(#000 44%, transparent 57%); }
+.preview-og .card-inner{ padding: 96px 150px 40px; }
+.preview-og .rose-arch{ top: calc(var(--hang) + 4px); width: 860px; -webkit-mask-image: linear-gradient(#000 44%, transparent 57%); mask-image: linear-gradient(#000 44%, transparent 57%); }
 .preview-og .script-title{ font-size: 84px; margin-bottom: 14px; }
 .preview-og .names-caps{ font-size: 20px; margin-bottom: 14px; white-space: nowrap; }
 .preview-og .names-caps .name{ display: inline; }
@@ -498,6 +498,8 @@ body{
   letter-spacing: 0;
   color: var(--ink);
 }
+/* a small cluster of the same ivory roses above the monogram, to balance the arch */
+.footer-roses{ display: block; width: 230px; max-width: 60%; height: auto; margin: 0 auto 6px; }
 .footer-mark::after{          /* inner rule */
   content: "";
   position: absolute;
