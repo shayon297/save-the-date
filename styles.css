@@ -155,6 +155,10 @@ body{
   pointer-events: none;
 }
 @media (max-width: 480px){
+  /* on phones the arch is small, so fade its hanging vines before they reach the names */
+  .rose-arch{ -webkit-mask-image: linear-gradient(#000 52%, transparent 74%); mask-image: linear-gradient(#000 52%, transparent 74%); }
+}
+@media (max-width: 480px){
   .card-inner{ padding-left: 30px; padding-right: 30px; }
   .card-inner .closing-caps{ font-size: 12px; letter-spacing: 0.22em; padding-left: 0.22em; }
   .script-title{ font-size: 36px; white-space: nowrap; }
@@ -500,9 +504,9 @@ body{
   color: var(--ink);
 }
 /* a small cluster of the same ivory roses above the monogram, to balance the arch */
-/* same scale as the arch's roses: the cluster is 475px wide at the arch artwork's scale (1400px wide),
+/* same scale as the arch's roses: the cluster is 479px wide at the arch artwork's scale (1400px wide),
    and the arch is drawn at (card width - 2 x hang - 40px) */
-.footer-roses{ display: block; width: calc((100cqw - 2 * var(--hang) - 40px) * 475 / 1400); height: auto; margin: 0 auto 6px; }
+.footer-roses{ display: block; width: calc((100cqw - 2 * var(--hang) - 40px) * 479 / 1400); height: auto; margin: 0 auto 18px; }   /* room above the monogram */
 .footer-mark::after{          /* inner rule */
   content: "";
   position: absolute;

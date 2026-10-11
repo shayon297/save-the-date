@@ -14,6 +14,7 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 | `styles.css` | All styling. Palette and fonts are CSS variables at the top |
 | `script.js` | Countdown, "Add to calendar" links, address form |
 | `assets/welcome-party.ics`, `assets/wedding.ics` | Calendar files for Apple / Outlook. Keep in sync with `EVENTS` in `script.js` |
+| `tools-rose-sprig.py` | Builds `assets/rose-sprig.webp` (three roses + a whole vine each side) from the recoloured arch |
 | `tools-rose-arch.py` | Recolours the stock watercolour rose arch (pink → varied ivory) into `assets/rose-arch.webp` |
 | `tools-flora.py` | Old line-art drape generator; no longer used on the page (kept for reference) |
 | `assets/rose-sprig.webp` | Small rose cluster cut from the arch, above the monogram |
@@ -100,7 +101,8 @@ and a phone width (375px) before calling a change done.
   It sits inset from the frame so no rose or vine touches the rules. A small cluster
   of the same roses (assets/rose-sprig.webp: three whole roses, with one complete vine
   from the arch tucked behind each side so every leaf ends naturally) sits above the
-  monogram, sized in CSS to the arch's exact scale.
+  monogram, sized in CSS to the arch's exact scale. On phones the arch's hanging vines
+  fade out before they reach the names.
 - The monogram is museo's own: A over S in Baskervville capitals inside a double-ruled
   oval (rings in the lighter olive, letters in ink) (as on museo's enclosure cards and belly band). Script monograms were tried and
   rejected (Pinyon's S reads as an L).

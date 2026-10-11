@@ -16,7 +16,7 @@ pink = np.clip((r - g - 0.005) / 0.07, 0, 1) * np.clip(sat / 0.05, 0, 1)
 lum = 0.3 * r + 0.59 * g + 0.11 * b
 t = np.clip((lum - 0.3) / 0.7, 0, 1) ** 0.65
 # warm sand shadows -> soft cream mid-tones -> ivory highlights
-shadow = np.array([188, 168, 132.0]) / 255
+shadow = np.array([206, 191, 160.0]) / 255   # light warm sand, so rose centres stay fresh
 mid = np.array([236, 224, 198.0]) / 255
 light = np.array([255, 252, 243.0]) / 255
 lo = shadow[None, None] + (mid - shadow)[None, None] * np.clip(t / 0.55, 0, 1)[..., None]
