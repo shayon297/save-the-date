@@ -14,9 +14,9 @@ Sunday, May 16, 2027 at the Cincinnati Art Museum.
 | `styles.css` | All styling. Palette and fonts are CSS variables at the top |
 | `script.js` | Countdown, "Add to calendar" links, address form |
 | `assets/welcome-party.ics`, `assets/wedding.ics` | Calendar files for Apple / Outlook. Keep in sync with `EVENTS` in `script.js` |
-| `tools-flora.py` | Draws the drapes, flowers and the top swag. Run `python3 tools-flora.py assets` to regenerate them |
-| `assets/drape-wide.svg`, `assets/drape-narrow.svg` | Generated drapes (desktop / phone and tablet). Don't hand-edit; change `tools-flora.py` |
-| `assets/swag.svg` | Generated shallow swag across the top joining the drapes at the centre (stretches to the card width) |
+| `tools-rose-arch.py` | Recolours the stock watercolour rose arch (pink → varied ivory) into `assets/rose-arch.webp` |
+| `tools-flora.py` | Old line-art drape generator; no longer used on the page (kept for reference) |
+| `assets/rose-arch.webp` | The draping arch of ivory roses over the header (the chuppah). Stock watercolour art Amanda supplied, recoloured; confirm its licence covers this use |
 | `assets/engagement.jpg` | Engagement photo in the arched frame under the header (the figure hides itself if the file is missing) |
 | `assets/favicon-32.png`, `assets/favicon-64.png`, `assets/apple-touch-icon.png` | Browser tab and home-screen icons: the A S oval monogram. Rendered from `.ba/icon.html`-style markup (not in the repo); re-render if the monogram changes |
 | `assets/og.jpg` | Link preview (1200×630), rendered from the page with `?preview=og` |
@@ -93,18 +93,10 @@ and a phone width (375px) before calling a change done.
   ink for screen readability. Form fields are visible boxes; the button reads
   "Submit mailing address".
 - "Save the Date" is ~12% smaller than before so the names lead.
-- Drapes (Amanda's pick, "B" + "C"'s swag): full-height drapes hanging from the
-  frame's top corners with a pale fabric fill; the outer edge stays flush with the
-  frame and the tie-back (about a third of the way down) gathers the folds against
-  it, widening gradually to the hem, which rests on the bottom inner rule. A light
-  vine runs along each inner edge with full rose clusters at the top corner and at
-  the tie, and only a few single roses and leaves between (thinned by half to stay as
-  quiet as museo). No tiny buds (they read as specks) and no side-view roses (they
-  read as doodles). Line weights are engraving-style: crisp petal outlines, lighter
-  inner curves and veins. Below the tie-backs the drapes are plain fabric (no vine or
-  flowers), so the schedule and form have room. A shallow scalloped swag runs across the top from
-  each drape and the two halves meet at the centre (no knot, tail or centre tie);
-  it sits behind the drapes.
+- Chuppah: a draping watercolour arch of ivory roses with trailing vines over the
+  header (assets/rose-arch.webp), each rose a slightly different cream. It replaced the
+  full-length line-art drapes, which reviewers found busy and too much like curtains.
+  The rest of the card is plain inside the double-rule frame.
 - The monogram is museo's own: A over S in Baskervville capitals inside a double-ruled
   oval (rings in the lighter olive, letters in ink) (as on museo's enclosure cards and belly band). Script monograms were tried and
   rejected (Pinyon's S reads as an L).
@@ -112,7 +104,8 @@ and a phone width (375px) before calling a change done.
   email, text message), the usual order on wedding stationery.
 - Phones should look like a scaled-down desktop, not a different design, and
   text must not touch the drapes.
-- Tried and rejected: a deep swag with a long hanging tail; a curtain-top arch; curtains drawn from a rod meeting at the centre (round or pointed opening); literal classical motifs (Cinzel inscription capitals,
+- Tried and rejected: full-length line-art drapes (read as curtains); hand-coded rose
+  drawings (never looked right); a deep swag with a long hanging tail; a curtain-top arch; curtains drawn from a rod meeting at the centre (round or pointed opening); literal classical motifs (Cinzel inscription capitals,
   Greek-key dividers, a laurel wreath around the monogram, Roman-numeral date),
   pinstripe borders, all-over flower patterns, extra frames
   competing with the drapes. (An earlier note rejected flowers bunched at the ties;

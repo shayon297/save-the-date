@@ -78,11 +78,11 @@ body{
   position: relative;
   z-index: 1;
   margin: calc(var(--inset) + 6px);
-  padding: 52px 22px 30px;   /* top clears the swag */
+  padding: 18% 22px 30px;   /* top: under the crown of the rose arch (% of the card's width) */
   text-align: center;
 }
 @media (min-width: 700px){
-  .card-inner{ padding: 72px 56px 44px; }   /* top clears the swag */
+  .card-inner{ padding: 18% 56px 44px; }
 }
 
 /* ---------- hero ---------- */
@@ -140,36 +140,21 @@ body{
   margin: 14px 0 0;
 }
 
-/* ---------- florals: a pair of full-height drapes, flowers along the fabric ----------
-   One drawing (tools-flora.py), mirrored for the right side, hanging just inside
-   the frame. The image keeps its proportions, so its width follows the card
-   height. Phones get a proportionally scaled version. */
-.drape-side{
+/* ---------- florals: a draping arch of ivory roses over the header (the chuppah) ----------
+   assets/rose-arch.webp: a watercolour rose arch with trailing vines, roses recoloured
+   ivory to suit the olive palette. It scales with the card's width. */
+.rose-arch{
   position: absolute;
-  top: var(--hang);
-  bottom: var(--hang);
-  z-index: 0;
-  display: block;
-  pointer-events: none;
-}
-/* swag across the top joining the two drapes at the centre (assets/swag.svg stretches to the card width) */
-.swag{
-  position: absolute;
-  top: var(--hang); left: var(--hang);
-  width: calc(100% - 2 * var(--hang));
-  height: 44px;
+  top: calc(var(--hang) - 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 2 * var(--hang) - 8px);
+  height: auto;
   z-index: 0;
   pointer-events: none;
-}
-@media (max-width: 480px){ .swag{ height: 26px; } }
-.drape-left{ left: var(--hang); }
-.drape-right{ right: var(--hang); transform: scaleX(-1); }
-.drape-side img{ display: block; height: 100%; width: auto; }
-@media (max-width: 699px){
-  .card-inner{ padding-left: 40px; padding-right: 40px; }   /* keep text inside the curtains */
 }
 @media (max-width: 480px){
-  .card-inner{ padding-left: 44px; padding-right: 44px; }
+  .card-inner{ padding-left: 30px; padding-right: 30px; }
   .card-inner .closing-caps{ font-size: 12px; letter-spacing: 0.22em; padding-left: 0.22em; }
   .script-title{ font-size: 36px; white-space: nowrap; }
   .names-caps{ letter-spacing: 0.22em; padding-left: 0.22em; }
@@ -453,9 +438,8 @@ body{
 .preview-og .card{ max-width: 980px; box-shadow: 0 24px 50px -24px rgba(0,0,0,0.6); }
 .preview-og .card-inner > :not(.hero){ display: none; }
 .preview-og .card-inner{ padding: 70px 150px 56px; }
-.preview-og .drape-side{ overflow: hidden; -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
-.preview-og .drape-side img{ height: 1300px; }
-.preview-og .script-title{ font-size: 104px; margin-bottom: 18px; }
+.preview-og .rose-arch{ width: 900px; -webkit-mask-image: linear-gradient(#000 44%, transparent 57%); mask-image: linear-gradient(#000 44%, transparent 57%); }
+.preview-og .script-title{ font-size: 84px; margin-bottom: 14px; }
 .preview-og .names-caps{ font-size: 20px; margin-bottom: 14px; white-space: nowrap; }
 .preview-og .names-caps .name{ display: inline; }
 .preview-og .names-caps .amp{ display: inline; margin: 0 0.6em 0 0.3em; }
@@ -506,7 +490,7 @@ body{
   justify-content: center;
   gap: 2px;
   width: 50px; height: 74px;
-  border: 1.25px solid var(--olive);   /* the drapes' softer olive, so the letters lead */
+  border: 1.25px solid var(--olive);   /* the softer olive, so the letters lead */
   border-radius: 50%;
   font-weight: 500;
   font-size: 17px;
