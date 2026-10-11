@@ -499,7 +499,7 @@ body{
   color: var(--ink);
 }
 /* a small cluster of the same ivory roses above the monogram, to balance the arch */
-.footer-roses{ display: block; width: 170px; max-width: 50%; height: auto; margin: 0 auto 6px; }
+.footer-roses{ display: block; width: 196px; max-width: 56%; height: auto; margin: 0 auto 6px; }
 .footer-mark::after{          /* inner rule */
   content: "";
   position: absolute;
