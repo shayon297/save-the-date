@@ -3,7 +3,9 @@
 A static save-the-date site (plain HTML/CSS/JS, no build step) for the wedding on
 Sunday, May 16, 2027 at the Cincinnati Art Museum.
 
-- Live: https://shayon297.github.io/save-the-date/
+- Live: https://amandashayon.wedding/ (custom domain via the `CNAME` file; DNS at GoDaddy: four A records
+  for `@` to GitHub Pages' 185.199.108-111.153, and `www` as a CNAME to `shayon297.github.io`.
+  The old shayon297.github.io/save-the-date/ link redirects here.)
 - Deploy: push to `main`. GitHub Pages serves the repo root and updates in about a minute.
 
 ## Files
